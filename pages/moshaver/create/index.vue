@@ -134,6 +134,11 @@ export default {
       loading: false
     }
   },
+  head() {
+    return {
+      title: 'ثبت نام مشاوران'
+    }
+  },
   methods: {
     provinceSelectOnClick (user) {
       user.provinceDropDown = true

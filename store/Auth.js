@@ -41,8 +41,8 @@ export const mutations = {
 
 export const actions = {
   logout({commit}) {
-    commit('Auth/updateUser', null)
-    commit('Auth/updateAccessToken', null)
-    commit('Auth/updateRedirectTo', null)
+    commit('updateUser', null)
+    commit('updateAccessToken', null)
+    commit('updateRedirectTo', null)
   }
 }

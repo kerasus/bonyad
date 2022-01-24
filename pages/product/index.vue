@@ -292,6 +292,11 @@ export default {
       cities: []
     }
   },
+  head() {
+    return {
+      title: 'ثبت نامی ها'
+    }
+  },
   watch: {
     dialog (val) {
       val || this.close()

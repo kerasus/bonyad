@@ -146,6 +146,11 @@ export default {
       loading: false
     }
   },
+  head() {
+    return {
+      title: 'ثبت نام کاربران'
+    }
+  },
   methods: {
     provinceSelectOnClick (user) {
       user.provinceDropDown = true
