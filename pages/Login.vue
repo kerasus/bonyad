@@ -123,6 +123,11 @@
             autofilledPass:false
           }
         },
+        head() {
+          return {
+            title: 'ورود'
+          }
+        },
         created() {
             if (this.getToken()) {
               this.getUserData( () => { this.redirectTo() })
@@ -171,7 +176,7 @@
               console.log('headers.common Authorization in login')
               this.setAccessToken(access_token)
               that.setUserData(response.data.data.user)
-              this.$router.push({path: '/user/create'})
+              this.$router.push({path: '/'})
               // this.getUserData(() => { this.redirectTo() })
             })
             .catch( () => {
