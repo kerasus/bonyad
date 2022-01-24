@@ -123,6 +123,11 @@
             autofilledPass:false
           }
         },
+        head() {
+          return {
+            title: 'ورود'
+          }
+        },
         created() {
             if (this.getToken()) {
               this.getUserData( () => { this.redirectTo() })
