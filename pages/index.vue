@@ -54,6 +54,11 @@ export default {
         }
       ]
     }
+  },
+  head() {
+    return {
+      title: 'فهرست'
+    }
   }
 }
 </script>
