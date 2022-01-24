@@ -48,18 +48,6 @@
               </div>
             </div>
             <div class="input-box">
-              <div class="select">
-                <select class="select-text" required v-model="user.major_id" :class="{ 'has-error': user.major_id_error }">
-                  <option value="" disabled selected></option>
-                  <option v-for="(item, index) in majors" :key="index" :value="item.id">{{ item.title }}</option>
-                </select>
-                <span class="select-highlight"></span>
-                <span class="select-bar"></span>
-                <label class="select-label">رشته</label>
-                <span class="error-message" v-if="user.major_id_error">{{ user.major_id_error }}</span>
-              </div>
-            </div>
-            <div class="input-box">
               <div class="form-input">
                 <label>
                   <input :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
@@ -134,7 +122,7 @@
 import API_ADDRESS from "assets/Addresses";
 
 export default {
-  name: 'userCreate',
+  name: 'moshaverCreate',
   middleware: 'auth',
   data () {
     return {
@@ -178,8 +166,6 @@ export default {
           lastName_error: false,
           gender_id: '',
           gender_id_error: false,
-          major_id: '',
-          major_id_error: false,
           mobile: '',
           mobile_error: false,
           nationalCode: '',
@@ -199,7 +185,7 @@ export default {
     },
     isUserInfoComplete(user) {
       return !!(user.firstName  || user.lastName  || user.gender_id
-         || user.major_id  || user.mobile  || user.nationalCode  ||
+         || user.mobile  || user.nationalCode  ||
         user.province  || user.shahr_id);
     },
     getUserFormData () {
@@ -219,13 +205,12 @@ export default {
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
 
-          this.$axios.post(API_ADDRESS.user.create, {
+          this.$axios.post(API_ADDRESS.moshaver.create, {
             firstName: user.firstName,
             lastName: user.lastName,
             mobile: user.mobile,
             nationalCode: user.nationalCode,
             gender_id: user.gender_id,
-            major_id: user.major_id,
             shahr_id: user.shahr_id
           }).then(resp => {
             user.hasBeenSaved = true
@@ -254,7 +239,7 @@ export default {
             }, 500)
           })
         } else if (user.firstName || user.lastName || user.gender_id
-           || user.major_id  || user.mobile  || user.nationalCode  ||
+           || user.mobile  || user.nationalCode  ||
           user.province  || user.shahr_id) {
           this.$notify({
             type: 'error',

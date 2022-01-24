@@ -13,6 +13,17 @@ const API_ADDRESS = {
     base: authServer + '/admin/bonyadEhsan/order',
     delete: authServer + '/admin/bonyadEhsan/order/'
   },
+  moshaver: {
+    update: authServer + '/admin/bonyadEhsan/user/',
+    create: authServer + '/admin/bonyadEhsan/moshaver',
+    base: authServer + '/user',
+    mobile: {
+      resend: authServer + '/mobile/resend',
+      verify: authServer + '/mobile/verify'
+    },
+    formData: authServer + '/megaroute/getUserFormData',
+    show_user: authServer + '/getUserFor3a'
+  },
   user: {
     update: authServer + '/admin/bonyadEhsan/user/',
     create: authServer + '/admin/bonyadEhsan/user',
