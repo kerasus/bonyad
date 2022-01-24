@@ -31,7 +31,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '@/plugins/notification.js'
+    '@/plugins/notification.js',
+    { src: '@/plugins/persistedState.client.js' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -46,10 +47,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    '@nuxtjs/axios',
-    ['nuxt-vuex-localstorage', {
-      localStorage: ['Auth']
-    }]
+    '@nuxtjs/axios'
   ],
 
   axios: {
