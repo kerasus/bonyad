@@ -176,17 +176,10 @@
               </v-icon>
             </v-btn>
           </template>
-          <template v-slot:no-data>
-            <v-btn
-              color="primary"
-              @click="initialize"
-            >
-              Reset
-            </v-btn>
-          </template>
         </v-data-table>
         <div class="text-center pt-2" v-if="!loading">
           <v-pagination
+            total-visible="10"
             v-model="page"
             :length="response.meta.last_page"
           ></v-pagination>
@@ -200,12 +193,13 @@
 import moment from 'moment-jalaali'
 import API_ADDRESS from "assets/Addresses";
 import goTo from 'vuetify/lib/services/goto'
+import {Order, OrderList} from "~/models/Order";
 
 export default {
   name: "productShowEdit.vue",
   middleware: 'auth',
   created () {
-    this.apiCall()
+    this.getData()
     this.getUserFormData()
   },
   data () {
@@ -305,7 +299,7 @@ export default {
       val || this.closeDelete()
     },
     page (val) {
-      this.apiCall(val)
+      this.getData(val)
     }
   },
   computed: {
@@ -326,7 +320,7 @@ export default {
           this.cities = resp.data.data.cities
         })
     },
-    apiCall (page = 1) {
+    getData (page = 1) {
       goTo(0)
       this.loading = true
       this.$axios.get(API_ADDRESS.product.base + '?page=' + page).then(resp => {
@@ -336,26 +330,26 @@ export default {
             {
               id: item.id,
               orderProducts: item.orderproducts,
-              major: item.user.major.name,
-              city: item.user.city,
-              user: item.user.first_name + ' ' + item.user.last_name,
-              user_mobile: item.user.mobile,
+              major: item.user && item.user.major ? item.user.major.name : '',
+              city: item.user ? item.user.city : '',
+              user: item.user ? item.user.first_name + ' ' + item.user.last_name : '',
+              user_mobile: item.user ? item.user.mobile : '',
               user_mobile_error: () => true,
-              insertor: item.insertor.first_name + ' ' + item.insertor.last_name,
-              insertor_mobile: item.insertor.mobile,
+              insertor: item.insertor ? item.insertor.first_name + ' ' + item.insertor.last_name : '',
+              insertor_mobile: item.insertor ? item.insertor.mobile : '',
               completed_at: (item.completed_at) ? moment(item.completed_at, 'YYYY-M-D hh:mm:ss').format('jYYYY/jMM/jDD hh:mm:ss') : '-',
-              user_first_name: item.user.first_name,
+              user_first_name: item.user ? item.user.first_name : '',
               user_firstName_error: () => true,
-              user_last_name: item.user.last_name,
+              user_last_name: item.user ? item.user.last_name : '',
               user_lastName_error: () => true,
-              user_id: item.user.id,
-              user_national_code: item.user.national_code,
+              user_id: item.user ? item.user.id : '',
+              user_national_code: item.user ? item.user.national_code : '',
               user_nationalCode_error: () => true,
-              user_major_id: item.user.major.id,
+              user_major_id: item.user && item.user.major ? item.user.major.id : '',
               user_major_id_error: () => true,
-              user_gender_id: item.user.gender.id,
+              user_gender_id: item.user && item.user.gender ? item.user.gender.id : '',
               user_gender_id_error: () => true,
-              user_shahr_id: item.user.shahr.id,
+              user_shahr_id: item.user && item.user.shahr ? item.user.shahr.id : '',
               user_shahr_id_error: () => true,
             }
         })
