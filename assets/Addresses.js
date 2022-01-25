@@ -25,6 +25,7 @@ const API_ADDRESS = {
     show_user: authServer + '/getUserFor3a'
   },
   user: {
+    info: authServer + '/admin/bonyadEhsan/user/myInfo',
     update: authServer + '/admin/bonyadEhsan/user/',
     create: authServer + '/admin/bonyadEhsan/user',
     base: authServer + '/user',

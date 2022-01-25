@@ -16,7 +16,7 @@
       </v-row>
       <v-form ref="form" lazy-validation>
         <v-row v-for="user in userForm" :key="user.key">
-          <v-col md="11" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
+          <v-col :style="{ maxWidth: '95vw' }" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
             <div class="input-box">
               <div class="form-input">
                 <label>
@@ -71,6 +71,42 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
+                  <input :class="{ 'has-error': user.address_error }" required type="text" v-model="user.address"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">آدرس</span>
+                </label>
+                <span class="error-message" v-if="user.address_error">{{ user.address_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.phone_error }" required type="text" v-model="user.phone"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">تلفن</span>
+                </label>
+                <span class="error-message" v-if="user.phone_error">{{ user.phone_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.father_mobile_error }" required type="text" v-model="user.father_mobile"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">موبایل پدر</span>
+                </label>
+                <span class="error-message" v-if="user.father_mobile_error">{{ user.father_mobile_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.mother_mobile_error }" required type="text" v-model="user.mother_mobile"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">موبایل مادر</span>
+                </label>
+                <span class="error-message" v-if="user.mother_mobile_error">{{ user.mother_mobile_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
                   <input :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
@@ -109,7 +145,7 @@
               </div>
             </div>
           </v-col>
-          <v-col md="1" class="options">
+          <v-col :style="{ maxWidth: '5vw' }" class="options">
             <v-progress-circular
               indeterminate
               color="grey"
@@ -177,7 +213,14 @@ export default {
       for (let i = 0; i < amount; i++) {
         this.userForm.push({
           firstName: '',
-          firstNameMessage: '',
+          address: '',
+          address_error: false,
+          phone: '',
+          phone_error: false,
+          father_mobile: '',
+          father_mobile_error: false,
+          mother_mobile: '',
+          mother_mobile_error: false,
           firstName_error: false,
           lastName: '',
           lastName_error: false,
@@ -203,7 +246,8 @@ export default {
       }
     },
     isUserInfoComplete(user) {
-      return !!(user.firstName  || user.lastName  || user.gender_id
+      return !!(user.firstName || user.lastName || user.address ||
+          user.phone || user.father_mobile || user.mother_mobile || user.gender_id
          || user.major_id  || user.mobile  || user.nationalCode  ||
         user.province  || user.shahr_id);
     },
@@ -226,6 +270,10 @@ export default {
 
           this.$axios.post(API_ADDRESS.user.create, {
             firstName: user.firstName,
+            address: user.address,
+            phone: user.phone,
+            father_mobile: user.father_mobile,
+            mother_mobile: user.mother_mobile,
             lastName: user.lastName,
             mobile: user.mobile,
             nationalCode: user.nationalCode,
@@ -258,7 +306,8 @@ export default {
               this.$refs.form.validate()
             }, 500)
           })
-        } else if (user.firstName || user.lastName || user.gender_id
+        } else if (user.firstName || user.lastName || user.address ||
+            user.phone || user.father_mobile || user.mother_mobile || user.gender_id
            || user.major_id  || user.mobile  || user.nationalCode  ||
           user.province  || user.shahr_id) {
           this.$notify({
