@@ -129,9 +129,9 @@
           }
         },
         created() {
-            if (this.getToken()) {
-              this.getUserData( () => { this.redirectTo() })
-            }
+            // if (this.getToken()) {
+            //   this.getUserData( () => { this.redirectTo() })
+            // }
         },
       methods: {
         getToken () {
@@ -173,14 +173,27 @@
               that.$store.commit('Auth/updateUser', that.user)
               const access_token = response.data.data.access_token
               this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token
-              console.log('headers.common Authorization in login')
               this.setAccessToken(access_token)
               that.setUserData(response.data.data.user)
-              this.$router.push({path: '/'})
+              that.$axios.get(API_ADDRESS.user.info).then(() => {
+                this.$router.push({path: '/'})
+              }).catch(() => {
+                this.$store.dispatch('Auth/logout')
+                this.$notify({
+                  type: 'error',
+                  title: 'توجه',
+                  text: 'شما دسترسی لازم برای ورود به پنل را ندارید'
+                })
+              })
               // this.getUserData(() => { this.redirectTo() })
             })
-            .catch( () => {
+            .catch( (err) => {
               this.loadingList = false
+              this.$notify({
+                type: 'error',
+                title: 'توجه',
+                text: err.response.data.message
+              })
             })
         }
       }
