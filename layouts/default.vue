@@ -65,6 +65,9 @@
       >
         <v-icon>mdi-menu</v-icon>
       </v-btn>
+      <span>
+        {{ user.full_name }}
+      </span>
     </v-app-bar>
     <v-main>
       <v-container fluid>
@@ -154,6 +157,9 @@ export default {
   computed: {
     isLoginPage () {
       return this.$route.path === '/login'
+    },
+    user () {
+      return this.$store.getters["Auth/user"]
     }
   },
   methods: {
