@@ -50,7 +50,7 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'مشاهده ثبت نام شده ها',
-          to: '/product'
+          to: '/order'
         }
       ]
     }

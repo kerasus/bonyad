@@ -138,7 +138,7 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'مشاهده ثبت نام شده ها',
-          to: '/product'
+          to: '/order'
         }
       ],
       miniVariant: false,
@@ -148,6 +148,17 @@ export default {
     }
   },
   created() {
+    let that = this
+    this.$axios.interceptors.response.use(undefined, function (error) {
+
+      that.$notify({
+          type: 'error',
+          title: 'توجه',
+          text: error.response.data.message
+      })
+
+      return Promise.reject(error);
+    })
     let token = this.$store.getters['Auth/accessToken']
     if (token) {
       console.log('headers.common Authorization in created DefaultLayout')

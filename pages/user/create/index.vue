@@ -306,16 +306,6 @@ export default {
               this.$refs.form.validate()
             }, 500)
           })
-        } else if (user.firstName || user.lastName || user.address ||
-            user.phone || user.father_mobile || user.mother_mobile || user.gender_id
-           || user.major_id  || user.mobile  || user.nationalCode  ||
-          user.province  || user.shahr_id) {
-          this.$notify({
-            type: 'error',
-            duration: 10000,
-            title: 'توجه',
-            text: 'پر کردن تمامی فیلدهای یک سطر الزامی ست'
-          })
         }
       })
     }
