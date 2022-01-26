@@ -52,7 +52,13 @@ class User extends Model {
         ])
 
         if (!this.full_name) {
-            this.full_name = this.first_name ? this.first_name : '' + ' ' + this.last_name ? this.last_name : ''
+          this.full_name = ''
+            if (this.first_name) {
+              this.full_name += this.first_name + ' '
+            }
+            if (this.last_name) {
+              this.full_name += this.last_name
+            }
         }
     }
 

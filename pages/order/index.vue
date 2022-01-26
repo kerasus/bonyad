@@ -158,8 +158,8 @@
           <template v-slot:item.major="{ item }">
             <p>{{item.major}}</p>
           </template>
-          <template v-slot:item.city="{ item }">
-            <p>{{item.city}}</p>
+          <template v-slot:item.user_shahr_title="{ item }">
+            <p>{{item.user_shahr_title}}</p>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-btn icon @click="editItem(item)" color="primary">
@@ -331,7 +331,7 @@ export default {
               id: item.id,
               orderProducts: item.orderproducts,
               major: item.user && item.user.major ? item.user.major.name : '',
-              city: item.user ? item.user.city : '',
+              user_shahr_title: item.user ? item.user.shahr.title : '',
               user: item.user ? item.user.first_name + ' ' + item.user.last_name : '',
               user_mobile: item.user ? item.user.mobile : '',
               user_mobile_error: () => true,
