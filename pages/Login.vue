@@ -187,13 +187,8 @@
               })
               // this.getUserData(() => { this.redirectTo() })
             })
-            .catch( (err) => {
+            .catch( () => {
               this.loadingList = false
-              this.$notify({
-                type: 'error',
-                title: 'توجه',
-                text: err.response.data.message
-              })
             })
         }
       }
