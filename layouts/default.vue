@@ -128,17 +128,17 @@ export default {
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت کاربر',
-          to: '/user/create'
+          to: '/admin/user/create'
         },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت مشاور',
-          to: '/moshaver/create'
+          to: '/admin/moshaver/create'
         },
         {
           icon: 'mdi-account-details',
           title: 'مشاهده ثبت نام شده ها',
-          to: '/order'
+          to: '/admin/order'
         }
       ],
       miniVariant: false,

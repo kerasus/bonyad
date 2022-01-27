@@ -193,7 +193,7 @@
 import moment from 'moment-jalaali'
 import API_ADDRESS from "assets/Addresses";
 import goTo from 'vuetify/lib/services/goto'
-import {Order, OrderList} from "~/models/Order";
+import {Order, OrderList} from "@/models/Order";
 
 export default {
   name: "productShowEdit.vue",
