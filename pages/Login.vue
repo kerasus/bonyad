@@ -175,7 +175,8 @@
               this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token
               this.setAccessToken(access_token)
               that.setUserData(response.data.data.user)
-              that.$axios.get(API_ADDRESS.user.info).then(() => {
+              that.$axios.get(API_ADDRESS.user.info).then((resp) => {
+                this.$store.commit('Auth/updateUser', resp.data.data)
                 this.$router.push({path: '/'})
               }).catch(() => {
                 this.$store.dispatch('Auth/logout')
