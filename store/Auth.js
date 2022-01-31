@@ -17,6 +17,9 @@ export const getters = {
   },
   redirectTo(state) {
     return state.redirectTo
+  },
+  isLoggedIn(state) {
+    return !!state.accessToken
   }
 }
 

@@ -30,6 +30,7 @@ class User extends Model {
 
             { key: 'mobile_verified_at' },
             { key: 'wallet_balance' },
+            { key: 'permissions' },
             { key: 'profile_completion' },
 
             {
