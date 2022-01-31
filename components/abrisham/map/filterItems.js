@@ -1,4 +1,4 @@
-var FilterItems = {
+const filterItems = {
     reshte: [
         {
             name: 'رشته ریاضی',
@@ -163,11 +163,4 @@ var FilterItems = {
     ]
 };
 
-var initFilterItems = {
-    install: function (vue, opts){
-        // FilterItems.path.abrisham.selected = true;
-        // FilterItems.path.oghianous.selected = false;
-    }
-};
-
-export {FilterItems, initFilterItems};
+export default filterItems;

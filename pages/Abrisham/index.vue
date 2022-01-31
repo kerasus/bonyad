@@ -1,6 +1,6 @@
 <template>
     <!-- App.vue -->
-    <v-app v-resize="onResize">
+    <v-app>
         <v-navigation-drawer
             class="side-menu"
             app
@@ -20,7 +20,8 @@
             <v-container fluid>
                 <expansion-menu v-if=" windowSize.x <= 768"/>
                 <!-- If using vue-router -->
-                <router-view/>
+                test
+                <Nuxt />
 
                 <auth />
             </v-container>
@@ -65,15 +66,18 @@ export default {
             showUserInfoFormModalStatus: false,
         }
     },
-    props:['userData', 'filterBoxCategory' ,'userAssetsCollection'],
+    props:['filterBoxCategory' ,'userAssetsCollection'],
     watch: {
         // 'windowSize.x' : function (newValue) {
         //   this.drawer = newValue > 576;
         // }
     },
     computed: {
+        isLoggedIn() {
+          return this.$store.getters["Auth/isLoggedIn"]
+        },
         windowSize() {
-            return this.$store.getters['windowSize']
+            return { x: window.innerWidth, y: window.innerHeight }
         },
         drawerSize() {
             if (this.windowSize.x >= 1920) {
@@ -93,7 +97,7 @@ export default {
             return this.$store.getters.appProps.user;
         },
         userData(){
-            return new User(window.user)
+            return new User(this.$store.getters["Auth/user"])
         }
     },
     created() {
@@ -103,33 +107,24 @@ export default {
         this.initUserInfoIfLoggedIn()
     },
     methods: {
-        isLoggedIn () {
-            const userID = document.querySelector('input[name="js-var-userId"]').value
-
-            return (!userID && userID !== 0)
-        },
         setToken() {
-            axios.defaults.headers.common['Accept'] = 'application/json '
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = window.Laravel.csrfToken
-        },
-        onResize() {
-            this.$store.commit('updateWindowSize', {x: window.innerWidth, y: window.innerHeight})
+            // this.$axios.defaults.headers.common['Accept'] = 'application/json '
+            // axios.defaults.headers.common['X-CSRF-TOKEN'] = window.Laravel.csrfToken
         },
         setUser(){
-            this.$store.commit('updateUser' , window.user)
+            // this.$store.commit('Auth/updateUser' , window.user)
         },
         updatingAppProps(){
-            this.$store.commit('updateAppProps', {
-                user: this.userData,
-            });
+            // this.$store.commit('Auth/updateUser', {
+            //     user: this.userData,
+            // });
         },
         userInfoUpdated() {
-            console.log('userInfoUpdated')
             this.initUserInfo()
         },
 
         initUserInfoIfLoggedIn(){
-            if (!this.isLoggedIn()) {
+            if (!this.isLoggedIn) {
                 this.initUserInfo();
             }
         },

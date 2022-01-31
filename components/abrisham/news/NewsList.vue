@@ -24,6 +24,8 @@
 import {LiveDescription,LiveDescriptionList} from '@/models/LiveDescription';
 import NewsItem from "./NewsItem"
 import { ObserveVisibility } from 'vue-observe-visibility'
+import Vue from 'vue'
+Vue.directive('observe-visibility', ObserveVisibility)
 export default {
     name: "NewsList",
     components: {NewsItem},

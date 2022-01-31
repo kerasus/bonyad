@@ -5,7 +5,7 @@ class CRUD {
     constructor() {
         this.headers = {
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': window.Laravel.csrfToken,
+            // 'X-CSRF-TOKEN': window.Laravel.csrfToken,
             // 'Content-Type': 'multipart/form-data'
         };
     }

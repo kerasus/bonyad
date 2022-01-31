@@ -19,7 +19,6 @@
                 />
             </div>
             <div class="profile-box ">
-                <i class="fi fi-rr-bell icon icon"/>
                 <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">
                         <v-avatar
@@ -28,6 +27,7 @@
                             v-on="on"
                         >
                             <img
+                                v-if="user.photo"
                                 :src="user.photo"
                                 alt="">
                         </v-avatar>
@@ -68,6 +68,7 @@
                         </v-list>
                     </v-card>
                 </v-menu>
+                <i class="fi fi-rr-bell icon icon"/>
             </div>
         </v-app-bar>
     </div>
@@ -88,7 +89,7 @@ export default {
     },
     computed: {
         user() {
-            return new User(this.$store.getters.user)
+            return new User(this.$store.getters["Auth/user"])
         },
 
     },

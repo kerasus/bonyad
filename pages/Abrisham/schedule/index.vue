@@ -133,6 +133,7 @@ export default {
     name: 'Schedule',
     components: {StudyPlanGroup, ContentListComponent, CommentBox, chipGroup, videoBox, datePicker: VuePersianDatetimePicker},
     mixins: [AbrishamContentMixin],
+    layout: 'abrisham',
     destroyed () {
         // console.log('destoryed')
     },
@@ -196,7 +197,7 @@ export default {
             this.getContents(this.DatePickerDate.split(' ')[0])
         },
         getContents (date) {
-          this.$axios.get('/api/v2/abrisham/whereIsKarvan', { params: {'date': date }})
+          this.$axios.get('/alaa/api/v2/abrisham/whereIsKarvan', { params: {'date': date }})
                 .then( response => {
                     this.contents = new ContentList(response.data.data)
                     if(this.contents.list.length === 0 ){
@@ -231,7 +232,7 @@ export default {
             return contentList[0]
         },
         getLessons () {
-          this.$axios.get('/api/v2/abrisham/lessons')
+          this.$axios.get('/alaa/api/v2/abrisham/lessons')
                 .then( response => {
                     response.data.data.forEach( (item, index) => {
                         this.majors.push({
@@ -245,16 +246,16 @@ export default {
                 })
         },
         loadPlansOfStudyPlan (studyPlanId) {
-          this.$axios.get('/api/v2/plan', { params: {'studyPlan_id': studyPlanId, }})
+          this.$axios.get('/alaa/api/v2/plan', { params: {'studyPlan_id': studyPlanId, }})
         },
         getMajors (studyPlanId) {
-          this.$axios.get('/api/v2/plan', { params: {'studyPlan_id': studyPlanId, }})
+          this.$axios.get('/alaa/api/v2/plan', { params: {'studyPlan_id': studyPlanId, }})
                 .then( response => {
                     this.majors = response.data.data
                 })
         },
         getMajorsForChip() {
-          this.$axios.get('/api/v2/abrisham/majors')
+          this.$axios.get('/alaa/api/v2/abrisham/majors')
                 .then(response => {
                     this.userMajors = response.data.data
                     let userM=[]

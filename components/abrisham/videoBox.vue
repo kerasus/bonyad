@@ -476,7 +476,7 @@ export default {
                     'watchable_type': 'content',
                     'duration': timeData.duration,
                 }
-                axios.post('/api/v2/watched', watchableData)
+              this.$axios.post('/alaa/api/v2/watched', watchableData)
                     .then(() => {
                         if (timeData.watchedPercentage >= 90) {
                             this.content.has_watched = true

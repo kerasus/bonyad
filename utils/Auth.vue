@@ -82,7 +82,7 @@ export default {
         loading: false
     }),
     created() {
-        this.dialog = !this.isLoggedIn()
+        this.dialog = !this.isLoggedIn
     },
     methods: {
         login () {
@@ -108,11 +108,7 @@ export default {
         getLoginActionUrl () {
             return document.querySelector('input[name="js-var-loginActionUrl"]').value
         },
-        isLoggedIn () {
-            const userID = document.querySelector('input[name="js-var-userId"]').value
 
-            return !!(userID && userID !== 0)
-        },
         showLoginModal () {
             setTimeout(function(){
                 AjaxLogin.showLogin(GlobalJsVar.loginActionUrl(), function (response) {
@@ -120,7 +116,12 @@ export default {
                 }, true);
             }, 1000);
         },
-    }
+    },
+  computed: {
+      isLoggedIn () {
+        return this.$store.getters["Auth/isLoggedIn"]
+      }
+  }
 }
 </script>
 

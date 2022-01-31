@@ -144,7 +144,7 @@ export default {
         getStudyPlanList() {
             const i = 5
             let that = this
-            axios.get('/api/v2/studyEvent/' + i + '/studyPlans')
+            this.$axios.get('/alaa/api/v2/studyEvent/' + i + '/studyPlans')
                 .then(response => {
                     this.studyPlanList = new StudyPlanList(response.data.data)
                     this.studyPlanListLoading = false
@@ -173,7 +173,7 @@ export default {
             if (!this.studyPanelIsClosing) {
                 this.studyPlanLoading = true
                 const i = this.studyPlanList.list[index].studyPlan_id
-                axios.get('/api/v2/studyPlan/' + i + '/plans')
+              this.$axios.get('/alaa/api/v2/studyPlan/' + i + '/plans')
                     .then(response => {
                         this.planList = new PlanList(response.data.data)
                         this.studyPlanList.list[index].plans = this.planList

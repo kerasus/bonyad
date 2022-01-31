@@ -197,7 +197,7 @@ import {Order, OrderList} from "@/models/Order";
 
 export default {
   name: "productShowEdit.vue",
-  middleware: 'auth',
+  middleware: ['auth', 'redirectAdmin'],
   created () {
     this.getData()
     this.getUserFormData()
@@ -326,7 +326,7 @@ export default {
       this.$axios.get(API_ADDRESS.product.base + '?page=' + page).then(resp => {
         this.response = resp.data
         this.response.data.forEach((item, index) => {
-          this.response.data[index] =
+          this.response.data[order] =
             {
               id: item.id,
               orderProducts: item.orderproducts,

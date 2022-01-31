@@ -137,6 +137,7 @@ import AbrishamContentMixin from '@/mixin/AbrishamContentMixin'
 import Vue from 'vue'
 
 export default {
+    layout: 'abrisham',
     name: 'Consulting',
     components: {ContentListComponent, CommentBox, videoBox, consultingMessage},
     mixins: [AbrishamContentMixin],
@@ -179,7 +180,7 @@ export default {
             }
             const param = this.generateParams()
             this.news.loading = true
-            this.$axios.get('/api/v2/livedescription?' + param)
+            this.$axios.get('/alaa/api/v2/livedescription?' + param)
                 .then((response) => {
                     this.newsNextPage = parseInt(response.data.meta.current_page) + 1
                     this.newsLastPage = response.data.meta.last_page
@@ -206,7 +207,7 @@ export default {
             this.contents = new ContentList(contents)
         },
         async getContentList(setId) {
-            return await this.$axios.get('/api/v2/set/' + 1213 + '/contents')
+            return await this.$axios.get('/alaa/api/v2/set/' + 1213 + '/contents')
         },
         setCurrentContent() {
             const currentContent = this.contents.list.find(item => item.type === 8)

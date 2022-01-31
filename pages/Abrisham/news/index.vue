@@ -155,6 +155,7 @@ import {LiveDescriptionList} from '@/models/LiveDescription';
 
 export default {
     name: "News",
+    layout: 'abrisham',
     components: {NewsList, NewsBanner},
     data() {
         return {
@@ -196,14 +197,67 @@ export default {
                     type: 'desc'
                 },
             ],
-            lessons: window.abrishamProducts,
+            lessons: [
+              {
+                "id": 347,
+                "title": "راه ابریشم ریاضی تجربی آلاء"
+              },
+              {
+                "id": 439,
+                "title": "راه ابریشم ریاضیات ریاضی آلاء"
+              },
+              {
+                "id": 440,
+                "title": "راه ابریشم فیزیک آلاء"
+              },
+              {
+                "id": 441,
+                "title": "راه ابریشم فیزیک آلاء"
+              },
+              {
+                "id": 442,
+                "title": "راه ابریشم زیست شناسی آلاء"
+              },
+              {
+                "id": 443,
+                "title": "راه ابریشم شیمی آلاء"
+              },
+              {
+                "id": 445,
+                "title": "پک اختصاصی راه ابریشم رشته تجربی آلاء"
+              },
+              {
+                "id": 446,
+                "title": "پک اختصاصی راه ابریشم رشته ریاضی آلاء"
+              },
+              {
+                "id": 569,
+                "title": "راه ابریشم زبان انگلیسی آلاء"
+              },
+              {
+                "id": 570,
+                "title": "راه ابریشم دین و زندگی آلاء"
+              },
+              {
+                "id": 571,
+                "title": "راه ابریشم عربی آلاء"
+              },
+              {
+                "id": 572,
+                "title": "راه ابریشم ادبیات آلاء"
+              },
+              {
+                "id": 573,
+                "title": "پک راه ابریشم عمومی آلاء"
+              }
+            ],
             categories: [
                 'همه',
                 'مشاوره',
                 'اطلاعیه',
                 'انتشار',
             ],
-            bannerImages: window.newsPageBanners,
+            bannerImages: [],
         }
     },
     methods: {
@@ -212,7 +266,7 @@ export default {
                 return
             }
             this.pinNews.loading = true
-            axios.get('/api/v2/livedescription/getPined?liveDescriptionPage=' + this.pinNewsNextPage)
+            this.$axios.get('/alaa/api/v2/livedescription/getPined?liveDescriptionPage=' + this.pinNewsNextPage)
                 .then((response) => {
                     console.log('response', response)
                     this.pinNewsNextPage = parseInt(response.data.meta.current_page) + 1
@@ -230,7 +284,7 @@ export default {
             }
             const params = this.generateParams()
             this.unpinNews.loading = true
-            axios.get('/api/v2/livedescription?' + params)
+            this.$axios.get('/alaa/api/v2/livedescription?' + params)
                 .then((response) => {
                     console.log('response', response)
                     this.unpinNewsNextPage = parseInt(response.data.meta.current_page) + 1
@@ -288,7 +342,7 @@ export default {
             this.getNewUnpinLiveDesctiption()
         },
         seen(liveDescriptionId) {
-            axios.get('/api/v2/livedescription/'+liveDescriptionId+'/seen')
+            this.$axios.get('/alaa/api/v2/livedescription/'+liveDescriptionId+'/seen')
                 .then((response) => {})
                 .catch(() => {})
         }

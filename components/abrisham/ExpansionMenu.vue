@@ -152,7 +152,7 @@ export default {
                 }
                 return i.selected = false
             })
-            this.$router.push({ name: selected.routeName })
+            this.$router.push({ path: 'Abrisham/' + selected.routeName })
         },
         setHeader(route){
 

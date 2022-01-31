@@ -13,6 +13,7 @@
 import 'font-awesome/css/font-awesome.css'
 import App from "@/components/abrisham/map/App";
 export default {
+    layout: 'abrisham',
     name: "Map",
     components:{App},
     data () {

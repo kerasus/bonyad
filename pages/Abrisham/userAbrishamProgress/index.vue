@@ -180,6 +180,7 @@ export default {
     name: 'UserAbrishamProgress',
     components: {ContentListComponent, CommentBox, chipGroup, videoBox},
     mixins: [AbrishamContentMixin],
+    layout: 'abrisham',
     data() {
         return {
             majors: [],
@@ -252,12 +253,12 @@ export default {
         },
         async whereAmI () {
             let product = this.lessons.find(lesson => lesson.selected)
-            return this.$axios.get('/api/v2/product/' + product.id + '/toWatch')
+            return this.$axios.get('/alaa/api/v2/product/' + product.id + '/toWatch')
 
         },
         getSets (productId, whereAmI) {
             this.contentListLoading = true
-            this.$axios.get('/api/v2/product/' + productId + '/sets')
+            this.$axios.get('/alaa/api/v2/product/' + productId + '/sets')
                 .then( response => {
                     // if (response.data.data.length > 0) {
                     //     this.getContents(response.data.data[0].id)
@@ -285,7 +286,7 @@ export default {
                 setId = this.setFilterId
             }
 
-            this.$axios.get('/api/v2/set/' + setId + '/contents')
+            this.$axios.get('/alaa/api/v2/set/' + setId + '/contents')
                 .then( response => {
                     this.contents = new ContentList(response.data.data)
                     const currentContent = this.contents.list.find( item => item.id === this.userContent.id)
@@ -355,7 +356,7 @@ export default {
             }
         },
         getLessons () {
-            this.$axios.get('/api/v2/abrisham/lessons')
+            this.$axios.get('/alaa/api/v2/abrisham/lessons')
                 .then( response => {
                     response.data.data.forEach( (item, index) => {
                         this.majors.push({
@@ -385,7 +386,7 @@ export default {
             this.getContents(this.setFilterId)
         },
         loadPlansOfStudyPlan (studyPlanId) {
-            this.$axios.get('/api/v2/plan', { params: {'studyPlan_id': studyPlanId, }})
+            this.$axios.get('/alaa/api/v2/plan', { params: {'studyPlan_id': studyPlanId, }})
         }
     }
 }

@@ -14,15 +14,15 @@
                     class="menu-item "
                 >
                     <div
-                        v-if="$route.name===item.routeName"
+                        v-if="$route.path === '/abrisham/' + item.routeName"
                         class="menu-indicator"
                     />
                     <router-link
-                        :to="{name: item.routeName} "
+                        :to="{path: '/abrisham/' + item.routeName} "
                     >
                         <i
                             class="fi"
-                            :class="['fi-rr-' + item.icon , $route.name===item.routeName ? 'activate' :'']"
+                            :class="['fi-rr-' + item.icon , $route.path === '/abrisham/' + item.routeName ? 'activate' :'']"
                         />
                     </router-link>
                 </li>

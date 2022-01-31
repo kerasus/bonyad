@@ -1,4 +1,4 @@
-import Model from './Model';
+import {Model} from './Model';
 import Collection from './Collection';
 import {Set} from "./Set";
 import Url from "./Url";

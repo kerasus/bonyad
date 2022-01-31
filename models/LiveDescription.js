@@ -6,7 +6,7 @@ class LiveDescription extends Model {
         super(data, [
             {
                 key: 'baseRoute',
-                default: '/api/v2/livedescription'
+                default: '/alaa/api/v2/livedescription'
             },
             {key: 'id'},
             {key: 'title'},

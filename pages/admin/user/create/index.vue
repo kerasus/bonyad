@@ -3,10 +3,19 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate />
     </v-overlay>
+    <v-progress-linear
+      :value="usage_number / usage_limit * 100"
+      color="blue-grey"
+      height="25"
+    >
+      <template v-slot:default="{ value }">
+        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
+      </template>
+    </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="2" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save">
+        <v-col md="5" class="vertialcally-center-items">
+          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon :style="{ marginRight: '10px' }">
               mdi-content-save
@@ -171,7 +180,7 @@ import API_ADDRESS from "assets/Addresses";
 
 export default {
   name: 'userCreate',
-  middleware: 'auth',
+  middleware: ['auth', 'redirectAdmin'],
   data () {
     return {
       userForm: [],
@@ -179,7 +188,9 @@ export default {
       majors: [],
       provinces: [],
       cities: [],
-      loading: false
+      loading: false,
+      usage_limit: 0,
+      usage_number: 0
     }
   },
   head() {
@@ -331,10 +342,19 @@ export default {
         return this.cities.filter(city => city.province.id === provinceId)
       }
     },
+    userData () {
+      return this.$store.getters['Auth/user']
+    }
   },
   created () {
     this.initUserFormArray(true, 20)
     this.getUserFormData()
+    let that = this
+    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+    .then(resp => {
+      that.usage_limit = resp.data.data.usage_limit
+      that.usage_number = resp.data.data.usage_number
+    })
   }
 }
 </script>

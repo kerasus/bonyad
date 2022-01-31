@@ -1,4 +1,4 @@
-import storeData from "../store/index";
+import {getters as storeDataGetters, state as storeDataState} from "../store/abrisham";
 import moment from 'moment';
 
 import * as PersianDate from "persian-date";
@@ -18,7 +18,7 @@ class Model {
         this.loading = false;
         this.props = props;
         this.initProps();
-        this.actionUrl = storeData.getters.url_crud_model(storeData.state)(this);
+        this.actionUrl = storeDataGetters.url_crud_model(storeDataState)(this);
     }
 
     initProps() {
@@ -284,4 +284,4 @@ class Model {
 
     //moment.duration(x.diff(y)).humanize();
 }
-export default Model;
+export {Model};

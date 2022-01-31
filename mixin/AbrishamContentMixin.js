@@ -22,7 +22,7 @@ const AbrishamContentMixin = {
         watched () {
             this.currentContent.loading = true
             if(!this.currentContent.has_watched){
-                axios.post('/api/v2/watched', {
+              this.$axios.post('/alaa/api/v2/watched', {
                     watchable_id: this.currentContent.id,
                     watchable_type: 'content'
                 })
@@ -35,7 +35,7 @@ const AbrishamContentMixin = {
                         this.currentContent.loading = false
                     })
             }else {
-                axios.post('/api/v2/unwatched', {
+              this.$axios.post('/alaa/api/v2/unwatched', {
                     watchable_id: this.currentContent.id,
                     watchable_type: 'content'
                 })
@@ -50,7 +50,7 @@ const AbrishamContentMixin = {
             }
         },
         setFavored () {
-            axios.post('/api/v2/c/'+this.currentContent.id+'/favored')
+          this.$axios.post('/alaa/api/v2/c/'+this.currentContent.id+'/favored')
                 .then( () => {
                     this.currentContent.is_favored = true
                     this.currentContent.loading = false
@@ -61,7 +61,7 @@ const AbrishamContentMixin = {
                 })
         },
         setUnfavored () {
-            axios.post('/api/v2/c/'+this.currentContent.id+'/unfavored')
+          this.$axios.post('/alaa/api/v2/c/'+this.currentContent.id+'/unfavored')
                 .then( () => {
                     this.currentContent.is_favored = false
                     this.currentContent.loading = false
@@ -73,7 +73,7 @@ const AbrishamContentMixin = {
         },
         saveComment (comment) {
             if (this.currentContent.comments[0]) {
-                axios.post('/api/v2/comment/' + this.currentContent.comments[0].id, {
+              this.$axios.post('/alaa/api/v2/comment/' + this.currentContent.comments[0].id, {
                     comment: comment,
                     _method: 'PUT'
                 })
@@ -83,7 +83,7 @@ const AbrishamContentMixin = {
                         this.syncCurrentContentWithContentInList()
                     })
             } else {
-                axios.post('/api/v2/comment', {
+              this.$axios.post('/alaa/api/v2/comment', {
                     commentable_id: this.currentContent.id,
                     commentable_type: 'content',
                     comment: comment
@@ -120,7 +120,7 @@ const AbrishamContentMixin = {
                 postStatus = 'favored'
             }
             // /api/v2/timepoint/{timepoint_id}/favored
-            axios.post('/api/v2/c/timepoint/' + parseInt(timeStampData.id) + '/'+ postStatus)
+          this.$axios.post('/alaa/api/v2/c/timepoint/' + parseInt(timeStampData.id) + '/'+ postStatus)
                 .then(response => {
                     if (response.status === 200){
                         this.currentContent.timepoints.list.forEach( function (item) {

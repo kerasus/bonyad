@@ -1,4 +1,4 @@
-import Model from "./Model";
+import {Model} from "./Model";
 
 class MapItemType extends Model {
     constructor(data) {

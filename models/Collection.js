@@ -1,4 +1,4 @@
-import storeData from "../store/index";
+import {getters as storeDataGetters, state as storeDateState} from "../store/abrisham";
 
 import CRUD from '@/utils/CRUD'
 
@@ -12,7 +12,7 @@ class Collection {
             this.url_key = null;
             this.paginate = paginateData;
             this.setUrlKey();
-            this.actionUrl = storeData.getters.url_crud_collection(storeData.state)(this);
+            this.actionUrl = storeDataGetters.url_crud_collection(storeDateState)(this);
 
         } catch (e) {
             console.log('constructor e', e);

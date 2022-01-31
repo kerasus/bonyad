@@ -368,10 +368,10 @@
 
                 console.log('updated');
                 // this.user['_mehod'] = 'PUT'
-                axios.put('/api/v2/user/' + this.user.id, this.user, {
+                axios.put('/alaa/api/v2/user/' + this.user.id, this.user, {
                     headers : {
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': window.Laravel.csrfToken,
+                        // 'X-CSRF-TOKEN': window.Laravel.csrfToken,
                     }
                 })
                 // this.user.update(undefined, {

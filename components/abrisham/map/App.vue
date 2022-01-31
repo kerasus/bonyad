@@ -1,199 +1,199 @@
 <template>
     <div style="height: 100%;">
-        <Sidebar ref="sidebarAdminToolBox"
-                 @on-closed="sidebarClosed"
-                 :width="'50%'"
-                 :minimize="true"
-        >
-            <admin-tool-box
-                :center="currentCenter"
-                :zoom="currentZoom"
-                :marker="adminToolBox.marker"
-                :polyline="adminToolBox.polyline"
-                ref="admintoolbox"
-                @add_marker="addAdminMarker"
-                @save_marker="saveMapItem"
-                @marker_change="updateAdminMarker"
-                @delete_marker="deleteAdminMapItem"
+<!--        <Sidebar ref="sidebarAdminToolBox"-->
+<!--                 @on-closed="sidebarClosed"-->
+<!--                 :width="'50%'"-->
+<!--                 :minimize="true"-->
+<!--        >-->
+<!--            <admin-tool-box-->
+<!--                :center="currentCenter"-->
+<!--                :zoom="currentZoom"-->
+<!--                :marker="adminToolBox.marker"-->
+<!--                :polyline="adminToolBox.polyline"-->
+<!--                ref="admintoolbox"-->
+<!--                @add_marker="addAdminMarker"-->
+<!--                @save_marker="saveMapItem"-->
+<!--                @marker_change="updateAdminMarker"-->
+<!--                @delete_marker="deleteAdminMapItem"-->
 
-                @delete_polyline="deleteAdminMapItem"
-                @save_polyline="saveMapItem"
-                @polyline_change="updateAdminPolyline"
+<!--                @delete_polyline="deleteAdminMapItem"-->
+<!--                @save_polyline="saveMapItem"-->
+<!--                @polyline_change="updateAdminPolyline"-->
 
-                @tab_changed="sidebarAdminToolBoxOnTabChange"
-                @open_map_items_list="openMapItemsList"
-                @reset_editable_polyline_to_center_of_map="resetEditablePolylineToCenterOfMap"
-            />
-        </Sidebar>
-        <Sidebar ref="rightSidebarMapTool"
-                 @on-closed="sidebarClosed"
-                 :position="'right'"
-                 :width="'15%'"
-                 :background="'#ffffffa6'"
-        >
-            <div v-if="canEditMap && !mapSearchToolShow">
-                <div v-if="sidebarAdminToolBoxTabName === 'marker'">
-                    <div class="text-center">
-                        نقطه
-                    </div>
-                    <MapItemsList
-                        :map-items="allMapMarker"
-                        @on-select-item="selectMapItem"
-                    />
-                </div>
-                <div v-else-if="sidebarAdminToolBoxTabName === 'polyline'">
-                    <div class="text-center">
-                        خط
-                    </div>
-                    <MapItemsList
-                        :map-items="allMapPolyline"
-                        @on-select-item="selectMapItem"
-                    />
-                </div>
-            </div>
-            <div v-if="mapSearchToolShow">
-                <SearchTool @changed="fetchMapItems" />
-            </div>
-        </Sidebar>
-        <div :class="{setMarker: selectedMapClickActionTypes.name === 'addIcon'}" style="height: 100%;">
-            <l-map style="height: 100%;"
-                   ref="lMap"
-                   @click="mapClick"
-                   :zoom.sync="zoom"
-                   :center.sync="center"
-                   :min-zoom="minZoom"
-                   :max-zoom="maxZoom"
-                   :options.sync="mapOptions"
-                   :bounds="bounds"
-                   :maxBounds="maxBounds"
-                   :maxBoundsViscosity="maxBoundsViscosity"
-                   :crs="crs"
-                   @update:zoom="zoomUpdated"
-                   @update:center="centerUpdated"
-                   @update:bounds="boundsUpdated">
+<!--                @tab_changed="sidebarAdminToolBoxOnTabChange"-->
+<!--                @open_map_items_list="openMapItemsList"-->
+<!--                @reset_editable_polyline_to_center_of_map="resetEditablePolylineToCenterOfMap"-->
+<!--            />-->
+<!--        </Sidebar>-->
+<!--        <Sidebar ref="rightSidebarMapTool"-->
+<!--                 @on-closed="sidebarClosed"-->
+<!--                 :position="'right'"-->
+<!--                 :width="'15%'"-->
+<!--                 :background="'#ffffffa6'"-->
+<!--        >-->
+<!--            <div v-if="canEditMap && !mapSearchToolShow">-->
+<!--                <div v-if="sidebarAdminToolBoxTabName === 'marker'">-->
+<!--                    <div class="text-center">-->
+<!--                        نقطه-->
+<!--                    </div>-->
+<!--                    <MapItemsList-->
+<!--                        :map-items="allMapMarker"-->
+<!--                        @on-select-item="selectMapItem"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div v-else-if="sidebarAdminToolBoxTabName === 'polyline'">-->
+<!--                    <div class="text-center">-->
+<!--                        خط-->
+<!--                    </div>-->
+<!--                    <MapItemsList-->
+<!--                        :map-items="allMapPolyline"-->
+<!--                        @on-select-item="selectMapItem"-->
+<!--                    />-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div v-if="mapSearchToolShow">-->
+<!--                <SearchTool @changed="fetchMapItems" />-->
+<!--            </div>-->
+<!--        </Sidebar>-->
+<!--        <div :class="{setMarker: selectedMapClickActionTypes.name === 'addIcon'}" style="height: 100%;">-->
+<!--            <l-map style="height: 100%;"-->
+<!--                   ref="lMap"-->
+<!--                   @click="mapClick"-->
+<!--                   :zoom.sync="zoom"-->
+<!--                   :center.sync="center"-->
+<!--                   :min-zoom="minZoom"-->
+<!--                   :max-zoom="maxZoom"-->
+<!--                   :options.sync="mapOptions"-->
+<!--                   :bounds="bounds"-->
+<!--                   :maxBounds="maxBounds"-->
+<!--                   :maxBoundsViscosity="maxBoundsViscosity"-->
+<!--                   :crs="crs"-->
+<!--                   @update:zoom="zoomUpdated"-->
+<!--                   @update:center="centerUpdated"-->
+<!--                   @update:bounds="boundsUpdated">-->
 
-                <l-tile-layer :url="url" />
+<!--                <l-tile-layer :url="url" />-->
 
-                <div v-for="item in visibleMapItems" :key="item.id">
-                    <l-marker
-                        v-if="(item.type.name === 'marker' || item.type.id === 1) && item.isInView"
-                        :lat-lng="item.data.latlng"
-                        :draggable="false"
-                        @add="openPopup($event, item)"
-                        @click="showMapItemInfo($event, item)"
-                    >
-                        <l-icon
-                            :icon-url="getIconURL(item)"
-                            :icon-size="item.data.icon.options.iconSize"
-                            :icon-anchor="item.data.icon.options.iconAnchor"
-                            :shadow-url="item.data.icon.options.shadowUrl"
-                            :shadow-size="item.data.icon.options.shadowSize"
-                            :shadow-anchor="item.data.icon.options.shadowAnchor">
-                            <div class="markerHeadline" v-html="item.data.headline.text"
-                                 :style="{
-                            fontSize: item.data.headline.fontSize+'px',
-                            'text-fill-color': item.data.headline.fillColor,
-                            '-webkit-text-fill-color': item.data.headline.fillColor,
-                            'text-stroke-width': item.data.headline.strokeWidth+'px',
-                            '-webkit-text-stroke-width': item.data.headline.strokeWidth+'px',
-                            'text-stroke-color': item.data.headline.strokeColor,
-                            '-webkit-text-stroke-color': item.data.headline.strokeColor
-                            }"
-                            >
-                            </div>
-                            <!--                        <i class="fa fa-edit editMapItem" v-if="item.editMode"></i>-->
-                            <img :src="item.data.icon.options.iconUrl" class="markerImage">
-                        </l-icon>
-                        <!--                    <l-popup-->
-                        <!--                        v-if="editMapMode"-->
-                        <!--                        :contenta="'<div>disable</div>'"-->
-                        <!--                        :options="{ autoClose: false, closeOnClick: false }"-->
-                        <!--                    >-->
-                        <!--                    </l-popup>-->
-                    </l-marker>
-                    <l-polyline
-                        v-if="(item.type.name === 'polyline' || item.type.id === 2) && item.data.line && item.data.line.options"
-                        :options="item.data.line.options"
-                        :lat-lngs="item.data.latlngs"
-                        :color="item.data.line.color"
-                        :bubblingMouseEvents="item.data.line.bubblingMouseEvents"
-                        :dashArray="item.data.line.dashArray"
-                        :dashOffset="item.data.line.dashOffset"
-                        :weight="item.data.line.weight"
-                        @add="openPopup($event, item)"
-                        @click="showMapItemInfo($event, item)"
-                    >
-                        <!--                    <l-popup :content="'<div>disable</div>'" :options="{ autoClose: false, closeOnClick: false }"></l-popup>-->
-                    </l-polyline>
-                </div>
-                <l-control position="topleft">
-                    <button class="btnMapControl btnGetLinkToShare" @click="copyToClipboard">
-                        <i class="fa fa-link" />
-                    </button>
-                    <div style="width: 130px; background: #ffffff8f;font-family: IRANSans;padding: 5px;border-radius: 5px;">
-                        زوم:
-                        {{ currentZoom }}
-                        <br>
-                        عرض:
-                        <span dir="ltr">
-                            {{ currentCenter.lat | latlang }}
-                        </span>
-                        <br>
-                        طول:
-                        <span dir="ltr">
-                            {{ currentCenter.lng | latlang }}
-                        </span>
-                    </div>
-                </l-control>
-                <l-control position="topright">
-                    <button v-if="canEditMap" class="btnMapControl" @click="mapEditModeUpdate">
-                        <i class="fa fa-edit" />
-                    </button>
-                    <button class="btnMapControl" @click="showMapSearchTool(true)">
-                        <i class="fa fa-search" />
-                    </button>
-                </l-control>
+<!--                <div v-for="item in visibleMapItems" :key="item.id">-->
+<!--                    <l-marker-->
+<!--                        v-if="(item.type.name === 'marker' || item.type.id === 1) && item.isInView"-->
+<!--                        :lat-lng="item.data.latlng"-->
+<!--                        :draggable="false"-->
+<!--                        @add="openPopup($event, item)"-->
+<!--                        @click="showMapItemInfo($event, item)"-->
+<!--                    >-->
+<!--                        <l-icon-->
+<!--                            :icon-url="getIconURL(item)"-->
+<!--                            :icon-size="item.data.icon.options.iconSize"-->
+<!--                            :icon-anchor="item.data.icon.options.iconAnchor"-->
+<!--                            :shadow-url="item.data.icon.options.shadowUrl"-->
+<!--                            :shadow-size="item.data.icon.options.shadowSize"-->
+<!--                            :shadow-anchor="item.data.icon.options.shadowAnchor">-->
+<!--                            <div class="markerHeadline" v-html="item.data.headline.text"-->
+<!--                                 :style="{-->
+<!--                            fontSize: item.data.headline.fontSize+'px',-->
+<!--                            'text-fill-color': item.data.headline.fillColor,-->
+<!--                            '-webkit-text-fill-color': item.data.headline.fillColor,-->
+<!--                            'text-stroke-width': item.data.headline.strokeWidth+'px',-->
+<!--                            '-webkit-text-stroke-width': item.data.headline.strokeWidth+'px',-->
+<!--                            'text-stroke-color': item.data.headline.strokeColor,-->
+<!--                            '-webkit-text-stroke-color': item.data.headline.strokeColor-->
+<!--                            }"-->
+<!--                            >-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;                        <i class="fa fa-edit editMapItem" v-if="item.editMode"></i>&ndash;&gt;-->
+<!--                            <img :src="item.data.icon.options.iconUrl" class="markerImage">-->
+<!--                        </l-icon>-->
+<!--                        &lt;!&ndash;                    <l-popup&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        v-if="editMapMode"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        :contenta="'<div>disable</div>'"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                        :options="{ autoClose: false, closeOnClick: false }"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                    >&ndash;&gt;-->
+<!--                        &lt;!&ndash;                    </l-popup>&ndash;&gt;-->
+<!--                    </l-marker>-->
+<!--                    <l-polyline-->
+<!--                        v-if="(item.type.name === 'polyline' || item.type.id === 2) && item.data.line && item.data.line.options"-->
+<!--                        :options="item.data.line.options"-->
+<!--                        :lat-lngs="item.data.latlngs"-->
+<!--                        :color="item.data.line.color"-->
+<!--                        :bubblingMouseEvents="item.data.line.bubblingMouseEvents"-->
+<!--                        :dashArray="item.data.line.dashArray"-->
+<!--                        :dashOffset="item.data.line.dashOffset"-->
+<!--                        :weight="item.data.line.weight"-->
+<!--                        @add="openPopup($event, item)"-->
+<!--                        @click="showMapItemInfo($event, item)"-->
+<!--                    >-->
+<!--                        &lt;!&ndash;                    <l-popup :content="'<div>disable</div>'" :options="{ autoClose: false, closeOnClick: false }"></l-popup>&ndash;&gt;-->
+<!--                    </l-polyline>-->
+<!--                </div>-->
+<!--                <l-control position="topleft">-->
+<!--                    <button class="btnMapControl btnGetLinkToShare" @click="copyToClipboard">-->
+<!--                        <i class="fa fa-link" />-->
+<!--                    </button>-->
+<!--                    <div style="width: 130px; background: #ffffff8f;font-family: IRANSans;padding: 5px;border-radius: 5px;">-->
+<!--                        زوم:-->
+<!--                        {{ currentZoom }}-->
+<!--                        <br>-->
+<!--                        عرض:-->
+<!--                        <span dir="ltr">-->
+<!--                            {{ currentCenter.lat | latlang }}-->
+<!--                        </span>-->
+<!--                        <br>-->
+<!--                        طول:-->
+<!--                        <span dir="ltr">-->
+<!--                            {{ currentCenter.lng | latlang }}-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </l-control>-->
+<!--                <l-control position="topright">-->
+<!--                    <button v-if="canEditMap" class="btnMapControl" @click="mapEditModeUpdate">-->
+<!--                        <i class="fa fa-edit" />-->
+<!--                    </button>-->
+<!--                    <button class="btnMapControl" @click="showMapSearchTool(true)">-->
+<!--                        <i class="fa fa-search" />-->
+<!--                    </button>-->
+<!--                </l-control>-->
 
-<!--                <l-rectangle :bounds="rectangle.bounds" :l-style="rectangle.style"></l-rectangle>-->
+<!--&lt;!&ndash;                <l-rectangle :bounds="rectangle.bounds" :l-style="rectangle.style"></l-rectangle>&ndash;&gt;-->
 
-                <l-marker :lat-lng="adminToolBox.marker.data.latlng"
-                          :draggable="true"
-                          :visible="adminToolBox.marker.editMode"
-                          @drag="reportAdminMarker($event, adminToolBox.marker)">
-                    <l-icon
-                        :icon-url="adminToolBox.marker.data.icon.options.iconUrl"
-                        :icon-size="adminToolBox.marker.data.icon.options.iconSize"
-                        :icon-anchor="adminToolBox.marker.data.icon.options.iconAnchor"
-                        :shadow-url="adminToolBox.marker.data.icon.options.shadowUrl"
-                        :shadow-size="adminToolBox.marker.data.icon.options.shadowSize"
-                        :shadow-anchor="adminToolBox.marker.data.icon.options.shadowAnchor">
-                        <div
-                            class="markerHeadline"
-                            v-html="adminToolBox.marker.data.headline.text"
-                            :style="{
-                                fontSize: adminToolBox.marker.data.headline.fontSize+'px',
-                                'text-fill-color': adminToolBox.marker.data.headline.fillColor,
-                                '-webkit-text-fill-color': adminToolBox.marker.data.headline.fillColor,
-                                'text-stroke-width': adminToolBox.marker.data.headline.strokeWidth+'px',
-                                '-webkit-text-stroke-width': adminToolBox.marker.data.headline.strokeWidth+'px',
-                                'text-stroke-color': adminToolBox.marker.data.headline.strokeColor,
-                                '-webkit-text-stroke-color': adminToolBox.marker.data.headline.strokeColor
-                            }"
-                        >
-                        </div>
-                        <img :src="adminToolBox.marker.data.icon.options.iconUrl" class="markerImage adminToolBoxMarker">
-                    </l-icon>
-                </l-marker>
-                <editable-polyline
-                    v-if="adminToolBox.polyline !== null"
-                    ref="editablePolyline"
-                    :latlngs.sync="adminToolBox.polyline.data.latlngs"
-                    :editablePolylineOptions="adminToolBox.polyline.data"
-                    :visible="adminToolBox.polyline.editMode"
-                    :map="$refs.lMap"
-                />
-            </l-map>
-        </div>
+<!--                <l-marker :lat-lng="adminToolBox.marker.data.latlng"-->
+<!--                          :draggable="true"-->
+<!--                          :visible="adminToolBox.marker.editMode"-->
+<!--                          @drag="reportAdminMarker($event, adminToolBox.marker)">-->
+<!--                    <l-icon-->
+<!--                        :icon-url="adminToolBox.marker.data.icon.options.iconUrl"-->
+<!--                        :icon-size="adminToolBox.marker.data.icon.options.iconSize"-->
+<!--                        :icon-anchor="adminToolBox.marker.data.icon.options.iconAnchor"-->
+<!--                        :shadow-url="adminToolBox.marker.data.icon.options.shadowUrl"-->
+<!--                        :shadow-size="adminToolBox.marker.data.icon.options.shadowSize"-->
+<!--                        :shadow-anchor="adminToolBox.marker.data.icon.options.shadowAnchor">-->
+<!--                        <div-->
+<!--                            class="markerHeadline"-->
+<!--                            v-html="adminToolBox.marker.data.headline.text"-->
+<!--                            :style="{-->
+<!--                                fontSize: adminToolBox.marker.data.headline.fontSize+'px',-->
+<!--                                'text-fill-color': adminToolBox.marker.data.headline.fillColor,-->
+<!--                                '-webkit-text-fill-color': adminToolBox.marker.data.headline.fillColor,-->
+<!--                                'text-stroke-width': adminToolBox.marker.data.headline.strokeWidth+'px',-->
+<!--                                '-webkit-text-stroke-width': adminToolBox.marker.data.headline.strokeWidth+'px',-->
+<!--                                'text-stroke-color': adminToolBox.marker.data.headline.strokeColor,-->
+<!--                                '-webkit-text-stroke-color': adminToolBox.marker.data.headline.strokeColor-->
+<!--                            }"-->
+<!--                        >-->
+<!--                        </div>-->
+<!--                        <img :src="adminToolBox.marker.data.icon.options.iconUrl" class="markerImage adminToolBoxMarker">-->
+<!--                    </l-icon>-->
+<!--                </l-marker>-->
+<!--                <editable-polyline-->
+<!--                    v-if="adminToolBox.polyline !== null"-->
+<!--                    ref="editablePolyline"-->
+<!--                    :latlngs.sync="adminToolBox.polyline.data.latlngs"-->
+<!--                    :editablePolylineOptions="adminToolBox.polyline.data"-->
+<!--                    :visible="adminToolBox.polyline.editMode"-->
+<!--                    :map="$refs.lMap"-->
+<!--                />-->
+<!--            </l-map>-->
+<!--        </div>-->
     </div>
 </template>
 
@@ -215,7 +215,8 @@
 
     import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/vue-loading.css';
-    import {FilterItems, initFilterItems} from "./filterItems";
+    import FilterItems from "./filterItems";
+    import initFilterItems from "./initFilterItems";
 
     Vue.use(Loading);
     Vue.use(FlowingSVG);
