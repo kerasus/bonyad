@@ -127,7 +127,7 @@
                     </l-polyline>
                 </div>
                 <l-control position="topleft">
-                    <button class="btnMapControl btnGetLinkToShare" @click="copyToClipboard">
+                    <button class="btnMapControl btnGetLinkToShare d-flex justify-center" @click="copyToClipboard">
                         <i class="fa fa-link" />
                     </button>
                     <div style="width: 130px; background: #ffffff8f;font-family: IRANSans;padding: 5px;border-radius: 5px;">
@@ -146,10 +146,10 @@
                     </div>
                 </l-control>
                 <l-control position="topright">
-                    <button v-if="canEditMap" class="btnMapControl" @click="mapEditModeUpdate">
+                    <button v-if="canEditMap" class="btnMapControl d-flex justify-center" @click="mapEditModeUpdate">
                         <i class="fa fa-edit" />
                     </button>
-                    <button class="btnMapControl" @click="showMapSearchTool(true)">
+                    <button class="btnMapControl d-flex justify-center" @click="showMapSearchTool(true)">
                         <i class="fa fa-search" />
                     </button>
                 </l-control>
