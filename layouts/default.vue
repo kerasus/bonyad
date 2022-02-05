@@ -149,7 +149,7 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
-          to: '/abrisham',
+          to: '/abrisham/UserAbrishamProgress',
           permission: ''
         }
       ],

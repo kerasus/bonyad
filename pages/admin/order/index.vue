@@ -225,7 +225,7 @@ export default {
         },
         {
           text: 'شهر دانش آموز',
-          value: 'city'
+          value: 'user_shahr_title'
         },
         {
           text: 'تخصیص دهنده',
