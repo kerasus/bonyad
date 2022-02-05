@@ -145,12 +145,12 @@ export default {
           to: '/admin/order',
           permission: 'accessBonyadEhsanPanel'
         },
-        // {
-        //   icon: 'mdi-account-details',
-        //   title: 'داشبورد ابریشم',
-        //   to: '/abrisham',
-        //   permission: ''
-        // }
+        {
+          icon: 'mdi-account-details',
+          title: 'داشبورد ابریشم',
+          to: '/abrisham',
+          permission: ''
+        }
       ],
       miniVariant: false,
       right: true,
