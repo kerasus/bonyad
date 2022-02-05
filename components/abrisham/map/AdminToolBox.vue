@@ -341,7 +341,7 @@
         // props: ['center', 'zoom', 'marker', ''],
         props: {
             center : {
-                type: Object ,
+                type: [Object, Array] ,
                 default() {
                     return {}
                 }
