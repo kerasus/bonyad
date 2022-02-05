@@ -268,7 +268,6 @@ export default {
             this.pinNews.loading = true
             this.$axios.get('/alaa/api/v2/livedescription/getPined?liveDescriptionPage=' + this.pinNewsNextPage)
                 .then((response) => {
-                    console.log('response', response)
                     this.pinNewsNextPage = parseInt(response.data.meta.current_page) + 1
                     this.pinNewsLastPage = response.data.meta.last_page
                     this.pinNews.add(...response.data.data)
@@ -286,7 +285,6 @@ export default {
             this.unpinNews.loading = true
             this.$axios.get('/alaa/api/v2/livedescription?' + params)
                 .then((response) => {
-                    console.log('response', response)
                     this.unpinNewsNextPage = parseInt(response.data.meta.current_page) + 1
                     this.unpinNewsLastPage = response.data.meta.last_page
                     this.unpinNews.add(...response.data.data)

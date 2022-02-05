@@ -305,7 +305,6 @@ export default {
   computed: {
     cityFromSpecificProvince () {
       return (provinceId) => {
-        console.log(provinceId)
         return this.cities.filter(city => city.province.id === provinceId)
       }
     }
