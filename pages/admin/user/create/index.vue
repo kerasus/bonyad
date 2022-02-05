@@ -3,10 +3,19 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate />
     </v-overlay>
+    <v-progress-linear
+      :value="usage_number / usage_limit * 100"
+      color="blue-grey"
+      height="25"
+    >
+      <template v-slot:default="{ value }">
+        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
+      </template>
+    </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="2" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save">
+        <v-col md="5" class="vertialcally-center-items">
+          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon :style="{ marginRight: '10px' }">
               mdi-content-save
@@ -16,7 +25,7 @@
       </v-row>
       <v-form ref="form" lazy-validation>
         <v-row v-for="user in userForm" :key="user.key">
-          <v-col md="11" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
+          <v-col :style="{ maxWidth: '95vw' }" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
             <div class="input-box">
               <div class="form-input">
                 <label>
@@ -71,6 +80,42 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
+                  <input :class="{ 'has-error': user.address_error }" required type="text" v-model="user.address"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">آدرس</span>
+                </label>
+                <span class="error-message" v-if="user.address_error">{{ user.address_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.phone_error }" required type="text" v-model="user.phone"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">تلفن</span>
+                </label>
+                <span class="error-message" v-if="user.phone_error">{{ user.phone_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.father_mobile_error }" required type="text" v-model="user.father_mobile"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">موبایل پدر</span>
+                </label>
+                <span class="error-message" v-if="user.father_mobile_error">{{ user.father_mobile_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.mother_mobile_error }" required type="text" v-model="user.mother_mobile"  @change="user.hasBeenSaved = false">
+                  <span class="placeholder">موبایل مادر</span>
+                </label>
+                <span class="error-message" v-if="user.mother_mobile_error">{{ user.mother_mobile_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
                   <input :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
@@ -109,7 +154,7 @@
               </div>
             </div>
           </v-col>
-          <v-col md="1" class="options">
+          <v-col :style="{ maxWidth: '5vw' }" class="options">
             <v-progress-circular
               indeterminate
               color="grey"
@@ -135,7 +180,7 @@ import API_ADDRESS from "assets/Addresses";
 
 export default {
   name: 'userCreate',
-  middleware: 'auth',
+  middleware: ['auth', 'redirectAdmin'],
   data () {
     return {
       userForm: [],
@@ -143,7 +188,9 @@ export default {
       majors: [],
       provinces: [],
       cities: [],
-      loading: false
+      loading: false,
+      usage_limit: 0,
+      usage_number: 0
     }
   },
   head() {
@@ -177,7 +224,14 @@ export default {
       for (let i = 0; i < amount; i++) {
         this.userForm.push({
           firstName: '',
-          firstNameMessage: '',
+          address: '',
+          address_error: false,
+          phone: '',
+          phone_error: false,
+          father_mobile: '',
+          father_mobile_error: false,
+          mother_mobile: '',
+          mother_mobile_error: false,
           firstName_error: false,
           lastName: '',
           lastName_error: false,
@@ -203,7 +257,8 @@ export default {
       }
     },
     isUserInfoComplete(user) {
-      return !!(user.firstName  || user.lastName  || user.gender_id
+      return !!(user.firstName || user.lastName || user.address ||
+          user.phone || user.father_mobile || user.mother_mobile || user.gender_id
          || user.major_id  || user.mobile  || user.nationalCode  ||
         user.province  || user.shahr_id);
     },
@@ -226,6 +281,10 @@ export default {
 
           this.$axios.post(API_ADDRESS.user.create, {
             firstName: user.firstName,
+            address: user.address,
+            phone: user.phone,
+            father_mobile: user.father_mobile,
+            mother_mobile: user.mother_mobile,
             lastName: user.lastName,
             mobile: user.mobile,
             nationalCode: user.nationalCode,
@@ -243,6 +302,12 @@ export default {
             })
             setTimeout(() => {
               this.$refs.form.validate()
+              let that = this
+              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+                .then(resp => {
+                  that.usage_limit = resp.data.data.usage_limit
+                  that.usage_number = resp.data.data.usage_number
+                })
             }, 500)
           }).catch(err => {
             user.loading = false
@@ -257,15 +322,6 @@ export default {
             setTimeout(() => {
               this.$refs.form.validate()
             }, 500)
-          })
-        } else if (user.firstName || user.lastName || user.gender_id
-           || user.major_id  || user.mobile  || user.nationalCode  ||
-          user.province  || user.shahr_id) {
-          this.$notify({
-            type: 'error',
-            duration: 10000,
-            title: 'توجه',
-            text: 'پر کردن تمامی فیلدهای یک سطر الزامی ست'
           })
         }
       })
@@ -292,10 +348,19 @@ export default {
         return this.cities.filter(city => city.province.id === provinceId)
       }
     },
+    userData () {
+      return this.$store.getters['Auth/user']
+    }
   },
   created () {
     this.initUserFormArray(true, 20)
     this.getUserFormData()
+    let that = this
+    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+    .then(resp => {
+      that.usage_limit = resp.data.data.usage_limit
+      that.usage_number = resp.data.data.usage_number
+    })
   }
 }
 </script>

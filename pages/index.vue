@@ -10,6 +10,7 @@
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
+          v-if="!item.permission || (user.permissions && user.permissions.find(permission => permission === item.permission))"
           :key="i"
           :to="item.to"
           router
@@ -40,17 +41,26 @@ export default {
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت کاربر',
-          to: '/user/create'
+          to: '/admin/user/create',
+          permission: 'accessBonyadEhsanPanel'
         },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت مشاور',
-          to: '/moshaver/create'
+          to: '/admin/moshaver/create',
+          permission: 'accessBonyadEhsanPanel'
         },
         {
           icon: 'mdi-account-details',
           title: 'مشاهده ثبت نام شده ها',
-          to: '/product'
+          to: '/admin/order',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
+          icon: 'mdi-account-details',
+          title: 'داشبورد ابریشم',
+          to: '/abrisham',
+          permission: ''
         }
       ]
     }
@@ -58,6 +68,11 @@ export default {
   head() {
     return {
       title: 'فهرست'
+    }
+  },
+  computed: {
+    user () {
+      return this.$store.getters['Auth/user']
     }
   }
 }

@@ -65,6 +65,9 @@
       >
         <v-icon>mdi-menu</v-icon>
       </v-btn>
+      <span>
+        {{ user.full_name }}
+      </span>
     </v-app-bar>
     <v-main>
       <v-container fluid>
@@ -87,8 +90,10 @@
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
+          v-if="!item.permission || (user.permissions && user.permissions.find(permission => permission === item.permission))"
           :key="i"
           :to="item.to"
+          @click="rightDrawer = false"
           router
           exact
         >
@@ -125,17 +130,26 @@ export default {
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت کاربر',
-          to: '/user/create'
+          to: '/admin/user/create',
+          permission: 'accessBonyadEhsanPanel'
         },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت مشاور',
-          to: '/moshaver/create'
+          to: '/admin/moshaver/create',
+          permission: 'accessBonyadEhsanPanel'
         },
         {
           icon: 'mdi-account-details',
           title: 'مشاهده ثبت نام شده ها',
-          to: '/product'
+          to: '/admin/order',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
+          icon: 'mdi-account-details',
+          title: 'داشبورد ابریشم',
+          to: '/abrisham',
+          permission: ''
         }
       ],
       miniVariant: false,
@@ -145,6 +159,17 @@ export default {
     }
   },
   created() {
+    let that = this
+    this.$axios.interceptors.response.use(undefined, function (error) {
+
+      that.$notify({
+          type: 'error',
+          title: 'توجه',
+          text: error.response.data.message
+      })
+
+      return Promise.reject(error);
+    })
     let token = this.$store.getters['Auth/accessToken']
     if (token) {
       console.log('headers.common Authorization in created DefaultLayout')
@@ -154,6 +179,9 @@ export default {
   computed: {
     isLoginPage () {
       return this.$route.path === '/login'
+    },
+    user () {
+      return this.$store.getters["Auth/user"]
     }
   },
   methods: {
