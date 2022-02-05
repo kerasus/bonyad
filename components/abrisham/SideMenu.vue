@@ -47,10 +47,10 @@ export default {
                     icon: 'play-alt',
                     routeName: 'UserAbrishamProgress',
                 },
-                // {
-                //     icon: 'calendar',
-                //     routeName: 'Schedule',
-                // },
+                {
+                    icon: 'calendar',
+                    routeName: 'Schedule',
+                },
                 {
                     icon: 'headphones',
                     routeName: 'consulting',

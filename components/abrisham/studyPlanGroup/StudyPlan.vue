@@ -97,14 +97,17 @@ export default {
     created() {
     },
     computed :{
+        windowSize() {
+          return { x: window.innerWidth, y: window.innerHeight }
+        },
         setHeaderWidthForMediaTags() {
-            if (this.$store.getters.windowSize.x < 1920){
+            if (this.windowSize.x < 1920){
                 return 140
             }
-            else if (this.$store.getters.windowSize.x < 768){
+            else if (this.windowSize.x < 768){
                 return 100
             }
-            else if (this.$store.getters.windowSize.x > 1920){
+            else if (this.windowSize.x > 1920){
                 return 200
 
             }
