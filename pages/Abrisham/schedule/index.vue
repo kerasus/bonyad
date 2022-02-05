@@ -134,9 +134,6 @@ export default {
     components: {StudyPlanGroup, ContentListComponent, CommentBox, chipGroup, videoBox, datePicker: VuePersianDatetimePicker},
     mixins: [AbrishamContentMixin],
     layout: 'abrisham',
-    destroyed () {
-        // console.log('destoryed')
-    },
     data() {
         return {
             showDatePicker: false,
@@ -188,7 +185,6 @@ export default {
             this.currentContent = this.contents.list.find(content => content.id === id)
             if (this.currentContent.comments[0]) {
                 this.comment = this.currentContent.comments[0].comment
-                // console.log('comment', this.currentContent.comments[0].comment)
             } else {
                 this.comment = ''
             }

@@ -301,7 +301,6 @@ export default {
               }
             })
             setTimeout(() => {
-              this.$refs.form.validate()
               let that = this
               this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
                 .then(resp => {
