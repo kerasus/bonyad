@@ -166,7 +166,7 @@
 import ProductItem from "@/components/abrisham/ProductItem";
 import NewsList from "@/components/abrisham/NewsList";
 import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
-import 'swiper/swiper.min.css'
+import 'swiper/css/swiper.css'
 import ContentListComponent from '@/components/abrisham/ContentList';
 import {ContentList} from "@/models/Content";
 
