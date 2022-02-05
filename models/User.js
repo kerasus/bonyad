@@ -63,6 +63,10 @@ class User extends Model {
         }
     }
 
+    hasPermission (permission)  {
+        return this.permissions.includes(permission)
+    }
+
     getCompletionInfoKeys () {
         return [
             'first_name',
