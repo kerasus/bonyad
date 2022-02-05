@@ -325,7 +325,7 @@ export default {
       this.$axios.get(API_ADDRESS.product.base + '?page=' + page).then(resp => {
         this.response = resp.data
         this.response.data.forEach((item, index) => {
-          this.response.data[order] =
+          this.response.data[index] =
             {
               id: item.id,
               orderProducts: item.orderproducts,
