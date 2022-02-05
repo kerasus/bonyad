@@ -18,7 +18,7 @@
             class="menu-indicator"
           />
           <router-link
-            :to="{path: '/abrisham/' + item.routeName} "
+            :to="{path: item.path} "
           >
             <i
               class="fi"
@@ -41,36 +41,36 @@ export default {
       menuItems: [
         // {
         //     icon: 'home',
-        //     routeName: 'home',
+        //     path: '/abrisham/home',
         // },
         {
           icon: 'play-alt',
-          routeName: 'UserAbrishamProgress',
+          path: '/abrisham/UserAbrishamProgress',
         },
         // {
         //     icon: 'calendar',
-        //     routeName: 'Schedule',
+        //     path: '/abrisham/Schedule',
         // },
         // {
         //     icon: 'headphones',
-        //     routeName: 'consulting',
+        //     path: '/abrisham/consulting',
         // },
         // {
         //     icon: 'list-check',
-        //     routeName: 'my-performance',
+        //     path: '/abrisham/my-performance',
 
         // },
         // {
         //     icon: 'stats',
-        //     routeName: 'assessment',
+        //     path: '/abrisham/assessment',
         // },
         // {
         //     icon: 'envelope',
-        //     routeName: 'news',
+        //     path: '/abrisham/news',
         // },
         {
           icon: 'world',
-          routeName: 'map',
+          path: '/abrisham/map',
         },
       ]
     }
@@ -84,7 +84,7 @@ export default {
     if (this.user.hasPermission('accessBonyadEhsanAdminPanel')) {
       this.menuItems.push({
         icon: 'settings',
-        routeName: 'userCreate'
+        path: '/admin/user/create'
       })
     }
   },
