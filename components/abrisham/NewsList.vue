@@ -74,6 +74,7 @@
         />
       </div>
     </div>
+    <div class="show-more" @click="redirectToNews" :style="{ cursor: 'pointer' }">بیشتر</div>
   </div>
 </template>
 
@@ -146,6 +147,9 @@ export default {
 
   },
   methods:{
+    redirectToNews () {
+      this.$router.push({path: '/abrisham/news'})
+    },
     btnClicked () {
       this.$emit('clicked')
     },
@@ -159,6 +163,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.show-more {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #EFF3FF;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #3E5480;
+}
 
 .content-list-box{
   position: relative;

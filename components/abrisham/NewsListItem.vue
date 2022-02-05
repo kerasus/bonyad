@@ -3,6 +3,7 @@
     class="newsListItem"
     :class="selected ? 'selected-newsListItem' : ''"
     ref="newsListItem"
+    @click="redirectToNews"
   >
     <div
       class="d-flex newsListItem-main-box"
@@ -25,16 +26,19 @@
         </div>
       </div>
         <div
-          class="sheet-icon d-flex justify-space-between align-center"
+          class="sheet-icon d-flex justify-space-between align-start"
         >
-          <div class="d-flex flex-column justify-center title-box">
-            <p class="newsListItem-title" v-if="false">
-              {{ newsListItem.short_title }}
-            </p>
+          <div class="d-flex flex-column title-box">
             <p
               class="newsListItem-description"
             >
               {{ newsListItem.title }}
+            </p>
+            <p class="news-subtitle">
+              راه ابریشمی عزیز سلام
+            </p>
+            <p class="news-time">
+              2 ساعت پیش
             </p>
           </div>
 <!--          <div-->
@@ -77,6 +81,9 @@ export default {
     this.setScrollPosition()
   },
   methods: {
+    redirectToNews () {
+      this.$router.push({path: '/abrisham/news'})
+    },
     setScrollPosition() {
       if ( this.newsListItem.is_current){
         this.$refs.newsListItemItem.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
@@ -108,6 +115,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.newsListItem-description {
+            font-size: 16px;
+            color: #3E5480;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            margin-bottom: 0;
+
+          }
+
+          .news-subtitle {
+            font-size: 14px;
+            color: #9FA5C0;
+            margin-bottom: 0;
+          }
+
+          .news-time {
+            font-size: 12px;
+            color: #9FA5C0;
+            margin-bottom: 0;
+          }
+
 .newsListItem{
   &:hover {
     cursor: pointer;
@@ -115,19 +147,19 @@ export default {
   }
   .newsListItem-main-box {
     margin:0 32px;
-    padding-top: 21px;
+    padding-top: 0;
     @media screen and (max-width: 1920px){
       margin: 0 15px;
-      padding-top: 15px;
+      padding-top: 0;
     }
     @media screen and (max-width: 350px){
       margin: 0 10px;
-      padding-top: 10px;
+      padding-top: 0;
     }
     .right-newsListItem {
-      margin-bottom: 21px;
+      margin-bottom: 12px;
       @media screen and (max-width: 576px){
-        margin-bottom: 15px;
+        margin-bottom: 12px;
       }
       .lesson_name {
         font-size: 12px;
@@ -183,16 +215,6 @@ export default {
         }
       }
     }
-    .left-newsListItem {
-      margin-right: 15px;
-      width: 100%;
-      height: 100%;
-      @media screen and (max-width: 1920px){
-        margin-right: 10px;
-      }
-      @media screen and (max-width: 576px){
-        margin-right: 5px;
-      }
       .time-sheet {
         font-size: 12px;
         .clock {
@@ -205,26 +227,12 @@ export default {
         .title-box {
           height: 100%;
           width: 100%;
-          .newsListItem-description {
-            font-size: 14px;
-            color: #9fa5c0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            @media screen and (max-width: 1920px){
-              font-size: 14px;
-              color: #9fa5c0;
-            }
-            @media screen and (max-width: 768px){
-              font-size: 12px;
-            }
-            @media screen and (max-width: 350px){
-              font-size: 12px;
-            }
+          height: 85px;
+          justify-content: space-around;
+          margin-right: 14px;
+    
 
-          }
+
           .newsListItem-title {
             font-size: 18px;
             font-weight: 500;
@@ -268,7 +276,7 @@ export default {
         }
       }
 
-    }
+    
   }
   &:last-child {
     .newsListItem-main-box {
