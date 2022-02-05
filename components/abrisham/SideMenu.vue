@@ -39,35 +39,35 @@ export default {
         return {
             isActive:null,
             menuItems: [
-                {
-                    icon: 'home',
-                    routeName: 'home',
-                },
+                // {
+                //     icon: 'home',
+                //     routeName: 'home',
+                // },
                 {
                     icon: 'play-alt',
                     routeName: 'UserAbrishamProgress',
                 },
-                {
-                    icon: 'calendar',
-                    routeName: 'Schedule',
-                },
-                {
-                    icon: 'headphones',
-                    routeName: 'consulting',
-                },
-                {
-                    icon: 'list-check',
-                    routeName: 'my-performance',
+                // {
+                //     icon: 'calendar',
+                //     routeName: 'Schedule',
+                // },
+                // {
+                //     icon: 'headphones',
+                //     routeName: 'consulting',
+                // },
+                // {
+                //     icon: 'list-check',
+                //     routeName: 'my-performance',
 
-                },
-                {
-                    icon: 'stats',
-                    routeName: 'assessment',
-                },
-                {
-                    icon: 'envelope',
-                    routeName: 'news',
-                },
+                // },
+                // {
+                //     icon: 'stats',
+                //     routeName: 'assessment',
+                // },
+                // {
+                //     icon: 'envelope',
+                //     routeName: 'news',
+                // },
                 {
                     icon: 'world',
                     routeName: 'map',
