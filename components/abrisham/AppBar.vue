@@ -103,8 +103,9 @@ export default {
     },
     methods: {
         logout() {
-            window.document.getElementById('logout-form').submit();
-            window.localStorage.setItem('access_token', '');
+          this.rightDrawer = false
+          this.$store.dispatch('Auth/logout')
+          this.$router.push({path: '/login'})
         },
     }
 }

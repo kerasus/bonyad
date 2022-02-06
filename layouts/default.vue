@@ -118,6 +118,7 @@
 
 <script>
 import '@/static/fonts/IRANSans/css/fontiran.css'
+import Assistant from "assets/assistant";
 
 export default {
   name: 'DefaultLayout',
@@ -148,7 +149,7 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
-          to: '/abrisham',
+          to: '/abrisham/UserAbrishamProgress',
           permission: ''
         }
       ],
@@ -161,18 +162,25 @@ export default {
   created() {
     let that = this
     this.$axios.interceptors.response.use(undefined, function (error) {
-
-      that.$notify({
-          type: 'error',
-          title: 'توجه',
-          text: error.response.data.message
+      const messages = Assistant.handleAxiosError(error, that.$notify)
+      messages.forEach((item) => {
+        that.$notify({
+          title: 'توجه!',
+          text: item,
+          type: 'error'
+        })
       })
+
+      // that.$notify({
+      //     type: 'error',
+      //     title: 'توجه',
+      //     text: error.response.data.message
+      // })
 
       return Promise.reject(error);
     })
     let token = this.$store.getters['Auth/accessToken']
     if (token) {
-      console.log('headers.common Authorization in created DefaultLayout')
       this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     }
   },

@@ -568,7 +568,6 @@
                 this.mapLoading = true;
                 this.allMapItems.fetch()
                     .then(function (response) {
-                        console.log('admin',response)
                         that.allMapItems = new MapItemList(response.data.data);
                         that.mapLoading = false;
                         loader.hide();
