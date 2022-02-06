@@ -18,7 +18,7 @@
                         @calcTimeData="changeVideoStatusToSeen"
                         @toggleBookmark="bookmarkPostIsFavored"
                     />
-                    <div v-else-if="(!content.id || !content.photo)">
+                    <div v-else>
                         <v-alert
                             class="null-video"
                             outlined
@@ -30,14 +30,6 @@
                         >
                             اوه نه! ویدیویی وجود نداره...
                         </v-alert>
-                    </div>
-                    <div v-else>
-                        <a
-                            :href="content.url.web"
-                            target="_blank"
-                        >
-                            <v-img :src="content.photo"/>
-                        </a>
                     </div>
                 </div>
             </v-responsive>

@@ -101,7 +101,7 @@ export default {
         }
     },
     created() {
-        this.$router.push({ path: '/abrisham/home' })
+        this.$router.push({ path: '/abrisham/UserAbrishamProgress' })
         this.setToken();
         this.setUser()
         this.updatingAppProps()
