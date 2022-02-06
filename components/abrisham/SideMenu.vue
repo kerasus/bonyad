@@ -1,10 +1,12 @@
 <template>
   <div class="side-menu">
     <div class="menu-logo">
-      <img
-        src="http://nodes.alaatv.com/upload/abrisham-panel-logo.png"
-        class="logo-image"
-      >
+      <v-img
+        :src="require('~/static/boniad-ehsan-logo.png')"
+        class="mx-auto mt-5"
+        max-width="90%"
+        width="90px"
+      />
     </div>
     <div class="menu-items">
       <ul class="menu-items-list">
