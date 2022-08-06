@@ -96,6 +96,15 @@
                 <span class="error-message" v-if="user.shahr_id_error">{{ user.shahr_id_error }}</span>
               </div>
             </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input :class="{ 'has-error': user.student_register_limit_error }" required v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
+                  <span class="placeholder">محدودیت ثبت نام</span>
+                </label>
+                <span class="error-message" v-if="user.student_register_limit_error">{{ user.student_register_limit_error }}</span>
+              </div>
+            </div>
           </v-col>
           <v-col md="1" class="options">
             <v-progress-circular
@@ -169,6 +178,7 @@ export default {
           firstName_error: false,
           student_register_limit: '',
           student_register_limitMessage: '',
+          student_register_limit_error: '',
           lastName: '',
           lastName_error: false,
           gender_id: '',
@@ -212,7 +222,7 @@ export default {
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
 
-          this.$axios.post(API_ADDRESS.moshaver.create, {
+          this.$axios.post(API_ADDRESS.network.create, {
             firstName: user.firstName,
             lastName: user.lastName,
             student_register_limit: user.student_register_limit,

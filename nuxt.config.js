@@ -105,8 +105,8 @@ export default {
   },
 
   env: {
-    AUTH_TARGET_API_SERVER: process.env.AUTH_TARGET_API_SERVER || 'https://office.alaatv.com:702/api/v2',
-    LUMEN_TARGET_API_SERVER: process.env.LUMEN_TARGET_API_SERVER || 'https://office.alaatv.com:500/api/v1',
+    AUTH_TARGET_API_SERVER: process.env.AUTH_TARGET_API_SERVER || 'http://office.alaa.tv/api/v2',
+    LUMEN_TARGET_API_SERVER: process.env.LUMEN_TARGET_API_SERVER || 'http://office.alaa.tv/api/v1',
     AUTH_INTERNAL_API_SERVER: process.env.AUTH_INTERNAL_API_SERVER || '/alaa/api/v2',
     LUMEN_INTERNAL_API_SERVER: process.env.LUMEN_INTERNAL_API_SERVER || '/3a/api/v1'
   }
