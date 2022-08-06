@@ -24,6 +24,12 @@ const API_ADDRESS = {
     formData: authServer + '/megaroute/getUserFormData',
     show_user: authServer + '/getUserFor3a'
   },
+  network: {
+    create: authServer + '/admin/bonyadEhsan/network'
+  },
+  subnetwork: {
+    create: authServer + '/admin/bonyadEhsan/subNetwork'
+  },
   user: {
     info: authServer + '/admin/bonyadEhsan/user/myInfo',
     update: authServer + '/admin/bonyadEhsan/user/',
