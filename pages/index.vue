@@ -40,12 +40,6 @@ export default {
       items: [
         {
           icon: 'mdi-account-multiple-plus',
-          title: 'ثبت دانش آموز',
-          to: '/admin/user/create',
-          permission: 'accessBonyadEhsanPanel'
-        },
-        {
-          icon: 'mdi-account-multiple-plus',
           title: 'ثبت شبکه',
           to: '/admin/network/create',
           permission: 'accessBonyadEhsanPanel'
@@ -60,6 +54,12 @@ export default {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت مشاور',
           to: '/admin/moshaver/create',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
+          icon: 'mdi-account-multiple-plus',
+          title: 'ثبت دانش آموز',
+          to: '/admin/user/create',
           permission: 'accessBonyadEhsanPanel'
         },
         {
