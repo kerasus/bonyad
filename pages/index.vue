@@ -39,6 +39,12 @@ export default {
       fixed: false,
       items: [
         {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست شبکه ها',
+          to: '/admin/network',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت شبکه',
           to: '/admin/network/create',
