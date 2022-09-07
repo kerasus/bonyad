@@ -17,7 +17,7 @@
           v-if="showResultBtn"
           class="ma-2"
           color="light-blue lighten-1"
-          :to="getResultRoute"
+          :to="getResultRoute(item.id)"
         >
           نتایج
         </v-btn>
@@ -88,8 +88,9 @@ export default {
   methods: {
     getUsersOfBonyad() {
       const id = this.getUserOfBonyadId()
-      this.$axios.get(API_ADDRESS.exam.usersOfBonyad + '?user_id=' + id)
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id))
         .then((resp) => {
+          resp.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
           this.rows = resp.data
         })
     },
@@ -109,8 +110,10 @@ export default {
       return this.$store.getters['Auth/user']
     },
     getResultRoute() {
-      return {
-        path : '/admin/network/Result'
+      return (id) => {
+        return {
+          path : '/admin/'+ this.nextPageInfo.routeName + '/result/' + id
+        }
       }
     },
   },
