@@ -1,6 +1,22 @@
 <template>
 <div>
-  <highcharts :options="chartOptions" />
+  <highcharts :options="chartOptions" class="mb-10" />
+  <v-card
+    class="mx-auto"
+    color="#ff8f00"
+    dark
+    max-width="400"
+  >
+    <v-card-text class="text-h5 font-weight-bold text-center mb-10">
+      میانگین تراز کل : {{ averageRank }}
+    </v-card-text>
+  </v-card>
+  <v-data-table
+    :headers="headers"
+    :items="rows"
+    :items-per-page="5"
+    class="elevation-1"
+  />
 </div>
 </template>
 
@@ -9,7 +25,7 @@ import { Chart } from 'highcharts-vue'
 import API_ADDRESS from "assets/Addresses";
 
 export default {
-  name: "userResult",
+  name: "moshaverResult",
   components: { highcharts: Chart },
   data () {
     return {
@@ -28,11 +44,11 @@ export default {
           href: 'https://www.soalaa.com'
         },
         subtitle: {
-          text: 'Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>'
+          text: 'Source: <a href="https://www.soalaa.com" target="_blank">soalaa.com</a>'
         },
         yAxis: {
           title: {
-            text: 'Number of Employees'
+            text: 'تراز های آزمون'
           }
         },
         xAxis: {
@@ -69,49 +85,112 @@ export default {
             }
           }]
         }
-      }
+      },
+      flatData: {},
+      rankChart: [],
+      userTable: [],
+      averageRank: [],
+      headers: [
+        {
+          text: 'نام آزمون',
+          align: 'center',
+          value: 'title',
+        },
+        { text: 'عربی', value: 'lessons.arabi' },
+        { text: 'فارسی', value: 'lessons.farsi' },
+        { text: 'ریاضی', value: 'lessons.riazi' },
+        { text: 'شیمی', value: 'lessons.shimi' }
+      ],
+      rows: [],
     }
   },
   created() {
-    this.loadCartData()
-    this.getStatistics()
+    this.getStatistics().then(() => {
+      this.setCartData()
+    })
+  },
+  computed:{
+    user () {
+      return this.$store.getters['Auth/user']
+    }
   },
   methods: {
-    loadCartData () {
-      this.series()
-      this.loadxAxis()
+    getUserOfBonyadId () {
+      return this.$route.params.result ? this.$route.params.result : this.user.id
     },
-    loadxAxis () {
-      this.chartOptions.xAxis.categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    setCartData () {
+      this.setRankChart()
+      this.setUserTable()
+      this.setAverageRank()
     },
-    series () {
-      this.chartOptions.series = [{
-        name: 'Installation & Developers',
-        data: [43934, 48656, 65165, 81827, 112143, 142383,
-          171533, 165174, 155157, 161454, 154610]
-      }, {
-        name: 'Manufacturing',
-        data: [24916, 37941, 29742, 29851, 32490, 30282,
-          38121, 36885, 33726, 34243, 31050]
-      }, {
-        name: 'Sales & Distribution',
-        data: [11744, 30000, 16005, 19771, 20185, 24377,
-          32147, 30912, 29243, 29213, 25663]
-      }, {
-        name: 'Operations & Maintenance',
-        data: [null, null, null, null, null, null, null,
-          null, 11164, 11218, 10077]
-      }, {
-        name: 'Other',
-        data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
-          17300, 13053, 11906, 10073]
-      }]
+    loadxAxis (data) {
+      this.chartOptions.xAxis.categories = data
     },
-    getStatistics () {
-      this.$axios.get(API_ADDRESS.exam.averageRank)
-        .then((resp) => {
-          console.log(resp.data)
-        })
+    series (data) {
+      this.chartOptions.series = data
+    },
+    setRankChart () {
+      this.setRankChartSeries()
+      this.setRankChartAxis()
+    },
+    setRankChartSeries(){
+      let config = [
+        {
+          name: 'تراز دروس اختصاصی',
+          data: []
+        },
+        {
+          name: 'تراز دروس عمومی',
+          data: []
+        },
+        {
+          name: 'میانگین تراز کل',
+          data: []
+        }
+      ]
+      this.flatData.rankChart.forEach(item => {
+        config[0].data.push(Math.round(item.proficiency))
+        config[1].data.push(Math.round(item.general))
+        config[2].data.push(Math.round(item.averageRank))
+      })
+      this.series(config)
+    },
+    setRankChartAxis(){
+      let config = []
+      this.flatData.rankChart.forEach(item => {
+        config.push(item.title)
+      })
+      this.loadxAxis(config)
+    },
+    setUserTable () {
+      this.rows = this.flatData.userTable
+    },
+    setAverageRank () {
+      this.averageRank = this.flatData.averageRank
+    },
+    async getStatistics () {
+      const [rankChart , userTable , averageRank] = await Promise.all([
+          this.getRankChart(),
+          this.getUserTable(),
+          this.getAverageRank()
+      ])
+      this.flatData = {
+        rankChart: rankChart.data.data,
+        userTable: userTable.data.data,
+        averageRank: averageRank.data.data
+      }
+    },
+    getRankChart () {
+      const id = this.getUserOfBonyadId()
+      return this.$axios.get(API_ADDRESS.exam.getRankChart(id))
+    },
+    getUserTable () {
+      const id = this.getUserOfBonyadId()
+      return this.$axios.get(API_ADDRESS.exam.getUserRank(id))
+    },
+    getAverageRank () {
+      const id = this.getUserOfBonyadId()
+      return this.$axios.get(API_ADDRESS.exam.getAverageRank(id))
     }
   }
 }

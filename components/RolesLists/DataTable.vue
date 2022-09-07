@@ -95,7 +95,7 @@ export default {
         })
     },
     getUserOfBonyadId () {
-      return this.$route.params.list ? this.$route.params.list : this.user.id
+      return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list') ? this.$route.params.list : this.user.id
     }
   },
   computed: {
@@ -112,7 +112,7 @@ export default {
     getResultRoute() {
       return (id) => {
         return {
-          path : '/admin/'+ this.nextPageInfo.routeName + '/result/' + id
+          path : '/admin/user/result/' + id
         }
       }
     },
