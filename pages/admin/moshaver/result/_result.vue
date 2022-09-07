@@ -1,7 +1,6 @@
 <template>
 <div>
   <highcharts :options="chartOptions" class="mb-10" />
-
   <v-card
     class="mx-auto"
     color="#ff8f00"
@@ -99,8 +98,8 @@ export default {
         },
         { text: 'عربی', value: 'lessons.arabi' },
         { text: 'فارسی', value: 'lessons.farsi' },
-        { text: 'شماره همراه', value: 'lessons.riazi' },
-        { text: 'پایه', value: 'lessons.shimi' }
+        { text: 'ریاضی', value: 'lessons.riazi' },
+        { text: 'شیمی', value: 'lessons.shimi' }
       ],
       rows: [],
     }
@@ -150,11 +149,11 @@ export default {
         }
       ]
       this.flatData.rankChart.forEach(item => {
-        config[0].data.push(item.proficiency)
-        config[1].data.push(item.general)
-        config[2].data.push(item.averageRank)
+        config[0].data.push(Math.round(item.proficiency))
+        config[1].data.push(Math.round(item.general))
+        config[2].data.push(Math.round(item.averageRank))
       })
-      // console.log('series', config)
+      console.log('series', config)
       this.series(config)
     },
     setRankChartAxis(){
