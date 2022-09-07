@@ -6,6 +6,7 @@
     </h2>
     <div class="btns">
       <v-btn
+        v-if="showResultBtn"
         class="ma-2"
         color="light-blue lighten-1"
         :to="getResultRoute"
@@ -13,6 +14,7 @@
         نتایج
       </v-btn>
       <v-btn
+        v-if="showNextListBtn"
         class="ma-2"
         color="secondary"
         :to="getNextRoutePath"
@@ -36,13 +38,6 @@ import API_ADDRESS from "assets/Addresses";
 export default {
   name: "DataTable",
   props: {
-    constructorType: {
-      type: String,
-      "default": 'chart'
-    },
-    options: {
-      type: Object
-    },
     showResultBtn: {
       type: Boolean,
       default: true

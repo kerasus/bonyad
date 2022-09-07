@@ -1,7 +1,12 @@
 <template>
   <div>
-    <div>لیست شبکه ها</div>
-    <data-table/>
+    <data-table
+      :table-title="'لیست شبکه ها'"
+      :next-page-info="{
+        btnName: 'لیست زیر شبکه ها',
+        routeName: 'subnetwork',
+      }"
+    />
   </div>
 </template>
 
