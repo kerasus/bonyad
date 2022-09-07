@@ -1,10 +1,19 @@
 <template>
-  <div>لیست دانش آموزان</div>
+  <data-table
+    :table-title="'لیست دانش آموزان'"
+    :show-next-list-btn="false"
+    :next-page-info="{
+        btnName: 'لیست دانش آموزان',
+        routeName: 'user'
+    }"
+  />
 </template>
 
 <script>
+import DataTable from "~/components/RolesLists/DataTable";
 export default {
-  name: "List"
+  name: "List",
+  components: {DataTable}
 }
 </script>
 

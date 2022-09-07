@@ -1,10 +1,18 @@
 <template>
-  <div>لیست مشاور ها</div>
+  <data-table
+    :table-title="'لیست مشاور ها'"
+    :next-page-info="{
+        btnName: 'لیست دانش آموزان',
+        routeName: 'user',
+    }"
+  />
 </template>
 
 <script>
+import DataTable from "~/components/RolesLists/DataTable";
 export default {
-  name: "List"
+  name: "List",
+  components: {DataTable}
 }
 </script>
 
