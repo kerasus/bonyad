@@ -52,8 +52,10 @@ const API_ADDRESS = {
     base: lumenServer + '/option'
   },
   exam: {
+    usersOfBonyad : lumenServer + '/exam/getUsersOfBonyad',
     rankChart: authServer + '/exam/rank-chart',
     userRank: authServer + '/exam/user-rank',
+    averageRank: authServer + '/exam/averageRank',
     editExam: lumenServer + '/exam',
     sendAnswers: lumenServer + '/temp-exam/answer/choice',
     sendAnswerSheetPhoto: lumenServer + '/temp-exam/scan',

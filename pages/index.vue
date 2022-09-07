@@ -41,7 +41,25 @@ export default {
         {
           icon: 'mdi-format-list-bulleted',
           title: 'لیست شبکه ها',
-          to: '/admin/network',
+          to: '/admin/network/List',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست زیر شبکه ها',
+          to: '/admin/subnetwork/List',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست مشاور ها',
+          to: '/admin/moshaver/List',
+          permission: 'accessBonyadEhsanPanel'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست دانش آموزان',
+          to: '/admin/user/List',
           permission: 'accessBonyadEhsanPanel'
         },
         {
