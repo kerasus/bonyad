@@ -6,6 +6,7 @@
         btnName: 'لیست زیر شبکه ها',
         routeName: 'subnetwork',
       }"
+      :show-next-list-btn="isUserPermitted"
     />
   </div>
 </template>
@@ -18,6 +19,12 @@ export default {
   data() {
     return {
 
+    }
+  },
+  computed: {
+    isUserPermitted () {
+      const user = this.$store.getters['Auth/user']
+      return user.hasPermission('bonyadShowSubnetworks')
     }
   }
 }

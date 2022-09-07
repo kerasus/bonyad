@@ -41,27 +41,27 @@ export default {
         {
           icon: 'mdi-format-list-bulleted',
           title: 'لیست شبکه ها',
-          to: '/admin/network/List',
+          to: '/admin/network/user/list',
           permission: 'accessBonyadEhsanPanel'
         },
-        {
-          icon: 'mdi-format-list-bulleted',
-          title: 'لیست زیر شبکه ها',
-          to: '/admin/subnetwork/List',
-          permission: 'accessBonyadEhsanPanel'
-        },
-        {
-          icon: 'mdi-format-list-bulleted',
-          title: 'لیست مشاور ها',
-          to: '/admin/moshaver/List',
-          permission: 'accessBonyadEhsanPanel'
-        },
-        {
-          icon: 'mdi-format-list-bulleted',
-          title: 'لیست دانش آموزان',
-          to: '/admin/user/List',
-          permission: 'accessBonyadEhsanPanel'
-        },
+        // {
+        //   icon: 'mdi-format-list-bulleted',
+        //   title: 'لیست زیر شبکه ها',
+        //   to: '/admin/subnetwork/List',
+        //   permission: 'accessBonyadEhsanPanel'
+        // },
+        // {
+        //   icon: 'mdi-format-list-bulleted',
+        //   title: 'لیست مشاور ها',
+        //   to: '/admin/moshaver/List',
+        //   permission: 'accessBonyadEhsanPanel'
+        // },
+        // {
+        //   icon: 'mdi-format-list-bulleted',
+        //   title: 'لیست دانش آموزان',
+        //   to: '/admin/user/List',
+        //   permission: 'accessBonyadEhsanPanel'
+        // },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت شبکه',

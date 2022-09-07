@@ -5,6 +5,7 @@
         btnName: 'لیست مشاور ها',
         routeName: 'moshaver',
       }"
+    :show-next-list-btn="isUserPermitted"
   />
 </template>
 
@@ -12,7 +13,16 @@
 import DataTable from "~/components/RolesLists/DataTable";
 export default {
   name: "List",
-  components: {DataTable}
+  components: {DataTable},
+  data() {
+    return {}
+  },
+  computed: {
+    isUserPermitted () {
+      const user = this.$store.getters['Auth/user']
+      return user.hasPermission('bonyadShowMoshavers')
+    }
+  }
 }
 </script>
 
