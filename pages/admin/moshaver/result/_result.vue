@@ -153,7 +153,6 @@ export default {
         config[1].data.push(Math.round(item.general))
         config[2].data.push(Math.round(item.averageRank))
       })
-      console.log('series', config)
       this.series(config)
     },
     setRankChartAxis(){
@@ -161,7 +160,6 @@ export default {
       this.flatData.rankChart.forEach(item => {
         config.push(item.title)
       })
-      // console.log('loadxAxis', config)
       this.loadxAxis(config)
     },
     setUserTable () {
