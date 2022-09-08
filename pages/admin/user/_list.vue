@@ -1,6 +1,7 @@
 <template>
   <data-table
     :table-title="'لیست دانش آموزان'"
+    :page-name="'student'"
     :show-next-list-btn="false"
     :next-page-info="{
         btnName: 'لیست دانش آموزان',

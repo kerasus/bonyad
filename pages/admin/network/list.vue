@@ -2,6 +2,7 @@
   <div>
     <data-table
       :table-title="'لیست شبکه ها'"
+      :page-name="'network'"
       :next-page-info="{
         btnName: 'لیست زیر شبکه ها',
         routeName: 'subnetwork',

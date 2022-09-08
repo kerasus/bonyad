@@ -62,6 +62,10 @@ export default {
       type: String,
       default: 'لیست شبکه ها'
     },
+    pageName: {
+      type: String,
+      default: 'network'
+    }
   },
   data () {
     return {
@@ -88,15 +92,29 @@ export default {
   methods: {
     getUsersOfBonyad() {
       const id = this.getUserOfBonyadId()
-      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id))
+      const mode = this.getUserOfBonyadParam()
+      // const address =
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode))
         .then((resp) => {
           resp.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
           this.rows = resp.data
         })
     },
+    getUserOfBonyadParam () {
+      if (this.user.hasPermission('bonyadShowNetworks') && !this.doesRouteHaveId()) {
+        return 'show-'+ this.pageName + 's'
+      }
+      return null
+    },
     getUserOfBonyadId () {
       // return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list') ? this.$route.params.list : this.user.id
-      return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list') ? this.$route.params.list : null
+      if (this.doesRouteHaveId()) {
+        return this.$route.params.list
+      }
+      return null
+    },
+    doesRouteHaveId() {
+      return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list')
     }
   },
   computed: {

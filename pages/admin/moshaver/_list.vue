@@ -1,9 +1,10 @@
 <template>
   <data-table
     :table-title="'لیست مشاور ها'"
+    :page-name="'moshaver'"
     :next-page-info="{
         btnName: 'لیست دانش آموزان',
-        routeName: 'user',
+        routeName: 'user'
     }"
     :show-next-list-btn="isUserPermitted"
   />

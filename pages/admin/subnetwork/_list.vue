@@ -1,6 +1,7 @@
 <template>
   <data-table
     :table-title="'لیست زیر شبکه ها'"
+    :page-name="'subnetwork'"
     :next-page-info="{
         btnName: 'لیست مشاور ها',
         routeName: 'moshaver',

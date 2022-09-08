@@ -67,7 +67,10 @@ const API_ADDRESS = {
     userExamsList: lumenServer + '/examAndUser',
     takhminRotbe: lumenServer + '/exam-report/rankSimulator',
     analysisVideo: lumenServer + '/exam-question/attach/sub-category',
-    getUsersOfBonyad (id) {
+    getUsersOfBonyad (id, mode) {
+      if (mode) {
+        return lumenServer + '/exam/getUsersOfBonyad?' + mode
+      }
       if (!id) {
         return lumenServer + '/exam/getUsersOfBonyad'
       }
