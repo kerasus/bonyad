@@ -4083,6 +4083,16 @@
   "resolved" "https://registry.npmjs.org/hex-color-regex/-/hex-color-regex-1.1.0.tgz"
   "version" "1.1.0"
 
+"highcharts-vue@^1.4.0":
+  "integrity" "sha512-fTPqJmU/wR/nUEtofbC/iJqcgULGcP3C0Hd4YYCKH2FiiteNs7UidjSM4eYj5Y4ldpOVhwPtNj/m6XwC3ajp6g=="
+  "resolved" "https://registry.npmjs.org/highcharts-vue/-/highcharts-vue-1.4.0.tgz"
+  "version" "1.4.0"
+
+"highcharts@>=5.0.0":
+  "integrity" "sha512-4QwLQwWc0XdBHXc2Uy6IJisAUir+sgQIMyFqYZc3BD9iFSFUdllLkRyoed6y33aPb73LAMZE2qLB5SuLqFE/fg=="
+  "resolved" "https://registry.npmjs.org/highcharts/-/highcharts-10.2.1.tgz"
+  "version" "10.2.1"
+
 "hmac-drbg@^1.0.1":
   "integrity" "sha1-0nRXAQJabHdabFRXk+1QL8DGSaE="
   "resolved" "https://registry.npmjs.org/hmac-drbg/-/hmac-drbg-1.0.1.tgz"
@@ -8338,7 +8348,7 @@
   "resolved" "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   "version" "1.9.1"
 
-"vue@*", "vue@^2.0.0", "vue@^2.5.17", "vue@^2.6.10", "vue@^2.6.12", "vue@^2.6.14", "vue@^2.6.4", "vue@2.x":
+"vue@*", "vue@^2.0.0", "vue@^2.5.17", "vue@^2.6.10", "vue@^2.6.12", "vue@^2.6.14", "vue@^2.6.4", "vue@>=1.0.0", "vue@2.x":
   "integrity" "sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-2.6.14.tgz"
   "version" "2.6.14"

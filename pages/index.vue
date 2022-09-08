@@ -39,6 +39,30 @@ export default {
       fixed: false,
       items: [
         {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست شبکه ها',
+          to: '/admin/network/list',
+          permission: 'bonyadShowNetworks'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست زیر شبکه ها',
+          to: '/admin/subnetwork/list',
+          permission: 'bonyadShowSubnetworks'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست مشاور ها',
+          to: '/admin/moshaver/list',
+          permission: 'bonyadShowMoshavers'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست دانش آموزان',
+          to: '/admin/user/list',
+          permission: 'bonyadShowStudents'
+        },
+        {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت شبکه',
           to: '/admin/network/create',
