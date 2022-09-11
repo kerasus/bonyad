@@ -52,6 +52,10 @@ const API_ADDRESS = {
     base: lumenServer + '/option'
   },
   exam: {
+    usersOfBonyad : lumenServer + '/exam/getUsersOfBonyad',
+    rankChart: lumenServer + '/exam/rank-chart',
+    userRank: lumenServer + '/exam/user-rank',
+    averageRank: lumenServer + '/exam/averageRank',
     editExam: lumenServer + '/exam',
     sendAnswers: lumenServer + '/temp-exam/answer/choice',
     sendAnswerSheetPhoto: lumenServer + '/temp-exam/scan',
@@ -63,6 +67,18 @@ const API_ADDRESS = {
     userExamsList: lumenServer + '/examAndUser',
     takhminRotbe: lumenServer + '/exam-report/rankSimulator',
     analysisVideo: lumenServer + '/exam-question/attach/sub-category',
+    getUsersOfBonyad (id, mode) {
+      if (mode) {
+        return lumenServer + '/exam/getUsersOfBonyad?' + mode
+      }
+      if (!id) {
+        return lumenServer + '/exam/getUsersOfBonyad'
+      }
+      return lumenServer + '/exam/getUsersOfBonyad?user_id=' + id
+    },
+    getRankChart (id) { return lumenServer + '/exam/rank-chart?user_id=' + id },
+    getUserRank (id) { return lumenServer + '/exam/user-rank?user_id=' + id },
+    getAverageRank (id) { return lumenServer + '/exam/averageRank?user_id=' + id },
     getAnalysisVideo (exam_id) { return lumenServer + '/exam-question/videos/' + exam_id },
     examReportIndex (type) { return lumenServer + '/exam-report/index/' + type },
     pdf (exam_id) { return lumenServer + '/exam-question/booklet-file/' +exam_id },
