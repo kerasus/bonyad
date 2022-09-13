@@ -69,7 +69,7 @@ const API_ADDRESS = {
     analysisVideo: lumenServer + '/exam-question/attach/sub-category',
     getUsersOfBonyad (id, mode) {
       if (mode) {
-        return lumenServer + '/exam/getUsersOfBonyad?' + mode
+        return lumenServer + '/exam/getUsersOfBonyad?action=' + mode
       }
       if (!id) {
         return lumenServer + '/exam/getUsersOfBonyad'
