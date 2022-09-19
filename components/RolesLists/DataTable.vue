@@ -6,9 +6,16 @@
     </h2>
   </div>
   <v-data-table
+    :footer-props="{
+        disableItemsPerPage: true,
+        itemsPerPageText: '',
+        pageText: 'صفحه ' + options.page + ' از ' + Math.ceil(totalRows / options.itemsPerPage),
+        showCurrentPage: true
+      }"
     :headers="headers"
     :items="rows"
-    :items-per-page="5"
+    :options.sync="options"
+    :server-items-length="totalRows"
     class="elevation-1"
   >
     <template v-slot:item.actions="{ item }">
@@ -69,6 +76,11 @@ export default {
   },
   data () {
     return {
+      options: {
+        itemsPerPage: 25,
+        page: 1
+      },
+      totalRows: 0,
       headers: [
         {
           text: 'شناسه',
@@ -89,15 +101,26 @@ export default {
       widgets: false
     }
   },
+  watch: {
+    options: {
+      handler() {
+        this.getUsersOfBonyad();
+      },
+    },
+    deep: true,
+  },
   methods: {
     getUsersOfBonyad() {
       const id = this.getUserOfBonyadId()
       const mode = this.getUserOfBonyadParam()
       // const address =
-      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode))
-        .then((resp) => {
-          resp.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
-          this.rows = resp.data
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode, this.options.page))
+        .then((response) => {
+          response.data.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
+          this.rows = response.data.data
+          this.totalRows = response.data.meta.total
+          this.totalRows = response.data.meta.total
+          this.options.itemsPerPage = response.data.meta.per_page
         })
     },
     getUserOfBonyadParam () {
@@ -137,7 +160,7 @@ export default {
     },
   },
   mounted() {
-    this.getUsersOfBonyad()
+    // this.getUsersOfBonyad()
   }
 }
 </script>
@@ -147,5 +170,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+::v-deep .v-data-footer {
+  .v-data-footer__select {
+    .v-input {
+      display: none;
+    }
+  }
 }
 </style>

@@ -67,14 +67,14 @@ const API_ADDRESS = {
     userExamsList: lumenServer + '/examAndUser',
     takhminRotbe: lumenServer + '/exam-report/rankSimulator',
     analysisVideo: lumenServer + '/exam-question/attach/sub-category',
-    getUsersOfBonyad (id, mode) {
+    getUsersOfBonyad (id, mode, pageNumber) {
       if (mode) {
-        return lumenServer + '/exam/getUsersOfBonyad?action=' + mode
+        return lumenServer + '/exam/getUsersOfBonyad?action=' + mode + '&page=' + pageNumber
       }
       if (!id) {
-        return lumenServer + '/exam/getUsersOfBonyad'
+        return lumenServer + '/exam/getUsersOfBonyad' + '&page=' + pageNumber
       }
-      return lumenServer + '/exam/getUsersOfBonyad?user_id=' + id
+      return lumenServer + '/exam/getUsersOfBonyad?user_id=' + id + '&page=' + pageNumber
     },
     getRankChart (id) { return lumenServer + '/exam/rank-chart?user_id=' + id },
     getUserRank (id) { return lumenServer + '/exam/user-rank?user_id=' + id },
