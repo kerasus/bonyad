@@ -41,8 +41,26 @@ export default {
         {
           icon: 'mdi-format-list-bulleted',
           title: 'لیست شبکه ها',
-          to: '/admin/network',
-          permission: 'accessBonyadEhsanPanel'
+          to: '/admin/network/list',
+          permission: 'bonyadShowNetworks'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست زیر شبکه ها',
+          to: '/admin/subnetwork/list',
+          permission: 'bonyadShowSubnetworks'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست مشاور ها',
+          to: '/admin/moshaver/list',
+          permission: 'bonyadShowMoshavers'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'لیست دانش آموزان',
+          to: '/admin/user/list',
+          permission: 'bonyadShowStudents'
         },
         {
           icon: 'mdi-account-multiple-plus',
@@ -77,7 +95,7 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
-          to: '/abrisham',
+          to: '/abrisham/UserAbrishamProgress',
           permission: ''
         }
       ]
