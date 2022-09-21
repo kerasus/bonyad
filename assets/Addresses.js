@@ -52,10 +52,10 @@ const API_ADDRESS = {
     base: lumenServer + '/option'
   },
   exam: {
-    usersOfBonyad : lumenServer + '/exam/getUsersOfBonyad',
-    rankChart: lumenServer + '/exam/rank-chart',
-    userRank: lumenServer + '/exam/user-rank',
-    averageRank: lumenServer + '/exam/averageRank',
+    usersOfBonyad : authServer + '/exam/getUsersOfBonyad',
+    rankChart: authServer + '/exam/rank-chart',
+    userRank: authServer + '/exam/user-rank',
+    averageRank: authServer + '/exam/averageRank',
     editExam: lumenServer + '/exam',
     sendAnswers: lumenServer + '/temp-exam/answer/choice',
     sendAnswerSheetPhoto: lumenServer + '/temp-exam/scan',
@@ -69,16 +69,16 @@ const API_ADDRESS = {
     analysisVideo: lumenServer + '/exam-question/attach/sub-category',
     getUsersOfBonyad (id, mode, pageNumber) {
       if (mode) {
-        return lumenServer + '/exam/getUsersOfBonyad?action=' + mode + '&page=' + pageNumber
+        return authServer + '/exam/getUsersOfBonyad?action=' + mode + '&page=' + pageNumber
       }
       if (!id) {
-        return lumenServer + '/exam/getUsersOfBonyad' + '&page=' + pageNumber
+        return authServer + '/exam/getUsersOfBonyad' + '&page=' + pageNumber
       }
-      return lumenServer + '/exam/getUsersOfBonyad?user_id=' + id + '&page=' + pageNumber
+      return authServer + '/exam/getUsersOfBonyad?user_id=' + id + '&page=' + pageNumber
     },
-    getRankChart (id) { return lumenServer + '/exam/rank-chart?user_id=' + id },
-    getUserRank (id) { return lumenServer + '/exam/user-rank?user_id=' + id },
-    getAverageRank (id) { return lumenServer + '/exam/averageRank?user_id=' + id },
+    getRankChart (id) { return authServer + '/exam/rank-chart?user_id=' + id },
+    getUserRank (id) { return authServer + '/exam/user-rank?user_id=' + id },
+    getAverageRank (id) { return authServer + '/exam/averageRank?user_id=' + id },
     getAnalysisVideo (exam_id) { return lumenServer + '/exam-question/videos/' + exam_id },
     examReportIndex (type) { return lumenServer + '/exam-report/index/' + type },
     pdf (exam_id) { return lumenServer + '/exam-question/booklet-file/' +exam_id },
