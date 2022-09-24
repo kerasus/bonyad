@@ -76,9 +76,9 @@ const API_ADDRESS = {
       }
       return authServer + '/exam/getUsersOfBonyad?user_id=' + id + '&page=' + pageNumber
     },
-    getRankChart (id) { return authServer + '/exam/rank-chart?user_id=' + id },
-    getUserRank (id) { return authServer + '/exam/user-rank?user_id=' + id },
-    getAverageRank (id) { return authServer + '/exam/averageRank?user_id=' + id },
+    getRankChart (id, major) { return authServer + '/exam/rank-chart?user_id=' + id + '&major=' + major },
+    getUserRank (id, major) { return authServer + '/exam/user-rank?user_id=' + id + '&major=' + major },
+    getAverageRank (id, major) { return authServer + '/exam/averageRank?user_id=' + id + '&major=' + major },
     getAnalysisVideo (exam_id) { return lumenServer + '/exam-question/videos/' + exam_id },
     examReportIndex (type) { return lumenServer + '/exam-report/index/' + type },
     pdf (exam_id) { return lumenServer + '/exam-question/booklet-file/' +exam_id },
