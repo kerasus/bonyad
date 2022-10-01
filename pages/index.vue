@@ -86,12 +86,12 @@ export default {
           to: '/admin/user/create',
           permission: 'accessBonyadEhsanPanel'
         },
-        {
-          icon: 'mdi-account-details',
-          title: 'مشاهده ثبت نام شده ها',
-          to: '/admin/order',
-          permission: 'accessBonyadEhsanPanel'
-        },
+        // {
+        //   icon: 'mdi-account-details',
+        //   title: 'مشاهده ثبت نام شده ها',
+        //   to: '/admin/order',
+        //   permission: 'accessBonyadEhsanPanel'
+        // },
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
