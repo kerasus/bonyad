@@ -72,7 +72,7 @@ const API_ADDRESS = {
         return authServer + '/exam/getUsersOfBonyad?action=' + mode + '&page=' + pageNumber
       }
       if (!id) {
-        return authServer + '/exam/getUsersOfBonyad' + '&page=' + pageNumber
+        return authServer + '/exam/getUsersOfBonyad' + '?page=' + pageNumber
       }
       return authServer + '/exam/getUsersOfBonyad?user_id=' + id + '&page=' + pageNumber
     },
