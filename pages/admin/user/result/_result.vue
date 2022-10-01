@@ -25,6 +25,10 @@
       :items-per-page="5"
       class="elevation-1"
     />
+    <div class="watchTimeCard">
+      میزان مشاهده فیلم ها به دقیقه:
+      {{ watchTime }}
+    </div>
   </div>
 </template>
 
@@ -37,6 +41,7 @@ export default {
   components: {highcharts: Chart},
   data() {
     return {
+      watchTime: 0,
       selectedMajor: 1,
       majors: [
         {
@@ -225,5 +230,11 @@ export default {
 </script>
 
 <style scoped>
-
+.watchTimeCard {
+  padding: 10px;
+  margin: 30px 20px;
+  border-radius: 6px;
+  background-color: #f7941d;
+  color: white;
+}
 </style>

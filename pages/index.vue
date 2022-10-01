@@ -66,32 +66,32 @@ export default {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت شبکه',
           to: '/admin/network/create',
-          permission: 'accessBonyadEhsanPanel'
+          permission: 'bonyadAddNetworks'
         },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت زیر شبکه',
           to: '/admin/subnetwork/create',
-          permission: 'accessBonyadEhsanPanel'
+          permission: 'bonyadAddSubnetworks'
         },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت مشاور',
           to: '/admin/moshaver/create',
-          permission: 'accessBonyadEhsanPanel'
+          permission: 'bonyadAddMoshavers'
         },
         {
           icon: 'mdi-account-multiple-plus',
           title: 'ثبت دانش آموز',
           to: '/admin/user/create',
-          permission: 'accessBonyadEhsanPanel'
+          permission: 'bonyadAddStudents'
         },
-        {
-          icon: 'mdi-account-details',
-          title: 'مشاهده ثبت نام شده ها',
-          to: '/admin/order',
-          permission: 'accessBonyadEhsanPanel'
-        },
+        // {
+        //   icon: 'mdi-account-details',
+        //   title: 'مشاهده ثبت نام شده ها',
+        //   to: '/admin/order',
+        //   permission: 'accessBonyadEhsanPanel'
+        // },
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
