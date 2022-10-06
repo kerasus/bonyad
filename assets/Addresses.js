@@ -14,6 +14,7 @@ const API_ADDRESS = {
     delete: authServer + '/admin/bonyadEhsan/order/'
   },
   moshaver: {
+    edit: (userId) => authServer + '/admin/bonyadEhsan/user/' + userId,
     update: authServer + '/admin/bonyadEhsan/user/',
     create: authServer + '/admin/bonyadEhsan/moshaver',
     base: authServer + '/user',
