@@ -25,6 +25,11 @@ const API_ADDRESS = {
     formData: authServer + '/megaroute/getUserFormData',
     show_user: authServer + '/getUserFor3a'
   },
+  liveDescription:{
+    create: authServer + '/liveDescription',
+    list: authServer + '/liveDescription?owner=2',
+    edit: (userId) => authServer + 'liveDescription/' + userId
+  },
   network: {
     create: authServer + '/admin/bonyadEhsan/network'
   },

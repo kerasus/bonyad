@@ -17,10 +17,6 @@
         cols="12"
         sm="6"
       >
-        <v-select
-          :items="messageType"
-          label="نوع پیام"
-        ></v-select>
       </v-col>
       <v-col
         cols="12"
@@ -49,29 +45,31 @@
 
 <script>
 
+import API_ADDRESS from "assets/Addresses";
+
 export default {
   name: "liveDescriptionCreate",
   data() {
     return {
       messageType: ['A', 'B', 'C'],
       title: '',
-      description:null,
+      description: null,
     }
   },
-  methods:{
-    createMessage(){
-      this.$axios.post('alaa/api/v2/livedescription',{
-        title:this.title,
-        description:this.description,
-        owner:2,
-        entity_id:347,
-        entity_type:'App\Product'
+  methods: {
+    createMessage() {
+      this.$axios.post(API_ADDRESS.liveDescription.create, {
+        title: this.title,
+        description: this.description,
+        owner: 2,
+        entity_id: 347,
+        entity_type: 'App\Product'
       })
-        .then(resp=>{
+        .then(resp => {
           console.log(resp)
-          this.$router.push({path:'/admin/liveDescription/list'})
+          this.$router.push({path: '/admin/liveDescription/list'})
         })
-        .catch(err=>{
+        .catch(err => {
           console.log(err)
         })
     }

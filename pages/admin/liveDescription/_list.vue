@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import API_ADDRESS from "assets/Addresses";
+
 export default {
   name: "messagesList",
   data() {
@@ -82,7 +84,7 @@ export default {
   },
   methods: {
     getMessagesList() {
-      this.$axios.get('alaa/api/v2/livedescription?owner=2')
+      this.$axios.get(API_ADDRESS.liveDescription.list)
         .then(resp => {
           this.items = resp.data.data
           console.log(this.items)

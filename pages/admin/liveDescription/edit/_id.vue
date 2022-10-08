@@ -39,6 +39,8 @@
 
 <script>
 
+import API_ADDRESS from "assets/Addresses";
+
 export default {
   name: "_id.vue",
   data() {
@@ -54,7 +56,7 @@ export default {
   methods: {
     getMessage() {
       const userId = this.$route.params.id
-      this.$axios.get('alaa/api/v2/livedescription/' + userId)
+      this.$axios.get(API_ADDRESS.liveDescription.edit(userId))
         .then(resp => {
           this.title = resp.data.data.title
           this.description = resp.data.data.description
@@ -66,7 +68,7 @@ export default {
     },
     editMessage() {
       const userId = this.$route.params.id
-      this.$axios.put('alaa/api/v2/livedescription/' + userId, {
+      this.$axios.put(API_ADDRESS.liveDescription.edit(userId), {
         title: this.title,
         description: this.description,
         entity_id: this.$route.params.id,
