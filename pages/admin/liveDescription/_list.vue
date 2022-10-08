@@ -9,17 +9,19 @@
       :headers="headers"
       :items="items"
       :items-per-page="5"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
       class="elevation-1"
     >
       <template v-slot:item.has_pinned="{ item }">
         <v-btn v-if="item.has_pinned"
                color="grey"
-               @click="unpin(item)"
+               @click="unpin(item.id)"
         >
           از سنجاق برداشتن
         </v-btn>
         <v-btn v-else
-               @click="pin(item)"
+               @click="pin(item.id)"
         >
           سنجاق کردن
         </v-btn>
@@ -52,6 +54,8 @@ export default {
   name: "messagesList",
   data() {
     return {
+      sortBy: 'has_pinned',
+      sortDesc: true,
       headers: [
         {
           text: 'توضیحات',
@@ -60,7 +64,7 @@ export default {
         },
         {text: 'عنوان', value: 'title'},
         {text: 'پین', value: 'has_pinned'},
-        {text: 'ویرایش', value: 'edit'},
+        {text: 'ویرایش', value: 'edit',},
       ],
       items: []
     }
@@ -84,7 +88,9 @@ export default {
   },
   methods: {
     getMessagesList() {
-      this.$axios.get(API_ADDRESS.liveDescription.list)
+      this.$axios.get(API_ADDRESS.liveDescription.list, {
+
+      })
         .then(resp => {
           this.items = resp.data.data
           console.log(this.items)
@@ -93,13 +99,23 @@ export default {
           console.log(err)
         })
     },
-    pin(item) {
-      item.has_pineed = true
-      // this.getMessagesList()
+    pin(messageId) {
+      this.$axios.get(API_ADDRESS.liveDescription.pin(messageId))
+        .then(() => {
+          this.getMessagesList()
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
-    unpin(item){
-      item.has_pineed = false
-      this.getMessagesList()
+    unpin(messageId) {
+      this.$axios.get(API_ADDRESS.liveDescription.unpin(messageId))
+        .then(() => {
+          this.getMessagesList()
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }
