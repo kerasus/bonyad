@@ -4,19 +4,13 @@
       <v-col
         class="d-flex"
         cols="12"
-        sm="6"
+        sm="12"
       >
         <v-text-field
           v-model="title"
           label="موضوع پیام"
           outlined
         />
-      </v-col>
-      <v-col
-        class="d-flex"
-        cols="12"
-        sm="6"
-      >
       </v-col>
       <v-col
         cols="12"
@@ -36,7 +30,7 @@
         <v-btn
           @click="createMessage"
         >
-          ثبت پبام
+          ثبت پیام
         </v-btn>
       </v-col>
     </v-row>
@@ -51,7 +45,6 @@ export default {
   name: "liveDescriptionCreate",
   data() {
     return {
-      messageType: ['A', 'B', 'C'],
       title: '',
       description: null,
     }
