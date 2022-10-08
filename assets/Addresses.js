@@ -26,9 +26,11 @@ const API_ADDRESS = {
     show_user: authServer + '/getUserFor3a'
   },
   liveDescription:{
-    create: authServer + '/liveDescription',
-    list: authServer + '/liveDescription?owner=2',
-    edit: (userId) => authServer + 'liveDescription/' + userId
+    create: authServer + '/livedescription',
+    list: authServer + '/livedescription?owner=2',
+    edit: (userId) => authServer + '/livedescription/' + userId,
+    pin: (userId) => authServer + '/livedescription/' + userId + '/pin',
+    unpin: (userId) => authServer + '/livedescription/' + userId + '/unpin'
   },
   network: {
     create: authServer + '/admin/bonyadEhsan/network'
