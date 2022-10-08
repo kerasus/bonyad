@@ -71,7 +71,7 @@ export default {
       this.$axios.put(API_ADDRESS.liveDescription.edit(userId), {
         title: this.title,
         description: this.description,
-        entity_id: this.$route.params.id,
+        entity_id: 347,
         entity_type: 'App\Product',
         owner:2
       })
