@@ -28,7 +28,6 @@ const API_ADDRESS = {
   },
   liveDescription:{
     create: authServer + '/livedescription',
-    list: authServer + '/livedescription?owner=2',
     edit: (userId) => authServer + '/livedescription/' + userId,
     pin: (userId) => authServer + '/livedescription/' + userId + '/pin',
     unpin: (userId) => authServer + '/livedescription/' + userId + '/unpin'
