@@ -14,6 +14,7 @@ const API_ADDRESS = {
     delete: authServer + '/admin/bonyadEhsan/order/'
   },
   moshaver: {
+    edit: (userId) => authServer + '/admin/bonyadEhsan/user/' + userId,
     update: authServer + '/admin/bonyadEhsan/user/',
     create: authServer + '/admin/bonyadEhsan/moshaver',
     base: authServer + '/user',
@@ -23,6 +24,13 @@ const API_ADDRESS = {
     },
     formData: authServer + '/megaroute/getUserFormData',
     show_user: authServer + '/getUserFor3a'
+  },
+  liveDescription:{
+    create: authServer + '/livedescription',
+    list: authServer + '/livedescription?owner=2',
+    edit: (userId) => authServer + '/livedescription/' + userId,
+    pin: (userId) => authServer + '/livedescription/' + userId + '/pin',
+    unpin: (userId) => authServer + '/livedescription/' + userId + '/unpin'
   },
   network: {
     create: authServer + '/admin/bonyadEhsan/network'

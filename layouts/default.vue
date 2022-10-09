@@ -187,6 +187,12 @@ export default {
           title: 'داشبورد ابریشم',
           to: '/abrisham/UserAbrishamProgress',
           permission: ''
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'پیام مشاور',
+          to: '/admin/LiveDescription/list',
+          permission: 'insertLiveDescription'
         }
       ],
       miniVariant: false,

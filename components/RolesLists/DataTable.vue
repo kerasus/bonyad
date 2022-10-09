@@ -12,34 +12,41 @@
         pageText: 'صفحه ' + options.page + ' از ' + Math.ceil(totalRows / options.itemsPerPage),
         showCurrentPage: true
       }"
-    :headers="headers"
-    :items="rows"
-    :options.sync="options"
-    :server-items-length="totalRows"
-    class="elevation-1"
-  >
-    <template v-slot:item.actions="{ item }">
-      <div class="btns">
-        <v-btn
-          v-if="showResultBtn"
-          class="ma-2"
-          color="light-blue lighten-1"
-          :to="getResultRoute(item.id)"
-        >
-          نتایج
-        </v-btn>
-        <v-btn
-          v-if="showNextListBtn"
-          class="ma-2"
-          color="secondary"
-          :to="getNextRoutePath(item.id)"
-        >
-          {{ nextPageInfo.btnName }}
-        </v-btn>
-      </div>
-    </template>
-  </v-data-table>
-</div>
+      :headers="headers"
+      :items="rows"
+      :options.sync="options"
+      :server-items-length="totalRows"
+      class="elevation-1"
+    >
+      <template v-slot:item.actions="{ item }">
+        <div class="btns">
+          <v-btn
+            v-if="showResultBtn"
+            class="ma-2"
+            color="light-blue lighten-1"
+            :to="getResultRoute(item.id)"
+          >
+            نتایج
+          </v-btn>
+          <v-btn
+            v-if="showNextListBtn"
+            class="ma-2"
+            color="secondary"
+            :to="getNextRoutePath(item.id)"
+          >
+            {{ nextPageInfo.btnName }}
+          </v-btn>
+          <v-btn
+            class="ma-5"
+            color="orange"
+            elevation="2"
+            :to="goToEdit(item.id)"
+          >ویرایش اطلاعات
+          </v-btn>
+        </div>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
@@ -158,6 +165,13 @@ export default {
         }
       }
     },
+    goToEdit() {
+      return (id) => {
+        return {
+          path: 'edit/' + id
+        }
+      }
+    }
   },
   mounted() {
     // this.getUsersOfBonyad()
