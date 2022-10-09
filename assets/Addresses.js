@@ -17,6 +17,7 @@ const API_ADDRESS = {
     edit: (userId) => authServer + '/admin/bonyadEhsan/user/' + userId,
     update: authServer + '/admin/bonyadEhsan/user/',
     create: authServer + '/admin/bonyadEhsan/moshaver',
+    product: authServer + '/admin/bonyadEhsan/selectOption',
     base: authServer + '/user',
     mobile: {
       resend: authServer + '/mobile/resend',
