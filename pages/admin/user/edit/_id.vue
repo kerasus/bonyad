@@ -15,7 +15,8 @@
     <div class="col-md-3">
       <v-select
         v-model="gender"
-        :items="gendersTitle"
+        :items="genders"
+        item-text="title"
         label="جنسیت"
         @change="changeGender"
       ></v-select>
@@ -23,7 +24,8 @@
     <div class="col-md-3">
       <v-select
         v-model="major"
-        :items="majorsTitle"
+        :items="majors"
+        item-text="title"
         label="رشته"
         @change="changeMajor"
       ></v-select>
@@ -67,7 +69,8 @@
     <div class="col-md-3">
       <v-select
         v-model="province"
-        :items="provincesTitle"
+        :items="provinces"
+        item-text="title"
         label="استان"
         @change="changeProvince()"
       ></v-select>
@@ -107,13 +110,9 @@ export default {
       province: null,
       city: null,
       genders: [],
-      gendersTitle: [],
       majors: [],
-      majorsTitle: [],
       provinces: [],
-      provincesTitle: [],
       cities: [],
-      citiesTitle: [],
       availableCities: [],
     }
   },
@@ -123,9 +122,8 @@ export default {
   methods: {
     userCurrentInformation() {
       const userId = this.$route.params.id
-      this.$axios.get('alaa/api/v2/admin/bonyadEhsan/user/' + userId)
+      this.$axios.get(API_ADDRESS.moshaver.edit(userId))
         .then((resp) => {
-          // console.log(resp.data.data)
           this.user = new User(resp.data.data)
           this.major = this.user.major.title
           this.gender = this.user.gender.title
@@ -141,21 +139,9 @@ export default {
       this.$axios.get(API_ADDRESS.user.formData)
         .then((resp) => {
           this.genders = resp.data.data.genders
-          for (let index = 0; index < this.genders.length; index++) {
-            this.gendersTitle.push(this.genders[index].title);
-          }
           this.majors = resp.data.data.majors
-          for (let index = 0; index < this.majors.length; index++) {
-            this.majorsTitle.push(this.majors[index].title);
-          }
           this.provinces = resp.data.data.provinces
-          for (let index = 0; index < this.provinces.length; index++) {
-            this.provincesTitle.push(this.provinces[index].title);
-          }
           this.cities = resp.data.data.cities
-          for (let index = 0; index < this.cities.length; index++) {
-            this.citiesTitle.push(this.cities[index].title);
-          }
           this.availableCities = this.cities.filter(city =>
             city.province.id === this.user.province.id
           )
@@ -172,16 +158,15 @@ export default {
       const gender = this.genders.filter(item => item.title === this.gender)
       this.user.gender = gender[0]
     },
-    changeMajor(){
+    changeMajor() {
       const major = this.majors.filter(item => item.title === this.major)
       this.user.major = major[0]
     },
-    changeCity(){
+    changeCity() {
       const city = this.cities.filter(item => item.title === this.city)
       this.user.city = city[0]
     },
     edit() {
-      console.log(this.user.motherMobile)
       this.$axios.put(API_ADDRESS.moshaver.edit(this.$route.params.id),
         {
           firstName: this.user.first_name,
@@ -196,8 +181,7 @@ export default {
           shahr_id: this.user.city.id,
         })
         .then(resp => {
-          console.log(resp.data)
-          this.user= new User(resp.data)
+          this.user = new User(resp.data)
         })
         .catch(err => {
           console.log(err)

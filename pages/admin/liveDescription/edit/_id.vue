@@ -4,13 +4,37 @@
       <v-col
         class="d-flex"
         cols="12"
-        sm="12"
+        sm="5"
       >
         <v-text-field
           v-model="title"
           label="موضوع پیام"
           outlined
         />
+      </v-col>
+      <v-col
+        class="d-flex"
+        cols="12"
+        sm="5"
+      >
+        <v-select
+          v-model="product"
+          :items="products"
+          item-text="name"
+          label="انتخاب محصول"
+          :disabled="disabled"
+          @change="changeProduct"
+        ></v-select>
+      </v-col>
+      <v-col
+        class="d-flex"
+        cols="12"
+        sm="2"
+      >
+        <v-checkbox
+          v-model="checkbox"
+          label="انتخاب همه"
+        ></v-checkbox>
       </v-col>
       <v-col
         cols="12"
@@ -47,20 +71,44 @@ export default {
     return {
       title: '',
       description: '',
-      messageType: []
+      products: [],
+      product:null,
+      checkbox: false,
+      disabled: false
     }
   },
   created() {
     this.getMessage()
+    this.getProducts()
+  },
+  watch: {
+    checkbox(newValue) {
+      if (newValue === true) {
+        this.disabled = true
+        this.product = null
+      } else this.disabled = false
+    }
   },
   methods: {
+    getProducts() {
+      this.$axios.get(API_ADDRESS.moshaver.product)
+        .then(resp => {
+          this.products = resp.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    changeProduct() {
+      const product = this.products.filter(product => product.name === this.product)
+      this.productId = product[0].id
+    },
     getMessage() {
       const userId = this.$route.params.id
       this.$axios.get(API_ADDRESS.liveDescription.edit(userId))
         .then(resp => {
           this.title = resp.data.data.title
           this.description = resp.data.data.description
-          console.log(resp.data)
         })
         .catch(err => {
           console.log(err)
@@ -71,13 +119,13 @@ export default {
       this.$axios.put(API_ADDRESS.liveDescription.edit(userId), {
         title: this.title,
         description: this.description,
-        entity_id: 347,
+        entity_id: this.productId,
         entity_type: 'App\Product',
-        owner:2
+        owner: 2
       })
         .then(resp => {
           console.log(resp.data)
-          this.$router.push({path:'/admin/liveDescription/list'})
+          this.$router.push({path: '/admin/liveDescription/list'})
         })
         .catch(err => {
           console.log(err)
