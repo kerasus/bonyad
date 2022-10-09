@@ -75,7 +75,8 @@ export default {
       product: null,
       checkbox: false,
       disabled: false,
-      productId: null
+      productId: null,
+      entity_type: 'App\\Product'
     }
   },
   created() {
@@ -86,6 +87,8 @@ export default {
       if (newValue === true) {
         this.disabled = true
         this.product = null
+        this.productId = 5
+        this.entity_type = 'َApp\\Studyevent'
       } else this.disabled = false
     }
   },
@@ -94,7 +97,6 @@ export default {
       this.$axios.get(API_ADDRESS.moshaver.product)
         .then(resp => {
           this.products = resp.data.data
-          console.log(this.products)
         })
         .catch(err => {
           console.log(err)
@@ -105,13 +107,12 @@ export default {
       this.productId = product[0].id
     },
     createMessage() {
-      console.log(this.productId)
       this.$axios.post(API_ADDRESS.liveDescription.create, {
         title: this.title,
         description: this.description,
         owner: 2,
         entity_id: this.productId,
-        entity_type: 'App\\Product'
+        entity_type: this.entity_type
       })
         .then(() => {
           this.$router.push({path: '/admin/liveDescription/list'})

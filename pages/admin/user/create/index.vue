@@ -29,7 +29,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input @paste="onPaste" @paste="onPaste" :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام</span>
                 </label>
                 <span class="error-message" v-if="user.firstName_error">{{ user.firstName_error }}</span>

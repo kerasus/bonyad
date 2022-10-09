@@ -23,7 +23,7 @@
           item-text="name"
           label="انتخاب محصول"
           :disabled="disabled"
-          @change="changeProduct"
+          @change="setProduct"
         ></v-select>
       </v-col>
       <v-col
@@ -72,9 +72,11 @@ export default {
       title: '',
       description: '',
       products: [],
-      product:null,
+      product: null,
       checkbox: false,
-      disabled: false
+      disabled: false,
+      productId: null,
+      entity_type: ''
     }
   },
   created() {
@@ -86,22 +88,26 @@ export default {
       if (newValue === true) {
         this.disabled = true
         this.product = null
+        this.productId = 5
+        this.entity_type = 'App\\Studyevent'
       } else this.disabled = false
     }
   },
   methods: {
+    setProduct() {
+      const product = this.products.filter(product => product.id === this.productId)
+      this.product = product[0].name
+      this.productId = product[0].id
+    },
     getProducts() {
       this.$axios.get(API_ADDRESS.moshaver.product)
         .then(resp => {
           this.products = resp.data.data
+          this.setProduct()
         })
         .catch(err => {
           console.log(err)
         })
-    },
-    changeProduct() {
-      const product = this.products.filter(product => product.name === this.product)
-      this.productId = product[0].id
     },
     getMessage() {
       const userId = this.$route.params.id
@@ -109,6 +115,11 @@ export default {
         .then(resp => {
           this.title = resp.data.data.title
           this.description = resp.data.data.description
+          this.productId = resp.data.data.entity_id
+          this.entity_type = resp.data.data.entity_type
+          if (this.productId === 5) {
+            this.checkbox = true
+          }
         })
         .catch(err => {
           console.log(err)
@@ -120,7 +131,7 @@ export default {
         title: this.title,
         description: this.description,
         entity_id: this.productId,
-        entity_type: 'App\Product',
+        entity_type: this.entity_type,
         owner: 2
       })
         .then(resp => {

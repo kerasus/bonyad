@@ -91,12 +91,7 @@ export default {
       },
       totalRows: 7,
       headers: [
-        {
-          text: 'توضیحات',
-          align: 'center',
-          value: 'description'
-        },
-        {text: 'عنوان', value: 'title'},
+        {text: 'عنوان', align: 'center', value: 'title'},
         {text: 'سنجاق', value: 'has_pinned'},
         {text: 'ویرایش', value: 'edit',},
         {text: 'حذف', value: 'delete',},

@@ -53,10 +53,10 @@ export default {
         //     icon: 'calendar',
         //     path: '/abrisham/Schedule',
         // },
-        // {
-        //     icon: 'headphones',
-        //     path: '/abrisham/consulting',
-        // },
+        {
+            icon: 'headphones',
+            path: '/abrisham/consulting',
+        },
         // {
         //     icon: 'list-check',
         //     path: '/abrisham/my-performance',
@@ -66,10 +66,10 @@ export default {
         //     icon: 'stats',
         //     path: '/abrisham/assessment',
         // },
-        // {
-        //     icon: 'envelope',
-        //     path: '/abrisham/news',
-        // },
+        {
+            icon: 'envelope',
+            path: '/abrisham/news',
+        },
         {
           icon: 'world',
           path: '/abrisham/map',
