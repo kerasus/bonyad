@@ -48,13 +48,13 @@
     </div>
     <div class="col-md-3">
       <v-text-field
-        v-model="fatherMobile"
+        v-model="user.fatherMobile"
         label="موبایل پدر"
       />
     </div>
     <div class="col-md-3">
       <v-text-field
-        v-model="motherMobile"
+        v-model="user.motherMobile"
         label="موبایل مادر"
       />
     </div>
@@ -106,8 +106,6 @@ export default {
       gender: null,
       province: null,
       city: null,
-      fatherMobile: '',
-      motherMobile: '',
       genders: [],
       gendersTitle: [],
       majors: [],
@@ -127,12 +125,12 @@ export default {
       const userId = this.$route.params.id
       this.$axios.get('alaa/api/v2/admin/bonyadEhsan/user/' + userId)
         .then((resp) => {
+          // console.log(resp.data.data)
           this.user = new User(resp.data.data)
           this.major = this.user.major.title
           this.gender = this.user.gender.title
           this.province = this.user.province.title
           this.city = this.user.city.title
-          console.log(this.city)
           this.getUserFormData()
         })
         .catch(err => {
@@ -183,11 +181,15 @@ export default {
       this.user.city = city[0]
     },
     edit() {
+      console.log(this.user.motherMobile)
       this.$axios.put(API_ADDRESS.moshaver.edit(this.$route.params.id),
         {
           firstName: this.user.first_name,
           lastName: this.user.last_name,
-          mobile: this.user.mobile,
+          phone: this.user.phone,
+          address: this.user.address,
+          motherMobile: this.user.motherMobile,
+          fatherMobile: this.user.fatherMobile,
           nationalCode: this.user.nationalCode,
           major_id: this.user.major.id,
           gender_id: this.user.gender.id,
