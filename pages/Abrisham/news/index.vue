@@ -118,6 +118,10 @@
                 @observe="getNewUnpinLiveDesctiption"
                 @showMore="seen"
               />
+              <v-pagination
+                v-model="page"
+                :length="unpinNewsLastPage"
+              ></v-pagination>
             </v-col>
           </v-row>
         </div>
@@ -167,6 +171,7 @@ export default {
       unpinNewsLastPage: null,
       doFilter: false,
       banner: true,
+      page: 1,
       filtersData: {
         sort: {
           value: 'created_at-desc',
@@ -287,7 +292,8 @@ export default {
         .then((response) => {
           this.unpinNewsNextPage = parseInt(response.data.meta.current_page) + 1
           this.unpinNewsLastPage = response.data.meta.last_page
-          this.unpinNews= new LiveDescriptionList(response.data.data)
+          console.log(this.unpinNewsLastPage)
+          this.unpinNews = new LiveDescriptionList(response.data.data)
           this.unpinNews.loading = false
         })
         .catch(() => {
@@ -299,44 +305,48 @@ export default {
     },
     generateParams() {
       const params = []
-      if (
-        this.filtersData.lesson &&
-        this.filtersData.lesson.id !== null &&
-        typeof this.filtersData.lesson.id !== 'undefined'
-      ) {
-        params.push({
-          key: 'product_id',
-          value: this.filtersData.lesson.id
-        })
-      }
+      // if (
+      //   this.filtersData.lesson &&
+      //   this.filtersData.lesson.id !== null &&
+      //   typeof this.filtersData.lesson.id !== 'undefined'
+      // ) {
+      //   params.push({
+      //     key: 'product_id',
+      //     value: this.filtersData.lesson.id
+      //   })
+      // }
+      //
+      // if (this.filtersData.category && this.filtersData.category !== 'همه') {
+      //   params.push({
+      //     key: 'tags[]',
+      //     value: this.filtersData.category
+      //   })
+      // }
+      // if (this.filtersData.sort) {
+      //   params.push({
+      //     key: 'order_by[]',
+      //     value: this.filtersData.sort.key
+      //   })
+      //   params.push({
+      //     key: 'order_type[]',
+      //     value: this.filtersData.sort.type
+      //   })
+      // }
 
-      if (this.filtersData.category && this.filtersData.category !== 'همه') {
-        params.push({
-          key: 'tags[]',
-          value: this.filtersData.category
-        })
-      }
-      if (this.filtersData.sort) {
-        params.push({
-          key: 'order_by[]',
-          value: this.filtersData.sort.key
-        })
-        params.push({
-          key: 'order_type[]',
-          value: this.filtersData.sort.type
-        })
-      }
-
-      params.push({
-        key: 'liveDescriptionPage',
-        value: this.unpinNewsNextPage
-      })
+      // params.push({
+      //   key: 'liveDescriptionPage',
+      //   value: this.unpinNewsNextPage
+      // })
 
       params.push({
         key: 'owner',
         value: 2
       })
 
+      params.push({
+        key: 'length',
+        value: 3
+      })
 
       return params.map(item => item.key + '=' + item.value).join('&')
     },

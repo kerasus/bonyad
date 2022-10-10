@@ -48,7 +48,6 @@ export default {
   data() {
     return {
       busy: false,
-      page: 1
     }
   },
   methods: {
