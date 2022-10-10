@@ -6,6 +6,13 @@
       </h2>
     </div>
     <v-data-table
+      :footer-props="{
+        disableItemsPerPage: true,
+        itemsPerPageText: 'تعداد پيام در هر صفحه',
+        pageText: 'صفحه ' + options.page + ' از ' + Math.ceil(totalRows / options.itemsPerPage),
+        showCurrentPage: true,
+        showFirstLastPage: true
+      }"
       :headers="headers"
       :items="items"
       :items-per-page="5"
@@ -15,12 +22,16 @@
     >
       <template v-slot:item.has_pinned="{ item }">
         <v-btn v-if="item.has_pinned"
+               :loading="pinLoading"
                color="grey"
                @click="unpin(item.id)"
         >
-          از سنجاق برداشتن
+          <v-icon color="white">
+            mdi-pin
+          </v-icon>
         </v-btn>
         <v-btn v-else
+               :loading="pinLoading"
                @click="pin(item.id)"
         >
           سنجاق کردن
@@ -33,7 +44,23 @@
             color="light-blue lighten-1"
             :to="getEditRoute(item.id)"
           >
-            ویرایش پیام
+            <v-icon color="white">
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+        </div>
+      </template>
+      <template v-slot:item.delete="{ item }">
+        <div class="btns">
+          <v-btn
+            class="ma-2"
+            color="red lighten-1"
+            @click="deleteMessage(item.id)"
+            :loading="deleteLoading"
+          >
+            <v-icon color="white">
+              mdi-delete
+            </v-icon>
           </v-btn>
         </div>
       </template>
@@ -56,15 +83,18 @@ export default {
     return {
       sortBy: 'has_pinned',
       sortDesc: true,
+      pinLoading: false,
+      deleteLoading: false,
+      options: {
+        itemsPerPage: 5,
+        page: 1
+      },
+      totalRows: 7,
       headers: [
-        {
-          text: 'توضیحات',
-          align: 'center',
-          value: 'description'
-        },
-        {text: 'عنوان', value: 'title'},
-        {text: 'پین', value: 'has_pinned'},
+        {text: 'عنوان', align: 'center', value: 'title'},
+        {text: 'سنجاق', value: 'has_pinned'},
         {text: 'ویرایش', value: 'edit',},
+        {text: 'حذف', value: 'delete',},
       ],
       items: []
     }
@@ -88,20 +118,34 @@ export default {
   },
   methods: {
     getMessagesList() {
-      this.$axios.get(API_ADDRESS.liveDescription.list, {
-
+      this.$axios.get(API_ADDRESS.liveDescription.create, {
+        params: {owner: 2, length: 9999}
       })
         .then(resp => {
           this.items = resp.data.data
-          console.log(this.items)
+          this.totalRows = resp.data.meta.total
+          // this.options.itemsPerPage = resp.data.meta.per_page
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    deleteMessage(messageId) {
+      this.deleteLoading = true
+      this.$axios.delete(API_ADDRESS.liveDescription.edit(messageId))
+        .then(() => {
+          this.deleteLoading = false
+          this.getMessagesList()
         })
         .catch(err => {
           console.log(err)
         })
     },
     pin(messageId) {
+      this.pinLoading = true
       this.$axios.get(API_ADDRESS.liveDescription.pin(messageId))
         .then(() => {
+          this.pinLoading = false
           this.getMessagesList()
         })
         .catch(err => {
@@ -109,8 +153,10 @@ export default {
         })
     },
     unpin(messageId) {
+      this.pinLoading = true
       this.$axios.get(API_ADDRESS.liveDescription.unpin(messageId))
         .then(() => {
+          this.pinLoading = false
           this.getMessagesList()
         })
         .catch(err => {

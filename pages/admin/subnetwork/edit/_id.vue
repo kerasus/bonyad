@@ -50,18 +50,6 @@
     </div>
     <div class="col-md-3">
       <v-text-field
-        v-model="user.fatherMobile"
-        label="موبایل پدر"
-      />
-    </div>
-    <div class="col-md-3">
-      <v-text-field
-        v-model="user.motherMobile"
-        label="موبایل مادر"
-      />
-    </div>
-    <div class="col-md-3">
-      <v-text-field
         v-model="user.nationalCode"
         label="کد ملی"
       />
@@ -84,14 +72,16 @@
         @change="changeCity"
       ></v-select>
     </div>
-    <v-btn class="mx-5"
-           :loading="loading"
-           large
-           rounded
-           elevation="4"
-           @click="edit"
-    >ذخیره تغییرات
-    </v-btn>
+    <div class="col-md-12">
+      <v-btn class="mx-5"
+             :loading="loading"
+             large
+             rounded
+             elevation="4"
+             @click="edit"
+      >ذخیره تغییرات
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -173,8 +163,6 @@ export default {
           lastName: this.user.last_name,
           phone: this.user.phone,
           address: this.user.address,
-          motherMobile: this.user.motherMobile,
-          fatherMobile: this.user.fatherMobile,
           nationalCode: this.user.nationalCode,
           major_id: this.user.major.id,
           gender_id: this.user.gender.id,
