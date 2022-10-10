@@ -29,7 +29,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام</span>
                 </label>
                 <span class="error-message" v-if="user.firstName_error">{{ user.firstName_error }}</span>
@@ -38,7 +38,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام خانوادگی</span>
                 </label>
                 <span class="error-message" v-if="user.lastName_error">{{ user.lastName_error }}</span>
@@ -71,7 +71,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">موبایل</span>
                 </label>
                 <span class="error-message" v-if="user.mobile_error">{{ user.mobile_error }}</span>
@@ -80,7 +80,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.address_error }" required type="text" v-model="user.address"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.address_error }" required type="text" v-model="user.address"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">آدرس</span>
                 </label>
                 <span class="error-message" v-if="user.address_error">{{ user.address_error }}</span>
@@ -89,7 +89,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.phone_error }" required type="text" v-model="user.phone"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.phone_error }" required type="text" v-model="user.phone"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">تلفن</span>
                 </label>
                 <span class="error-message" v-if="user.phone_error">{{ user.phone_error }}</span>
@@ -98,7 +98,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.father_mobile_error }" required type="text" v-model="user.father_mobile"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.father_mobile_error }" required type="text" v-model="user.father_mobile"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">موبایل پدر</span>
                 </label>
                 <span class="error-message" v-if="user.father_mobile_error">{{ user.father_mobile_error }}</span>
@@ -107,7 +107,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.mother_mobile_error }" required type="text" v-model="user.mother_mobile"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.mother_mobile_error }" required type="text" v-model="user.mother_mobile"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">موبایل مادر</span>
                 </label>
                 <span class="error-message" v-if="user.mother_mobile_error">{{ user.mother_mobile_error }}</span>
@@ -116,7 +116,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
                 <span class="error-message" v-if="user.nationalCode_error">{{ user.nationalCode_error }}</span>
@@ -183,6 +183,7 @@ export default {
   middleware: ['auth', 'redirectAdmin'],
   data () {
     return {
+      jsonObj: null,
       userForm: [],
       genders: [],
       majors: [],
@@ -324,6 +325,44 @@ export default {
           })
         }
       })
+    },
+    onPaste (e) {
+      e.preventDefault();
+      let cb;
+      let clipText = '';
+      if (window.clipboardData && window.clipboardData.getData) {
+        cb = window.clipboardData;
+        clipText = cb.getData('Text');
+      } else if (e.clipboardData && e.clipboardData.getData) {
+        cb = e.clipboardData;
+        clipText = cb.getData('text/plain');
+      } else {
+        cb = e.originalEvent.clipboardData;
+        clipText = cb.getData('text/plain');
+      }
+      let clipRows = clipText.split('\n');
+      for (let i = 0; i < clipRows.length; i++) {
+        clipRows[i] = clipRows[i].split('\t');
+      }
+      let jsonObj = [];
+      for (let i = 0; i < clipRows.length - 1; i++) {
+        let item = {};
+        for (let j = 0; j < clipRows[i].length; j++) {
+          if (clipRows[i][j] !== '\r') {
+            if (clipRows[i][j].length !== 0) {
+              item[j] = clipRows[i][j];
+            }
+          }
+        }
+        jsonObj.push(item);
+      }
+      if (jsonObj.length > 0) {
+        this.jsonObj = jsonObj;
+        // toastr.success('اکسل کئی شد.');
+        console.log(this.jsonObj);
+      } else {
+        // toastr.error('عبارت کپی شده صحیح نمی باشد.');
+      }
     }
   },
   computed: {
