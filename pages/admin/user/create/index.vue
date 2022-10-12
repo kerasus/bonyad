@@ -14,11 +14,29 @@
     </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="5" class="vertialcally-center-items">
+        <v-col md="12" class="vertialcally-center-items">
+          <v-btn block color="green" dark @click="save">
+            دانلود اکسل نهایی
+            <v-icon :style="{ marginRight: '10px' }">
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row :style="{ padding: '20px 10px' }">
+        <v-col md="5" class="vertialcally-center-items text-left  ">
           <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon :style="{ marginRight: '10px' }">
               mdi-content-save
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col md="5" class="vertialcally-center-items">
+          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
+            <a href="./assets/sampleExcel/sample.xlsm" download>دانلود اکسل نمونه</a>
+            <v-icon :style="{ marginRight: '10px' }">
+              mdi-download
             </v-icon>
           </v-btn>
         </v-col>
@@ -198,13 +216,14 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
+import {mixinCreateUsers} from '@/mixin/Mixins'
 
 export default {
   name: 'userCreate',
+  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
-      jsonObj: [],
       userForm: [],
       genders: [],
       majors: [],
@@ -212,7 +231,8 @@ export default {
       cities: [],
       loading: false,
       usage_limit: 0,
-      usage_number: 0
+      usage_number: 0,
+      // excel: {title: 'دانلود اکسل نمونه', loc: require('@/assets/sampleExcel/sample.xlsm')}
     }
   },
   head() {
@@ -244,34 +264,34 @@ export default {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
-        // if (data && data[i][0] === 'نام'){
-        //   continue;
-        // }
+        if (data && data[i] && data[i][0] === 'نام'){
+          continue;
+        }
         this.userForm.push({
           firstName: data && data[i] ? data[i][0] : '',
-          address: data && data[i] ? data[i][5] : '',
+          address: data && data[i] ? data[i][7] : '',
           address_error: false,
-          phone: data && data[i] ? data[i][6] : '',
+          phone: data && data[i] ? data[i][8] : '',
           phone_error: false,
-          father_mobile: data && data[i] ? data[i][7] : '',
+          father_mobile: data && data[i] ? data[i][9] : '',
           father_mobile_error: false,
-          mother_mobile: data && data[i] ? data[i][8] : '',
+          mother_mobile: data && data[i] ? data[i][10] : '',
           mother_mobile_error: false,
           firstName_error: false,
           lastName: data && data[i] ? data[i][1] : '',
           lastName_error: false,
-          gender_id: '',
+          gender_id: data && data[i] ? data[i][3] : '',
           gender_id_error: false,
-          major_id: '',
+          major_id: data && data[i] ? data[i][5] : '',
           major_id_error: false,
-          mobile: data && data[i] ? data[i][4] : '',
+          mobile: data && data[i] ? data[i][6] : '',
           mobile_error: false,
-          nationalCode: data && data[i] ? data[i][9] : '',
+          nationalCode: data && data[i] ? data[i][11] : '',
           nationalCode_error: false,
-          province: data && data[i] ?  Number(data[i][12]) : '',
+          province: data && data[i] ? Number(data[i][14]) : '',
           provinceDropDown: false,
           province_error: false,
-          shahr_id: data && data[i] ? Number(data[i][14]) : '',
+          shahr_id: data && data[i] ? Number(data[i][16]) : '',
           shahr_idDropdown: false,
           shahr_id_error: false,
           key: Date.now() + Math.random() * 10000,
@@ -279,12 +299,6 @@ export default {
           editable: true,
           loading: false
         })
-        if (data && data[i]) {
-          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
-          const major_id = this.majors.filter(major => major.title === data[i][3])
-          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
-          this.userForm[i].major_id = major_id[0] ? major_id[0].id : 0
-        }
       }
     },
     isUserInfoComplete(user) {
@@ -304,7 +318,6 @@ export default {
           this.cities = resp.data.data.cities
         })
     },
-
 
 
     save() {
@@ -360,41 +373,8 @@ export default {
       })
     },
     onPaste(e) {
-      e.preventDefault();
-      let cb;
-      let clipText = '';
-      if (window.clipboardData && window.clipboardData.getData) {
-        cb = window.clipboardData;
-        clipText = cb.getData('Text');
-      } else if (e.clipboardData && e.clipboardData.getData) {
-        cb = e.clipboardData;
-        clipText = cb.getData('text/plain');
-      } else {
-        cb = e.originalEvent.clipboardData;
-        clipText = cb.getData('text/plain');
-      }
-      let clipRows = clipText.split('\n');
-      for (let i = 0; i < clipRows.length; i++) {
-        clipRows[i] = clipRows[i].split('\t');
-      }
-      let jsonObj = [];
-      for (let i = 0; i < clipRows.length - 1; i++) {
-        let item = {};
-        for (let j = 0; j < clipRows[i].length; j++) {
-          if (clipRows[i][j] !== '\r' && clipRows[i][j].length !== 0) {
-            item[j] = clipRows[i][j];
-          }
-        }
-        jsonObj.push(item);
-      }
-      if (jsonObj.length > 0) {
-        this.jsonObj = jsonObj;
-        // toastr.success('اکسل کپی شد.');
-        console.log(this.jsonObj);
-        this.initUserFormArray(true, 20, this.jsonObj)
-      } else {
-        // toastr.error('عبارت کپی شده صحیح نمی باشد.');
-      }
+      this.pasteData(e)
+      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
   },
   computed: {
@@ -436,6 +416,10 @@ export default {
 </script>
 
 <style scoped>
+a{
+  text-decoration: none;
+  color: white !important;
+}
 .has-been-saved {
   background: rgba(0, 280, 0, 0.2);
 }

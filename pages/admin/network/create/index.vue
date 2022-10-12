@@ -5,6 +5,16 @@
     </v-overlay>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
+        <v-col md="12" class="vertialcally-center-items">
+          <v-btn block color="green" dark @click="save">
+            دانلود اکسل
+            <v-icon :style="{ marginRight: '10px' }">
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row :style="{ padding: '20px 10px' }">
         <v-col md="2" class="vertialcally-center-items">
           <v-btn color="green" dark @click="save">
             ذخیره
@@ -20,7 +30,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام</span>
                 </label>
                 <span class="error-message" v-if="user.firstName_error">{{ user.firstName_error }}</span>
@@ -29,7 +39,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام خانوادگی</span>
                 </label>
                 <span class="error-message" v-if="user.lastName_error">{{ user.lastName_error }}</span>
@@ -50,7 +60,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">موبایل</span>
                 </label>
                 <span class="error-message" v-if="user.mobile_error">{{ user.mobile_error }}</span>
@@ -59,7 +69,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
                 <span class="error-message" v-if="user.nationalCode_error">{{ user.nationalCode_error }}</span>
@@ -99,7 +109,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.student_register_limit_error }" required v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.student_register_limit_error }" required v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
                   <span class="placeholder">محدودیت ثبت نام</span>
                 </label>
                 <span class="error-message" v-if="user.student_register_limit_error">{{ user.student_register_limit_error }}</span>
@@ -129,9 +139,11 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
+import {mixinCreateUsers} from '@/mixin/Mixins'
 
 export default {
   name: 'moshaverCreate',
+  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data () {
     return {
@@ -267,6 +279,10 @@ export default {
           })
         }
       })
+    },
+    onPaste(e){
+      this.pasteData(e)
+      this.initUserFormArray(true, 20, this.jsonObj)
     }
   },
   computed: {
