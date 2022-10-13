@@ -2,9 +2,9 @@
   <div>
     <v-row :style="{ padding: '20px 10px' }">
       <v-col md="12" class="vertialcally-center-items">
-        <v-btn block color="green" dark>
-          <a :href=download target="_blank" download>دانلود خروجی اکسل</a>
-          <v-icon :style="{ marginRight: '10px' }">
+        <v-btn block color="green" dark @click="getExcel">
+          دانلود خروجی اکسل
+          <v-icon class="mr-3">
             mdi-download
           </v-icon>
         </v-btn>
@@ -132,7 +132,8 @@ export default {
       const mode = this.getUserOfBonyadParam()
       this.$axios.get(API_ADDRESS.exam.usersOfBonyad, {params: {action: mode, excel_export: true}})
         .then(resp => {
-          this.download = resp.data.data.export_file_url
+          let route = resp.data.data.export_file_url
+          window.open(route, '_blank');
         })
         .catch(err => {
           console.log(err)
@@ -148,7 +149,6 @@ export default {
           this.totalRows = response.data.meta.total
           this.totalRows = response.data.meta.total
           this.options.itemsPerPage = response.data.meta.per_page
-          this.getExcel()
         })
     },
     getUserOfBonyadParam() {
@@ -201,6 +201,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+a{
+  text-decoration: none;
+  color: white !important;
+}
+
 .header {
   display: flex;
   align-items: center;
