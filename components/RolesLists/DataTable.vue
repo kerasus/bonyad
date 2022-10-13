@@ -1,12 +1,22 @@
 <template>
-<div>
-  <div class="header">
-    <h2 class="mb-2">
-      {{ tableTitle }}
-    </h2>
-  </div>
-  <v-data-table
-    :footer-props="{
+  <div>
+    <v-row :style="{ padding: '20px 10px' }">
+      <v-col md="12" class="vertialcally-center-items">
+        <v-btn block color="green" dark>
+          <a :href=download target="_blank" download>دانلود خروجی اکسل</a>
+          <v-icon :style="{ marginRight: '10px' }">
+            mdi-download
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <div class="header">
+      <h2 class="mb-2">
+        {{ tableTitle }}
+      </h2>
+    </div>
+    <v-data-table
+      :footer-props="{
         disableItemsPerPage: true,
         itemsPerPageText: '',
         pageText: 'صفحه ' + options.page + ' از ' + Math.ceil(totalRows / options.itemsPerPage),
@@ -66,10 +76,10 @@ export default {
     nextPageInfo: {
       type: Object,
       default() {
-         return {
-           btnName : 'لیست زیر شبکه ها',
-           routeName : 'subnetwork'
-         }
+        return {
+          btnName: 'لیست زیر شبکه ها',
+          routeName: 'subnetwork'
+        }
       }
     },
     tableTitle: {
@@ -81,8 +91,9 @@ export default {
       default: 'network'
     }
   },
-  data () {
+  data() {
     return {
+      download: '',
       options: {
         itemsPerPage: 25,
         page: 1
@@ -94,12 +105,12 @@ export default {
           align: 'center',
           value: 'id',
         },
-        { text: 'نام', value: 'first_name' },
-        { text: 'نام خانوادگی', value: 'last_name' },
-        { text: 'شماره همراه', value: 'mobile' },
-        { text: 'پایه', value: 'grade' },
-        { text: 'رشته', value: 'major' },
-        { text: 'عملیات', value: 'actions' },
+        {text: 'نام', value: 'first_name'},
+        {text: 'نام خانوادگی', value: 'last_name'},
+        {text: 'شماره همراه', value: 'mobile'},
+        {text: 'پایه', value: 'grade'},
+        {text: 'رشته', value: 'major'},
+        {text: 'عملیات', value: 'actions'},
       ],
       rows: [],
       dialog: false,
@@ -117,10 +128,19 @@ export default {
     deep: true,
   },
   methods: {
+    getExcel() {
+      const mode = this.getUserOfBonyadParam()
+      this.$axios.get(API_ADDRESS.exam.usersOfBonyad, {params: {action: mode, excel_export: true}})
+        .then(resp => {
+          this.download = resp.data.data.export_file_url
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     getUsersOfBonyad() {
       const id = this.getUserOfBonyadId()
       const mode = this.getUserOfBonyadParam()
-      // const address =
       this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode, this.options.page))
         .then((response) => {
           response.data.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
@@ -128,15 +148,16 @@ export default {
           this.totalRows = response.data.meta.total
           this.totalRows = response.data.meta.total
           this.options.itemsPerPage = response.data.meta.per_page
+          this.getExcel()
         })
     },
-    getUserOfBonyadParam () {
-      if (this.user.hasPermission('bonyadShowNetworks') && !this.doesRouteHaveId()) {
-        return 'show-'+ this.pageName + 's'
+    getUserOfBonyadParam() {
+      if (!this.doesRouteHaveId()) {
+        return 'show-' + this.pageName + 's'
       }
       return null
     },
-    getUserOfBonyadId () {
+    getUserOfBonyadId() {
       // return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list') ? this.$route.params.list : this.user.id
       if (this.doesRouteHaveId()) {
         return this.$route.params.list
@@ -148,20 +169,20 @@ export default {
     }
   },
   computed: {
-    getNextRoutePath () {
+    getNextRoutePath() {
       return (id) => {
         return {
-          path: '/admin/'+ this.nextPageInfo.routeName + '/' + id
+          path: '/admin/' + this.nextPageInfo.routeName + '/' + id
         }
       }
     },
-    user () {
+    user() {
       return this.$store.getters['Auth/user']
     },
     getResultRoute() {
       return (id) => {
         return {
-          path : '/admin/user/result/' + id
+          path: '/admin/user/result/' + id
         }
       }
     },
@@ -185,6 +206,7 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
+
 ::v-deep .v-data-footer {
   .v-data-footer__select {
     .v-input {
