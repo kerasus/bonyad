@@ -15,8 +15,8 @@
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark @click="document.location='./assets/sampleExcel/sample.xlsx'">
-            دانلود نمونه اکسل
+          <v-btn block color="green" dark>
+            <a href="@assets/sampleExcel/sample.xlsx" download>دانلود نمونه اکسل</a>
             <v-icon class="mr-3">
               mdi-download
             </v-icon>
@@ -25,7 +25,7 @@
         <v-col md="5" class="vertialcally-center-items text-left  ">
           <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
             ذخیره
-            <v-icon :style="{ marginRight: '10px' }">
+            <v-icon class="mr-3">
               mdi-content-save
             </v-icon>
           </v-btn>
@@ -254,7 +254,7 @@ export default {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
-        if (data && data[i] && data[i][0] === 'نام'){
+        if (data && data[i] && data[i][0] === 'نام') {
           continue;
         }
         this.userForm.push({
@@ -337,14 +337,14 @@ export default {
                 user[key] = false
               }
             })
-            setTimeout(() => {
-              let that = this
-              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-                .then(resp => {
-                  that.usage_limit = resp.data.data.usage_limit
-                  that.usage_number = resp.data.data.usage_number
-                })
-            }, 500)
+            // setTimeout(() => {
+            // let that = this
+            // this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+            //   .then(resp => {
+            //     that.usage_limit = resp.data.data.usage_limit
+            //     that.usage_number = resp.data.data.usage_number
+            //   })
+            // }, 500)
           }).catch(err => {
             user.loading = false
             Object.keys(user).forEach(key => {
@@ -395,21 +395,22 @@ export default {
   created() {
     this.initUserFormArray(true, 20)
     this.getUserFormData()
-    let that = this
-    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-      .then(resp => {
-        that.usage_limit = resp.data.data.usage_limit
-        that.usage_number = resp.data.data.usage_number
-      })
+    // let that = this
+    // this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+    //   .then(resp => {
+    //     that.usage_limit = resp.data.data.usage_limit
+    //     that.usage_number = resp.data.data.usage_number
+    //   })
   }
 }
 </script>
 
 <style scoped>
-a{
+a {
   text-decoration: none;
   color: white !important;
 }
+
 .has-been-saved {
   background: rgba(0, 280, 0, 0.2);
 }

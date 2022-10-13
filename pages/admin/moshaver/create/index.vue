@@ -7,7 +7,7 @@
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
           <v-btn block color="green" dark @click="document.location='./assets/sampleExcel/sample.xlsx'">
-            دانلود نمونه اکسل
+            <a href="@assets/sampleExcel/sample.xlsx" download>دانلود نمونه اکسل</a>
             <v-icon class="mr-3">
               mdi-download
             </v-icon>
@@ -16,7 +16,7 @@
         <v-col md="5" class="vertialcally-center-items">
           <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
             ذخیره
-            <v-icon :style="{ marginRight: '10px' }">
+            <v-icon class="mr-3">
               mdi-content-save
             </v-icon>
           </v-btn>

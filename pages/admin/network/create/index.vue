@@ -16,7 +16,7 @@
         <v-col md="5" class="vertialcally-center-items">
           <v-btn color="green" dark @click="save">
             ذخیره
-            <v-icon :style="{ marginRight: '10px' }">
+            <v-icon class="mr-3">
               mdi-content-save
             </v-icon>
           </v-btn>
