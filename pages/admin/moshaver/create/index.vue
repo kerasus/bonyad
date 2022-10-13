@@ -5,21 +5,19 @@
     </v-overlay>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark @click="save">
-            دانلود اکسل
-            <v-icon :style="{ marginRight: '10px' }">
-              mdi-download
-            </v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="2" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save">
+        <v-col md="5" class="vertialcally-center-items">
+          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon :style="{ marginRight: '10px' }">
               mdi-content-save
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col md="5" class="vertialcally-center-items">
+          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
+            <a href="./assets/sampleExcel/sample.xlsm" download>دانلود نمونه اکسل</a>
+            <v-icon :style="{ marginRight: '10px' }">
+              mdi-download
             </v-icon>
           </v-btn>
         </v-col>
@@ -324,6 +322,11 @@ export default {
 </script>
 
 <style scoped>
+a{
+  text-decoration: none;
+  color: white !important;
+}
+
 .has-been-saved {
   background: rgba(0, 280, 0, 0.2);
 }
