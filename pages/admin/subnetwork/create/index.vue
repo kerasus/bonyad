@@ -6,7 +6,7 @@
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark @click="document.location='./assets/sampleExcel/sample.xlsx'">
+          <v-btn block color="green" dark @click="window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')">
             دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
