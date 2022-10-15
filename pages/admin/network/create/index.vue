@@ -3,6 +3,15 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate />
     </v-overlay>
+<!--    <v-progress-linear-->
+<!--      :value="usage_number / usage_limit * 100"-->
+<!--      color="blue-grey"-->
+<!--      height="25"-->
+<!--    >-->
+<!--      <template v-slot:default="{ value }">-->
+<!--        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>-->
+<!--      </template>-->
+<!--    </v-progress-linear>-->
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -189,7 +198,7 @@ export default {
           firstName: data && data[i] ? data[i][0] : '',
           firstNameMessage: '',
           firstName_error: false,
-          student_register_limit: data && data[i] ? data[i][9] : '',
+          student_register_limit: data && data[i] ? Number(data[i][8]) : '',
           student_register_limitMessage: '',
           student_register_limit_error: '',
           lastName: data && data[i] ? data[i][1] : '',
@@ -215,10 +224,7 @@ export default {
           const gender_id = this.genders.find(gender => gender.title === data[i][2])
           const major_id = this.majors.find(major => major.title === data[i][3])
           const province = this.provinces.find(province => province.title === data[i][6])
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][8])
-          if (!shahr_id) {
-            shahr_id = this.cities.find(city => city.title === data[i][8])
-          }
+          let shahr_id = this.cities.find(city => city.title === data[i][7])
           this.userForm[i].gender_id = gender_id ? gender_id.id : 0
           this.userForm[i].major_id = major_id ? major_id.id : 0
           this.userForm[i].province = province ? province.id : 0
