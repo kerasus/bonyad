@@ -15,11 +15,11 @@
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark @click=" window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')">
-<!--            <a href="@assets/sampleExcel/sample.xlsx" download>دانلود نمونه اکسل</a>-->
+          <v-btn block color="green" dark @click="downloadExcel">
             <v-icon class="mr-3">
               mdi-download
             </v-icon>
+            دانلود نمونه اکسل
           </v-btn>
         </v-col>
         <v-col md="5" class="vertialcally-center-items text-left  ">
@@ -231,6 +231,9 @@ export default {
     }
   },
   methods: {
+    downloadExcel () {
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')
+    },
     provinceSelectOnClick(user) {
       user.provinceDropDown = true
     },
