@@ -228,17 +228,17 @@ export default {
           loading: false
         })
         if (data && data[i]) {
-          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
-          const major_id = this.majors.filter(major => major.title === data[i][3])
-          const province = this.provinces.filter(province => province.title === data[i][6])
-          let shahr_id = this.cities.find(city => city.title === data[i][8])
+          const gender_id = this.genders.find(gender => gender.title === data[i][2])
+          const major_id = this.majors.find(major => major.title === data[i][3])
+          const province = this.provinces.find(province => province.title === data[i][6])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][8])
           if (!shahr_id) {
             shahr_id = this.cities.find(city => city.title === data[i][8])
           }
-          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
-          this.userForm[i].major_id = major_id[0] ? major_id[0].id : 0
-          this.userForm[i].province = province[0] ? province[0].id : 0
-          this.userForm[i].shahr_id = shahr_id? shahr_id.id : 0
+          this.userForm[i].gender_id = gender_id ? gender_id.id : 0
+          this.userForm[i].major_id = major_id ? major_id.id : 0
+          this.userForm[i].province = province ? province.id : 0
+          this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
         }
       }
     },
