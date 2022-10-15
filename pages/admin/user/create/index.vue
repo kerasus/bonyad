@@ -343,7 +343,7 @@ export default {
         }),
         type: 'user' // user - moshaver - subnetwork - network
       }
-      
+
       this.userForm.forEach(user => {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
