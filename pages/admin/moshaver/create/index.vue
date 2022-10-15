@@ -6,7 +6,8 @@
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark @click=" window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')">
+          <v-btn block color="green" dark
+                 @click=" window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')">
             دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
@@ -14,7 +15,7 @@
           </v-btn>
         </v-col>
         <v-col md="5" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
+          <v-btn color="green" dark @click="save" :loading="loading" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon class="mr-3">
               mdi-content-save
@@ -189,9 +190,6 @@ export default {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
-        if (data && data[i] && data[i][0] === 'نام'){
-          continue;
-        }
         this.userForm.push({
           firstName: data && data[i] ? data[i][0] : '',
           firstNameMessage: '',
@@ -200,16 +198,16 @@ export default {
           student_register_limitMessage: '',
           lastName: data && data[i] ? data[i][1] : '',
           lastName_error: false,
-          gender_id: data && data[i] ? data[i][3] : '',
+          gender_id: '',
           gender_id_error: false,
-          mobile: data && data[i] ? data[i][4] : '',
+          mobile: data && data[i] ? data[i][3] : '',
           mobile_error: false,
-          nationalCode: data && data[i] ? data[i][5] : '',
+          nationalCode: data && data[i] ? data[i][4] : '',
           nationalCode_error: false,
-          province: data && data[i] ? Number(data[i][8]) : '',
+          province: '',
           provinceDropDown: false,
           province_error: false,
-          shahr_id: data && data[i] ? Number(data[i][10]) : '',
+          shahr_id: '',
           shahr_idDropdown: false,
           shahr_id_error: false,
           key: Date.now() + Math.random() * 10000,
@@ -217,6 +215,14 @@ export default {
           editable: true,
           loading: false
         })
+        if (data && data[i]) {
+          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
+          const province = this.provinces.filter(province => province.title === data[i][5])
+          const shahr_id = this.cities.filter(city => city.title + '\r' === data[i][7])
+          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
+          this.userForm[i].province = province[0] ? province[0].id : 0
+          this.userForm[i].shahr_id = shahr_id[0] ? shahr_id[0].id : 0
+        }
       }
     },
     isUserInfoComplete(user) {
@@ -240,7 +246,7 @@ export default {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-
+          this.loading = true
           this.$axios.post(API_ADDRESS.moshaver.create, {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -253,6 +259,7 @@ export default {
             user.hasBeenSaved = true
             user.editable = false
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
@@ -322,7 +329,7 @@ export default {
 </script>
 
 <style scoped>
-a{
+a {
   text-decoration: none;
   color: white !important;
 }

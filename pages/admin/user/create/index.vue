@@ -16,14 +16,14 @@
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
           <v-btn block color="green" dark @click="downloadExcel">
+            دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
             </v-icon>
-            دانلود نمونه اکسل
           </v-btn>
         </v-col>
         <v-col md="5" class="vertialcally-center-items text-left  ">
-          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
+          <v-btn color="green" dark @click="save" :loading="loading" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon class="mr-3">
               mdi-content-save
@@ -231,7 +231,7 @@ export default {
     }
   },
   methods: {
-    downloadExcel () {
+    downloadExcel() {
       window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')
     },
     provinceSelectOnClick(user) {
@@ -257,18 +257,15 @@ export default {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
-        if (data && data[i] && data[i][0] === 'نام') {
-          continue;
-        }
         this.userForm.push({
           firstName: data && data[i] ? data[i][0] : '',
-          address: data && data[i] ? data[i][7] : '',
+          address: data && data[i] ? data[i][5] : '',
           address_error: false,
-          phone: data && data[i] ? data[i][8] : '',
+          phone: data && data[i] ? data[i][6] : '',
           phone_error: false,
-          father_mobile: data && data[i] ? data[i][9] : '',
+          father_mobile: data && data[i] ? data[i][7] : '',
           father_mobile_error: false,
-          mother_mobile: data && data[i] ? data[i][10] : '',
+          mother_mobile: data && data[i] ? data[i][8] : '',
           mother_mobile_error: false,
           firstName_error: false,
           lastName: data && data[i] ? data[i][1] : '',
@@ -277,14 +274,14 @@ export default {
           gender_id_error: false,
           major_id: data && data[i] ? data[i][5] : '',
           major_id_error: false,
-          mobile: data && data[i] ? data[i][6] : '',
+          mobile: data && data[i] ? data[i][4] : '',
           mobile_error: false,
-          nationalCode: data && data[i] ? data[i][11] : '',
+          nationalCode: data && data[i] ? data[i][9] : '',
           nationalCode_error: false,
-          province: data && data[i] ? Number(data[i][14]) : '',
+          province: '',
           provinceDropDown: false,
           province_error: false,
-          shahr_id: data && data[i] ? Number(data[i][16]) : '',
+          shahr_id: '',
           shahr_idDropdown: false,
           shahr_id_error: false,
           key: Date.now() + Math.random() * 10000,
@@ -292,6 +289,16 @@ export default {
           editable: true,
           loading: false
         })
+        if (data && data[i]) {
+          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
+          const major_id = this.majors.filter(major => major.title === data[i][3])
+          const province = this.provinces.filter(province => province.title === data[i][10])
+          const shahr_id = this.cities.filter(city => city.title + '\r' === data[i][12])
+          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
+          this.userForm[i].major_id = major_id[0] ? major_id[0].id : 0
+          this.userForm[i].province = province[0] ? province[0].id : 0
+          this.userForm[i].shahr_id = shahr_id[0] ? shahr_id[0].id : 0
+        }
       }
     },
     isUserInfoComplete(user) {
@@ -318,7 +325,7 @@ export default {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-
+          this.loading = true
           this.$axios.post(API_ADDRESS.user.create, {
             firstName: user.firstName,
             address: user.address,
@@ -335,6 +342,7 @@ export default {
             user.hasBeenSaved = true
             user.editable = false
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
