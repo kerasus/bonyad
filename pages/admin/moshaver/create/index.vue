@@ -3,6 +3,15 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate/>
     </v-overlay>
+<!--    <v-progress-linear-->
+<!--      :value="usage_number / usage_limit * 100"-->
+<!--      color="blue-grey"-->
+<!--      height="25"-->
+<!--    >-->
+<!--      <template v-slot:default="{ value }">-->
+<!--        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>-->
+<!--      </template>-->
+<!--    </v-progress-linear>-->
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -218,9 +227,9 @@ export default {
         if (data && data[i]) {
           const gender_id = this.genders.find(gender => gender.title === data[i][2])
           const province = this.provinces.find(province => province.title === data[i][5])
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][7])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][6])
           if (!shahr_id) {
-            shahr_id = this.cities.find(city => city.title === data[i][7])
+            shahr_id = this.cities.find(city => city.title === data[i][6])
           }
           this.userForm[i].gender_id = gender_id ? gender_id.id : 0
           this.userForm[i].province = province ? province.id : 0
