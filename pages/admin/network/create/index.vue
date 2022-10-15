@@ -184,7 +184,7 @@ export default {
       if (clean) {
         this.userForm = []
       }
-      for (let i = 0; i < amount; i++, data) {
+      for (let i = 0; i < amount; i++) {
         this.userForm.push({
           firstName: data && data[i] ? data[i][0] : '',
           firstNameMessage: '',
