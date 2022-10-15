@@ -310,7 +310,7 @@ export default {
     },
     onPaste(e) {
       this.pasteData(e)
-      this.initUserFormArray(true, 20, this.jsonObj)
+      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
   },
   computed: {
