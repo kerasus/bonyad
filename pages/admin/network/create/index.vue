@@ -6,7 +6,7 @@
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark @click=" window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')">
+          <v-btn block color="green" dark @click="downloadExcel">
             دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
@@ -159,6 +159,9 @@ export default {
     }
   },
   methods: {
+    downloadExcel () {
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')
+    },
     provinceSelectOnClick (user) {
       user.provinceDropDown = true
     },
@@ -181,21 +184,21 @@ export default {
       if (clean) {
         this.userForm = []
       }
-      for (let i = 0; i < amount; i++) {
+      for (let i = 0; i < amount; i++, data) {
         this.userForm.push({
-          firstName: '',
+          firstName: data && data[i] ? data[i][0] : '',
           firstNameMessage: '',
           firstName_error: false,
-          student_register_limit: '',
+          student_register_limit: data && data[i] ? data[i][9] : '',
           student_register_limitMessage: '',
           student_register_limit_error: '',
-          lastName: '',
+          lastName: data && data[i] ? data[i][1] : '',
           lastName_error: false,
           gender_id: '',
           gender_id_error: false,
-          mobile: '',
+          mobile: data && data[i] ? data[i][4] : '',
           mobile_error: false,
-          nationalCode: '',
+          nationalCode: data && data[i] ? data[i][5] : '',
           nationalCode_error: false,
           province: '',
           provinceDropDown: false,
@@ -208,6 +211,16 @@ export default {
           editable: true,
           loading: false
         })
+        if (data && data[i]) {
+          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
+          const major_id = this.majors.filter(major => major.title === data[i][3])
+          const province = this.provinces.filter(province => province.title === data[i][6])
+          const shahr_id = this.cities.filter(city => city.title + '\r' === data[i][8])
+          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
+          this.userForm[i].major_id = major_id[0] ? major_id[0].id : 0
+          this.userForm[i].province = province[0] ? province[0].id : 0
+          this.userForm[i].shahr_id = shahr_id[0] ? shahr_id[0].id : 0
+        }
       }
     },
     isUserInfoComplete(user) {
