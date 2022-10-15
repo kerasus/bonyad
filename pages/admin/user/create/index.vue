@@ -232,7 +232,7 @@ export default {
   },
   methods: {
     downloadExcel() {
-      window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28students%29.xlsx', '_blank')
     },
     provinceSelectOnClick(user) {
       user.provinceDropDown = true

@@ -3,20 +3,20 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate/>
     </v-overlay>
-<!--    <v-progress-linear-->
-<!--      :value="usage_number / usage_limit * 100"-->
-<!--      color="blue-grey"-->
-<!--      height="25"-->
-<!--    >-->
-<!--      <template v-slot:default="{ value }">-->
-<!--        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>-->
-<!--      </template>-->
-<!--    </v-progress-linear>-->
+    <v-progress-linear
+      :value="usage_number / usage_limit * 100"
+      color="blue-grey"
+      height="25"
+    >
+      <template v-slot:default="{ value }">
+        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
+      </template>
+    </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
           <v-btn block color="green" dark
-                 @click=" window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')">
+                 @click="window.open('https://nodes.alaatv.com/upload/bonyad/sample%28moshaver%29.xlsx', '_blank')">
             دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
@@ -167,6 +167,8 @@ export default {
       majors: [],
       provinces: [],
       cities: [],
+      usage_limit: 0,
+      usage_number: 0,
       loading: false,
     }
   },
