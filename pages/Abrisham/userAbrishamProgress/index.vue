@@ -160,19 +160,6 @@
         />
       </v-col>
     </v-row>
-    <v-row class="footer">
-      <v-col md="1"
-             cols="12"
-      >
-        <a href="https://soalaa.com/" target="_blank">
-          <v-img
-            class="soalaa-logo"
-            src="https://nodes.alaatv.com/aaa/landing/Soalaa/Logo/logo.png"
-          >
-          </v-img>
-        </a>
-      </v-col>
-    </v-row>
   </div>
 </template>
 
@@ -415,20 +402,6 @@ export default {
     margin: 0;
   }
 
-  .footer {
-    .soalaa-logo {
-      display: none;
-      @media screen and (max-width: 767px) {
-        width: 70px;
-        margin-right: 100px;
-        display: block;
-        z-index: 10;
-        position: absolute;
-        //right: 15px;
-        //top: 9px;
-      }
-    }
-  }
 
   .header {
     display: flex;

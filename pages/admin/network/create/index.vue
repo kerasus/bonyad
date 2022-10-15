@@ -3,15 +3,15 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate />
     </v-overlay>
-<!--    <v-progress-linear-->
-<!--      :value="usage_number / usage_limit * 100"-->
-<!--      color="blue-grey"-->
-<!--      height="25"-->
-<!--    >-->
-<!--      <template v-slot:default="{ value }">-->
-<!--        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>-->
-<!--      </template>-->
-<!--    </v-progress-linear>-->
+    <v-progress-linear
+      :value="usage_number / usage_limit * 100"
+      color="blue-grey"
+      height="25"
+    >
+      <template v-slot:default="{ value }">
+        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
+      </template>
+    </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -159,7 +159,9 @@ export default {
       majors: [],
       provinces: [],
       cities: [],
-      loading: false
+      loading: false,
+      usage_limit: 0,
+      usage_number: 0,
     }
   },
   head() {
@@ -169,7 +171,7 @@ export default {
   },
   methods: {
     downloadExcel () {
-      window.open('https://nodes.alaatv.com/upload/bonyad/sample.xlsx', '_blank')
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')
     },
     provinceSelectOnClick (user) {
       user.provinceDropDown = true
