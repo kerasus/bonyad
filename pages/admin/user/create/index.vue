@@ -290,14 +290,17 @@ export default {
           loading: false
         })
         if (data && data[i]) {
-          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
-          const major_id = this.majors.filter(major => major.title === data[i][3])
-          const province = this.provinces.filter(province => province.title === data[i][10])
-          const shahr_id = this.cities.filter(city => city.title + '\r' === data[i][12])
-          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
-          this.userForm[i].major_id = major_id[0] ? major_id[0].id : 0
-          this.userForm[i].province = province[0] ? province[0].id : 0
-          this.userForm[i].shahr_id = shahr_id[0] ? shahr_id[0].id : 0
+          const gender_id = this.genders.find(gender => gender.title === data[i][2])
+          const major_id = this.majors.find(major => major.title === data[i][3])
+          const province = this.provinces.find(province => province.title === data[i][10])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][12])
+          if (!shahr_id) {
+            shahr_id = this.cities.find(city => city.title === data[i][12])
+          }
+          this.userForm[i].gender_id = gender_id ? gender_id.id : 0
+          this.userForm[i].major_id = major_id ? major_id.id : 0
+          this.userForm[i].province = province ? province.id : 0
+          this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
         }
       }
     },
@@ -321,12 +324,32 @@ export default {
 
 
     save() {
+      // ToDo: send this data for bulk
+      const sendData = {
+        users: this.userForm.map(user=> {
+          return {
+            firstName: user.firstName,
+            address: user.address,
+            phone: user.phone,
+            father_mobile: user.father_mobile,
+            mother_mobile: user.mother_mobile,
+            lastName: user.lastName,
+            mobile: user.mobile,
+            nationalCode: user.nationalCode,
+            gender_id: user.gender_id,
+            major_id: user.major_id,
+            shahr_id: user.shahr_id
+          }
+        }),
+        type: 'user' // user - moshaver - subnetwork - network
+      }
+
       this.userForm.forEach(user => {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
           this.loading = true
-          this.$axios.post(API_ADDRESS.user.create, {
+          this.$axios.post(API_ADDRESS.user.bulkCreate, {
             firstName: user.firstName,
             address: user.address,
             phone: user.phone,
