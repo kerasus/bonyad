@@ -114,6 +114,7 @@ export default {
 <style lang="scss" scoped>
 .app-bar-parent {
   .app-bar {
+    right: 0!important;
     .header-box {
       .header-logo-img {
         width: 142px;
