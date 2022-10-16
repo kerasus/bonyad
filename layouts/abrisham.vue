@@ -12,17 +12,17 @@
       <side-menu/>
     </v-navigation-drawer>
     <app-bar
-      :width="windowSize"
+      :width="windowSize.width"
     />
     <!-- Sizes your content based upon application components -->
     <v-main>
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
-        <expansion-menu v-if=" windowSize.x <= 768"/>
+        <expansion-menu v-if=" windowSize.width <= 768"/>
         <!-- If using vue-router -->
-        <Nuxt />
+        <Nuxt/>
 
-        <auth />
+        <auth/>
       </v-container>
     </v-main>
 
@@ -58,6 +58,7 @@ import AppBar from '@/components/abrisham/AppBar';
 import SideMenu from '@/components/abrisham/SideMenu';
 import ExpansionMenu from '@/components/abrisham/ExpansionMenu';
 import '@/static/fonts/FlatIcons/uicons-regular-rounded/css/uicons-regular-rounded.css'
+
 export default {
   name: 'abrisham',
   layout: 'abrisham',
@@ -66,31 +67,35 @@ export default {
     return {
       drawer: true,
       showUserInfoFormModalStatus: false,
+      windowSize: {
+        width: window.innerWidth,
+        height: window.innerHeight
+      }
     }
   },
-  props:['filterBoxCategory' ,'userAssetsCollection'],
+  props: ['filterBoxCategory', 'userAssetsCollection'],
   watch: {
     // 'windowSize.x' : function (newValue) {
     //   this.drawer = newValue > 576;
-    // }
+    // },
   },
   computed: {
     isLoggedIn() {
       return this.$store.getters["Auth/isLoggedIn"]
     },
-    windowSize() {
-      return { x: window.innerWidth, y: window.innerHeight }
-    },
+    // windowSize() {
+    //   return {x: window.innerWidth, y: window.innerHeight}
+    // },
     drawerSize() {
-      if (this.windowSize.x >= 1920) {
+      if (this.windowSize.width >= 1920) {
         return 130
-      } else if (this.windowSize.x >= 1200) {
+      } else if (this.windowSize.width >= 1200) {
         return 100
-      }  else if (this.windowSize.x >= 990) {
+      } else if (this.windowSize.width >= 990) {
         return 80
-      }  else if (this.windowSize.x >= 768) {
+      } else if (this.windowSize.width >= 768) {
         return 60
-      } else if (this.windowSize.x >= 576) {
+      } else if (this.windowSize.width >= 576) {
         return 0
       }
       return 0
@@ -98,11 +103,12 @@ export default {
     user() {
       return this.$store.getters.appProps.user;
     },
-    userData(){
+    userData() {
       return new User(this.$store.getters["Auth/user"])
     }
   },
   created() {
+    window.addEventListener('resize', this.resizeHandler);
     let that = this
     this.$axios.interceptors.response.use(undefined, function (error) {
 
@@ -116,20 +122,28 @@ export default {
     })
     let token = this.$store.getters['Auth/accessToken']
     if (token) {
-      console.log('headers.common Authorization in created DefaultLayout')
       this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     }
     this.initUserInfoIfLoggedIn()
   },
+  mounted() {
+    // this.windowSize.width = window.innerWidth;
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.resizeHandler);
+  },
   methods: {
+    resizeHandler(e) {
+      this.width = window.innerWidth
+    },
     setToken() {
       // this.$axios.defaults.headers.common['Accept'] = 'application/json '
       // axios.defaults.headers.common['X-CSRF-TOKEN'] = window.Laravel.csrfToken
     },
-    setUser(){
+    setUser() {
       // this.$store.commit('Auth/updateUser' , window.user)
     },
-    updatingAppProps(){
+    updatingAppProps() {
       // this.$store.commit('Auth/updateUser', {
       //     user: this.userData,
       // });
@@ -138,7 +152,7 @@ export default {
       this.initUserInfo()
     },
 
-    initUserInfoIfLoggedIn(){
+    initUserInfoIfLoggedIn() {
       if (!this.isLoggedIn) {
         this.initUserInfo();
       }
@@ -177,19 +191,22 @@ export default {
 </script>
 
 <style lang="scss">
-::-webkit-scrollbar-track{
-  border-radius: 6px ;
-  background-color: #F5F5F5 ;
+::-webkit-scrollbar-track {
+  border-radius: 6px;
+  background-color: #F5F5F5;
 }
-::-webkit-scrollbar{
-  width: 6px ;
-  border-radius: 6px ;
-  background-color: #F5F5F5 ;
+
+::-webkit-scrollbar {
+  width: 6px;
+  border-radius: 6px;
+  background-color: #F5F5F5;
 }
-::-webkit-scrollbar-thumb{
-  border-radius: 6px ;
-  background-color: #f7941d ;
+
+::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background-color: #f7941d;
 }
+
 @media screen and (max-width: 1200px) {
 
 }
@@ -197,6 +214,12 @@ export default {
 @media screen and (max-width: 768px) {
   .container {
     padding: 15px;
+  }
+  .side-menu {
+    display: none;
+  }
+  .v-main {
+    padding-right: 0 !important;
   }
 }
 
@@ -207,12 +230,20 @@ export default {
 @media screen and (max-width: 320px) {
 
 }
+
+.expansion-menu {
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+  }
+}
 </style>
 
 <style>
 .v-navigation-drawer.side-menu {
   min-height: 100%;
 }
+
 .modal-header {
   display: flex;
   align-items: flex-start;
@@ -223,6 +254,7 @@ export default {
   font-weight: 300;
   font-size: 1.2rem;
 }
+
 .modal-body {
   position: relative;
   flex: 1 1 auto;
@@ -231,20 +263,25 @@ export default {
   font-weight: 300;
   font-size: 1.2rem;
 }
+
 .form-group {
   margin-bottom: 1rem;
 }
+
 .m-input-icon {
   position: relative;
   padding: 0;
   width: 100%;
 }
+
 .m-input-icon.m-input-icon--left .form-control {
   padding-right: 2.8rem;
 }
+
 .form-control.m-input--air {
   box-shadow: 0px 3px 20px 0px rgba(51, 51, 51, 0.11);
 }
+
 .form-control {
   font-family: IRANSans;
   font-size: 11px;
@@ -262,9 +299,11 @@ export default {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   border: 1px solid #e8ecf0;
 }
+
 button, input {
   overflow: visible;
 }
+
 .m-input-icon > .m-input-icon__icon {
   position: absolute;
   height: 100%;
@@ -273,25 +312,30 @@ button, input {
   top: 0;
   width: 3.2rem;
 }
+
 .btn-primary:hover {
   color: #fff !important;
   background-color: #384ad7 !important;
   border-color: #2e40d4 !important;
 }
+
 .btn {
   font-family: "IRANSans";
   box-shadow: none !important;
   cursor: pointer;
   border-radius: 0;
 }
+
 .btn-primary {
   color: #fff !important;
   background-color: #5867dd !important;
   border-color: #5867dd !important;
 }
+
 .btn.btn-primary.a--full-width.btnSubmitEvent {
   width: 100%;
 }
+
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -315,20 +359,24 @@ button, input {
   border-radius: 0;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
 .alert-danger:not(.m-alert--outline) {
   font-weight: bold;
   color: white;
   background-color: #f66e84;
   border-color: #f55f78;
 }
+
 .alert-danger {
   color: #7f2a38;
   background-color: #fddce2;
   border-color: #fcced6;
 }
+
 .alert-dismissible {
   padding-left: 4rem;
 }
+
 .alert {
   position: relative;
   padding: 0.75rem 1.25rem;
@@ -339,15 +387,19 @@ button, input {
   border-bottom-color: transparent;
   border-left-color: transparent;
 }
+
 .fade {
   -webkit-transition: opacity 0.15s linear;
 }
+
 .close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {
   opacity: .75;
 }
+
 .alert-danger:not(.m-alert--outline) .close {
   color: white;
 }
+
 .alert .close {
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
@@ -359,6 +411,7 @@ button, input {
   text-rendering: auto;
   line-height: 1;
 }
+
 .alert .close {
   font-family: "LineAwesome";
   text-decoration: inherit;
@@ -374,6 +427,7 @@ button, input {
   padding-bottom: 0;
   cursor: pointer;
 }
+
 .alert-dismissible .close {
   position: absolute;
   top: 0;
@@ -383,9 +437,11 @@ button, input {
   padding-bottom: 0.75rem;
   color: inherit;
 }
+
 button:not(:disabled), [type="button"]:not(:disabled), [type="reset"]:not(:disabled), [type="submit"]:not(:disabled) {
   cursor: pointer;
 }
+
 button.close {
   padding: 0;
   background-color: transparent;
@@ -394,6 +450,7 @@ button.close {
   -moz-appearance: none;
   appearance: none;
 }
+
 .close {
   float: left;
   font-size: 1.5rem;
@@ -403,26 +460,33 @@ button.close {
   text-shadow: 0 1px 0 #fff;
   opacity: .5;
 }
+
 button, [type="button"], [type="reset"], [type="submit"] {
   -webkit-appearance: button;
 }
+
 button, select {
   text-transform: none;
 }
+
 button, input {
   overflow: visible;
 }
+
 button {
   border-radius: 0;
 }
+
 button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
   padding: 0;
   border-style: none;
 }
+
 .modal .modal-content .modal-header .close::before, .alert .close::before {
   font-family: "Font Awesome 5 Free";
   content: "\f00d";
 }
+
 /*!
  * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
@@ -441,12 +505,15 @@ button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-mo
   text-rendering: auto;
   line-height: 1;
 }
+
 .fa-user:before {
   content: "\f007";
 }
+
 .fa-location-arrow:before {
   content: "\f124";
 }
+
 .fa-graduation-cap:before {
   content: "\f19d";
 }
@@ -459,6 +526,7 @@ button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-mo
   src: url(/fonts/vendor/fontawesome-free-sass-2/webfa-solid-900.eot?d47e596a5490f16f21ee57e8daed315a);
   src: url(/fonts/vendor/fontawesome-free-sass-2/webfa-solid-900.eot?d47e596a5490f16f21ee57e8daed315a) format("embedded-opentype"), url(/fonts/vendor/fontawesome-free-sass-2/webfa-solid-900.woff2?af96b2744b250585e30cf62e91afe9d9) format("woff2"), url(/fonts/vendor/fontawesome-free-sass-2/webfa-solid-900.woff?5dde9eca6241e6b978fce826749d0627) format("woff"), url(/fonts/vendor/fontawesome-free-sass-2/webfa-solid-900.ttf?3c8fb6c49d1241de6e6aacef5302610a) format("truetype"), url(/fonts/vendor/fontawesome-free-sass-2/webfa-solid-900.svg?bfcbb6522309e075d05625b3b8de4c8f) format("svg");
 }
+
 .fa,
 .fas {
   font-family: "Font Awesome 5 Free";

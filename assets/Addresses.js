@@ -41,6 +41,7 @@ const API_ADDRESS = {
   user: {
     info: authServer + '/admin/bonyadEhsan/user/myInfo',
     update: authServer + '/admin/bonyadEhsan/user/',
+    bulkCreate: authServer + '/admin/bonyadEhsan/user/bulk', // ToDo: must change
     create: authServer + '/admin/bonyadEhsan/user',
     base: authServer + '/user',
     mobile: {

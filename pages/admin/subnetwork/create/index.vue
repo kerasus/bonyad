@@ -1,12 +1,30 @@
 <template>
   <v-row class="user-create">
     <v-overlay v-if="loading">
-      <v-progress-circular indeterminate />
+      <v-progress-circular indeterminate/>
     </v-overlay>
+    <v-progress-linear
+      :value="usage_number / usage_limit * 100"
+      color="blue-grey"
+      height="25"
+    >
+      <template v-slot:default="{ value }">
+        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
+      </template>
+    </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="2" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save">
+        <v-col md="12" class="vertialcally-center-items">
+          <v-btn block color="green" dark
+                 @click="downloadExcel">
+            دانلود نمونه اکسل
+            <v-icon class="mr-3">
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col md="5" class="vertialcally-center-items">
+          <v-btn color="green" dark @click="save" :loading="loading">
             ذخیره
             <v-icon :style="{ marginRight: '10px' }">
               mdi-content-save
@@ -20,7 +38,8 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.firstName_error }" required type="text"
+                         v-model="user.firstName" @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام</span>
                 </label>
                 <span class="error-message" v-if="user.firstName_error">{{ user.firstName_error }}</span>
@@ -29,7 +48,8 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.lastName_error }" required type="text"
+                         v-model="user.lastName" @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام خانوادگی</span>
                 </label>
                 <span class="error-message" v-if="user.lastName_error">{{ user.lastName_error }}</span>
@@ -37,7 +57,8 @@
             </div>
             <div class="input-box">
               <div class="select">
-                <select class="select-text" required v-model="user.gender_id" :class="{ 'has-error': user.gender_id_error }">
+                <select class="select-text" required v-model="user.gender_id"
+                        :class="{ 'has-error': user.gender_id_error }">
                   <option value="" disabled selected></option>
                   <option v-for="(item, index) in genders" :key="index" :value="item.id">{{ item.title }}</option>
                 </select>
@@ -50,7 +71,8 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.mobile_error }" required type="text"
+                         v-model="user.mobile" @change="user.hasBeenSaved = false">
                   <span class="placeholder">موبایل</span>
                 </label>
                 <span class="error-message" v-if="user.mobile_error">{{ user.mobile_error }}</span>
@@ -59,7 +81,8 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.nationalCode_error }" required type="text"
+                         v-model="user.nationalCode" @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
                 <span class="error-message" v-if="user.nationalCode_error">{{ user.nationalCode_error }}</span>
@@ -67,7 +90,10 @@
             </div>
             <div class="input-box">
               <div class="select">
-                <select class="select-text" :class="{ 'has-error': user.province_error }" required v-model="user.province" @click="provinceSelectOnClick(user)" @mousedown="provinceSelectOnClick(user)" @blur="provinceSelectOnBlur(user)" @change="provinceSelectOnChange(user)">
+                <select class="select-text" :class="{ 'has-error': user.province_error }" required
+                        v-model="user.province" @click="provinceSelectOnClick(user)"
+                        @mousedown="provinceSelectOnClick(user)" @blur="provinceSelectOnBlur(user)"
+                        @change="provinceSelectOnChange(user)">
                   <option value="" disabled selected></option>
                   <option
                     v-for="(item, index) in provincesComputed(user.provinceDropDown, user.province)"
@@ -85,10 +111,18 @@
             </div>
             <div class="input-box">
               <div class="select">
-                <select class="select-text" :class="{ 'has-error': user.shahr_id_error }" required v-model="user.shahr_id" @click="shahr_idSelectOnClick(user)" @mousedown="shahr_idSelectOnClick(user)" @blur="shahr_idSelectOnBlur(user)" @change="shahr_idSelectOnChange(user)">
+                <select class="select-text" :class="{ 'has-error': user.shahr_id_error }" required
+                        v-model="user.shahr_id" @click="shahr_idSelectOnClick(user)"
+                        @mousedown="shahr_idSelectOnClick(user)" @blur="shahr_idSelectOnBlur(user)"
+                        @change="shahr_idSelectOnChange(user)">
                   <option value="" disabled selected></option>
-                  <option value="disable" disabled selected v-if="selectedProvinceCity(user.province).length === 0">ابتدا استان را انتخاب کنید</option>
-                  <option v-for="(item, index) in selectedProvinceCity(user.province, user.shahr_idDropdown, user.shahr_id)" :key="index" :value="item.id">{{ item.title }}</option>
+                  <option value="disable" disabled selected v-if="selectedProvinceCity(user.province).length === 0">
+                    ابتدا استان را انتخاب کنید
+                  </option>
+                  <option
+                    v-for="(item, index) in selectedProvinceCity(user.province, user.shahr_idDropdown, user.shahr_id)"
+                    :key="index" :value="item.id">{{ item.title }}
+                  </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
@@ -99,10 +133,12 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.student_register_limit_error }" required v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.student_register_limit_error }" required
+                         v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
                   <span class="placeholder">محدودیت ثبت نام</span>
                 </label>
-                <span class="error-message" v-if="user.student_register_limit_error">{{ user.student_register_limit_error }}</span>
+                <span class="error-message"
+                      v-if="user.student_register_limit_error">{{ user.student_register_limit_error }}</span>
               </div>
             </div>
           </v-col>
@@ -129,18 +165,22 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
+import {mixinCreateUsers} from '@/mixin/Mixins'
 
 export default {
   name: 'moshaverCreate',
+  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
-  data () {
+  data() {
     return {
       userForm: [],
       genders: [],
       majors: [],
       provinces: [],
       cities: [],
-      loading: false
+      loading: false,
+      usage_limit: 0,
+      usage_number: 0,
     }
   },
   head() {
@@ -149,43 +189,46 @@ export default {
     }
   },
   methods: {
-    provinceSelectOnClick (user) {
+    downloadExcel () {
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')
+    },
+    provinceSelectOnClick(user) {
       user.provinceDropDown = true
     },
-    provinceSelectOnBlur (user) {
+    provinceSelectOnBlur(user) {
       user.provinceDropDown = false
     },
-    provinceSelectOnChange (user) {
+    provinceSelectOnChange(user) {
       user.provinceDropDown = false
     },
-    shahr_idSelectOnClick (user) {
+    shahr_idSelectOnClick(user) {
       user.shahr_idDropdown = true
     },
-    shahr_idSelectOnBlur (user) {
+    shahr_idSelectOnBlur(user) {
       user.shahr_idDropdown = false
     },
-    shahr_idSelectOnChange (user) {
+    shahr_idSelectOnChange(user) {
       user.shahr_idDropdown = false
     },
-    initUserFormArray(clean = true, amount = 20) {
+    initUserFormArray(clean = true, amount = 20, data) {
       if (clean) {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
         this.userForm.push({
-          firstName: '',
+          firstName: data && data[i] ? data[i][0] : '',
           firstNameMessage: '',
           firstName_error: false,
-          student_register_limit: '',
+          student_register_limit: data && data[i] ? Number(data[i][8]) : '',
           student_register_limitMessage: '',
           student_register_limit_error: '',
-          lastName: '',
+          lastName: data && data[i] ? data[i][1] : '',
           lastName_error: false,
           gender_id: '',
           gender_id_error: false,
-          mobile: '',
+          mobile: data && data[i] ? data[i][4] : '',
           mobile_error: false,
-          nationalCode: '',
+          nationalCode: data && data[i] ? data[i][5] : '',
           nationalCode_error: false,
           province: '',
           provinceDropDown: false,
@@ -198,14 +241,24 @@ export default {
           editable: true,
           loading: false
         })
+        if (data && data[i]) {
+          const gender_id = this.genders.find(gender => gender.title === data[i][2])
+          const major_id = this.majors.find(major => major.title === data[i][3])
+          const province = this.provinces.find(province => province.title === data[i][6])
+          let shahr_id = this.cities.find(city => city.title === data[i][7])
+          this.userForm[i].gender_id = gender_id ? gender_id.id : 0
+          this.userForm[i].major_id = major_id ? major_id.id : 0
+          this.userForm[i].province = province ? province.id : 0
+          this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
+        }
       }
     },
     isUserInfoComplete(user) {
-      return !!(user.firstName || user.student_register_limit || user.lastName  || user.gender_id
-         || user.mobile  || user.nationalCode  ||
-        user.province  || user.shahr_id);
+      return !!(user.firstName || user.student_register_limit || user.lastName || user.gender_id
+        || user.mobile || user.nationalCode ||
+        user.province || user.shahr_id);
     },
-    getUserFormData () {
+    getUserFormData() {
       this.loading = true
       this.$axios.get(API_ADDRESS.user.formData)
         .then((resp) => {
@@ -216,12 +269,12 @@ export default {
           this.cities = resp.data.data.cities
         })
     },
-    save () {
+    save() {
       this.userForm.forEach(user => {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-
+          this.loading = true
           this.$axios.post(API_ADDRESS.subnetwork.create, {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -230,10 +283,11 @@ export default {
             nationalCode: user.nationalCode,
             gender_id: user.gender_id,
             shahr_id: user.shahr_id
-          }).then(resp => {
+          }).then(() => {
             user.hasBeenSaved = true
             user.editable = false
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
@@ -241,9 +295,16 @@ export default {
             })
             setTimeout(() => {
               this.$refs.form.validate()
+              let that = this
+              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+                .then(resp => {
+                  that.usage_limit = resp.data.data.usage_limit
+                  that.usage_number = resp.data.data.usage_number
+                })
             }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
@@ -254,11 +315,17 @@ export default {
             })
             setTimeout(() => {
               this.$refs.form.validate()
+              let that = this
+              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+                .then(resp => {
+                  that.usage_limit = resp.data.data.usage_limit
+                  that.usage_number = resp.data.data.usage_number
+                })
             }, 500)
           })
         } else if (user.firstName || user.lastName || user.student_register_limit || user.gender_id
-           || user.mobile  || user.nationalCode  ||
-          user.province  || user.shahr_id) {
+          || user.mobile || user.nationalCode ||
+          user.province || user.shahr_id) {
           this.$notify({
             type: 'error',
             duration: 10000,
@@ -267,10 +334,14 @@ export default {
           })
         }
       })
+    },
+    onPaste(e) {
+      this.pasteData(e)
+      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
   },
   computed: {
-    provincesComputed () {
+    provincesComputed() {
       return (show, provinceId) => {
         if (!show && !provinceId) {
           return []
@@ -280,7 +351,7 @@ export default {
         return this.provinces
       }
     },
-    selectedProvinceCity () {
+    selectedProvinceCity() {
       return (provinceId, show = true, cityId) => {
         if (!provinceId || (!show && !cityId)) {
           return []
@@ -290,15 +361,29 @@ export default {
         return this.cities.filter(city => city.province.id === provinceId)
       }
     },
+    userData() {
+      return this.$store.getters['Auth/user']
+    }
   },
-  created () {
+  created() {
     this.initUserFormArray(true, 20)
     this.getUserFormData()
+    let that = this
+    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+      .then(resp => {
+        that.usage_limit = resp.data.data.usage_limit
+        that.usage_number = resp.data.data.usage_number
+      })
   }
 }
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+  color: white !important;
+}
+
 .has-been-saved {
   background: rgba(0, 280, 0, 0.2);
 }
@@ -306,6 +391,7 @@ export default {
 .has-error {
   border-color: red !important;
 }
+
 .error-message {
   color: red;
   font-size: 14px;
@@ -338,61 +424,58 @@ export default {
   width: 100%;
 
 
-label {
-  position:relative;
-  display:block;
-  width:100%;
-  min-height:30px + 15px;
-}
-
-.placeholder {
-  position:absolute;
-  display:block;
-  color: grey;
-  top: 8px;
-  z-index:2;
-  font-size:16px;
-  transition:all 200ms ease-in-out;
-  cursor:text;
-  right: 10px;
-  background-color: #fff;
-  padding: 0 5px;
-}
-
-input {
-  position:absolute;
-  padding: 0 10px;
-  z-index:1;
-  width:100%;
-  font-size:16px;
-  border:1px solid grey;
-  border-radius: 5px;
-  transition: border-color 200ms ease-in-out;
-  outline:none;
-  margin: 0;
-}
-
-input {
-  height:40px;
-}
-
-input:focus,
-input:valid,
-textarea:focus,
-textarea:valid {
-& + .placeholder {
-    top:-10px;
-    cursor:inherit;
-    font-size: 14px;
-    color:orange;
+  label {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 30px + 15px;
   }
 
-border:1px solid grey;
+  .placeholder {
+    position: absolute;
+    display: block;
+    color: grey;
+    top: 8px;
+    z-index: 2;
+    font-size: 16px;
+    transition: all 200ms ease-in-out;
+    cursor: text;
+    right: 10px;
+    background-color: #fff;
+    padding: 0 5px;
+  }
+
+  input {
+    position: absolute;
+    padding: 0 10px;
+    z-index: 1;
+    width: 100%;
+    font-size: 16px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    transition: border-color 200ms ease-in-out;
+    outline: none;
+    margin: 0;
+  }
+
+  input {
+    height: 40px;
+  }
+
+  input:focus,
+  input:valid,
+  textarea:focus,
+  textarea:valid {
+    & + .placeholder {
+      top: -10px;
+      cursor: inherit;
+      font-size: 14px;
+      color: orange;
+    }
+
+    border: 1px solid grey;
+  }
 }
-}
-
-
-
 
 
 .select {
@@ -420,7 +503,7 @@ border:1px solid grey;
 /* Use custom arrow */
 .select .select-text {
   appearance: none;
-  -webkit-appearance:none
+  -webkit-appearance: none
 }
 
 .select:after {
