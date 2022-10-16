@@ -179,7 +179,7 @@ export default {
   },
   methods: {
     downloadExcel () {
-      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28moshaver%29.xlsx', '_blank')
     },
     provinceSelectOnClick(user) {
       user.provinceDropDown = true
