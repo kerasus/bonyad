@@ -30,7 +30,15 @@
         </li>
       </ul>
     </div>
-
+    <div class="footer">
+      <a href="https://soalaa.com/" target="_blank">
+        <v-img
+          class="soalaa-logo"
+          src="https://nodes.alaatv.com/aaa/landing/Soalaa/Logo/logo.png"
+        >
+        </v-img>
+      </a>
+    </div>
   </div>
 </template>
 
@@ -54,8 +62,8 @@ export default {
         //     path: '/abrisham/Schedule',
         // },
         {
-            icon: 'headphones',
-            path: '/abrisham/consulting',
+          icon: 'headphones',
+          path: '/abrisham/consulting',
         },
         // {
         //     icon: 'list-check',
@@ -67,8 +75,8 @@ export default {
         //     path: '/abrisham/assessment',
         // },
         {
-            icon: 'envelope',
-            path: '/abrisham/news',
+          icon: 'envelope',
+          path: '/abrisham/news',
         },
         {
           icon: 'world',
@@ -78,7 +86,7 @@ export default {
     }
   },
   computed: {
-    user () {
+    user() {
       return this.$store.getters['Auth/user']
     }
   },
@@ -99,6 +107,13 @@ export default {
   min-height: calc(100vh - 2px);
   display: flex !important;
   flex-direction: column;
+
+  .footer {
+    align-self: center;
+    .soalaa-logo {
+      width: 40px;
+    }
+  }
 
   .menu-logo {
     text-align: center;
