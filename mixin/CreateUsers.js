@@ -2,7 +2,7 @@ const CreateUsersMixin = {
   data() {
     return {
       jsonObj: [],
-      header: ['نام', 'نام خانوادگی', 'جنسیت', 'آیدی جنسیت', 'رشته', 'آیدی رشته', 'موبایل', 'کد ملی', 'آدرس', 'تلفن', 'موبایل پدر', 'موبایل مادر', 'استان', 'province', 'آیدی استان', 'شهر', 'آیدی شهر']
+      header: ['نام', 'نام خانوادگی', 'جنسیت', 'رشته', 'موبایل', 'کد ملی', 'آدرس', 'تلفن', 'موبایل پدر', 'موبایل مادر', 'استان', 'province', 'شهر', 'محدودیت ثبت نام']
     }
   }, methods: {
     pasteData(e) {
@@ -25,14 +25,14 @@ const CreateUsersMixin = {
       }
       let jsonObj = [];
       for (let i = 0; i < clipRows.length - 1; i++) {
-        let item = {};
+        let item = [];
         for (let j = 0; j < clipRows[i].length; j++) {
           if (clipRows[i][j] !== '\r' && clipRows[i][j].length !== 0) {
-                item[j] = clipRows[i][j];
-            // this.header.forEach(val => {
-            //   if (clipRows[i][j] === val)
-            // })
+            item[j] = clipRows[i][j];
           }
+        }
+        if (this.header.indexOf(item[0])!==-1){
+          continue
         }
         jsonObj.push(item);
       }
