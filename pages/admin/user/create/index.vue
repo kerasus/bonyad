@@ -292,8 +292,8 @@ export default {
         if (data && data[i]) {
           const gender_id = this.genders.find(gender => gender.title === data[i][2])
           const major_id = this.majors.find(major => major.title === data[i][3])
-          const province = this.provinces.find(province => province.title === data[i][10])
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][11])
+          const province = this.provinces.find(province => province.title === data[i][11])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][12])
           if (!shahr_id) {
             shahr_id = this.cities.find(city => city.title === data[i][11])
           }
@@ -349,7 +349,7 @@ export default {
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
           this.loading = true
-          this.$axios.post(API_ADDRESS.user.bulkCreate, {
+          this.$axios.post(API_ADDRESS.user.create, {
             firstName: user.firstName,
             address: user.address,
             phone: user.phone,
@@ -381,6 +381,7 @@ export default {
             // }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false

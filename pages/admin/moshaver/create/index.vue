@@ -287,14 +287,17 @@ export default {
             }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
               }
             })
-            Object.keys(err.response.data.errors).forEach(key => {
-              user[key + '_error'] = err.response.data.errors[key][0]
-            })
+            if (err?.response?.data?.errors) {
+              Object.keys(err.response.data.errors).forEach(key => {
+                user[key + '_error'] = err.response.data.errors[key][0]
+              })
+            }
             setTimeout(() => {
               this.$refs.form.validate()
             }, 500)
