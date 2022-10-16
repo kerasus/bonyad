@@ -11,55 +11,59 @@ let Assistant = function () {
   }
 
   function handleAxiosError(error ,$notify) {
-    if (error.response) {
-      console.log('in assis :', error.response)
-      const err = error.response
-      if (err.status === 429 && err.config.url === "/alaa/api/v2/mobile/resend") {
-        return
-      }
-      if (err.status === 400 && err.config.url === "/alaa/api/v2/mobile/verify") {
-        return
-      }
-      let messages = []
-
-      if (!error || !err) {
-        return
-      }
-      let statusCode = parseInt(err.status)
-      if (statusCode >= 500 && statusCode <= 599) {
-        messages.push('مشکلی رخ داده است. مجدد تلاش کنید.')
-      } else if (statusCode === 404) {
-        messages.push('موردی یافت نشد.')
-      } else if (statusCode === 401) {
-        messages.push('ابتدا وارد سامانه شوید.')
-      } else if (err.data.errors) {
-        for (const [key, value] of Object.entries(err.data.errors)) {
-          if (Array.isArray(value)) {
-            value.forEach(item => {
-              messages.push(item)
-            })
-          } else {
-            messages.push(value)
-          }
-          console.log(`${key}: ${value}`);
-        }
-      } else if (err.data.error && !AjaxResponseMessages.isCustomMessage(err.data.error.code)) {
-        messages.push(err.data.error.message)
-      } else if (err.data.error && AjaxResponseMessages.isCustomMessage(err.data.error.code)) {
-        messages.push(AjaxResponseMessages.getMessage(err.data.error.code))
-      } else if (err.data) {
-        for (const [key, value] of Object.entries(err.data)) {
-          if (typeof value === 'string') {
-            messages.push(value)
-          } else {
-            messages = messages.concat(getMessagesFromArrayWithRecursion(value))
-          }
-          // console.log(`${key}: ${value}`);
-        }
-      }
-
+    let messages = []
+    if (!error.response) {
       return messages
     }
+
+    console.log('in assis :', error.response)
+    const err = error.response
+    if (err.status === 429 && err.config.url === "/alaa/api/v2/mobile/resend") {
+      return
+    }
+    if (err.status === 400 && err.config.url === "/alaa/api/v2/mobile/verify") {
+      return
+    }
+
+    if (!error || !err) {
+      return
+    }
+    let statusCode = parseInt(err.status)
+    if (statusCode >= 500 && statusCode <= 599) {
+      messages.push('مشکلی رخ داده است. مجدد تلاش کنید.')
+    } else if (statusCode === 404) {
+      messages.push('موردی یافت نشد.')
+    } else if (statusCode === 401) {
+      messages.push('ابتدا وارد سامانه شوید.')
+    } else if (err.data.errors) {
+      for (const [key, value] of Object.entries(err.data.errors)) {
+        if (Array.isArray(value)) {
+          value.forEach(item => {
+            messages.push(item)
+          })
+        } else {
+          messages.push(value)
+        }
+        console.log(`${key}: ${value}`);
+      }
+    } else if (err.data.error && !AjaxResponseMessages.isCustomMessage(err.data.error.code)) {
+      messages.push(err.data.error.message)
+    } else if (err.data.error && AjaxResponseMessages.isCustomMessage(err.data.error.code)) {
+      messages.push(AjaxResponseMessages.getMessage(err.data.error.code))
+    } else if (typeof err.data.message === 'string') {
+      messages.push(err.data.message)
+    } else if (err.data) {
+      for (const [key, value] of Object.entries(err.data)) {
+        if (typeof value === 'string') {
+          messages.push(value)
+        } else {
+          messages = messages.concat(getMessagesFromArrayWithRecursion(value))
+        }
+        // console.log(`${key}: ${value}`);
+      }
+    }
+
+    return messages
   }
 
   function getMessagesFromArrayWithRecursion(array) {

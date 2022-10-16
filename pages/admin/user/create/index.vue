@@ -355,7 +355,7 @@ export default {
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
           this.loading = true
-          this.$axios.post(API_ADDRESS.user.bulkCreate, {
+          this.$axios.post(API_ADDRESS.user.create, {
             firstName: user.firstName,
             address: user.address,
             phone: user.phone,
@@ -387,6 +387,7 @@ export default {
             // }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
