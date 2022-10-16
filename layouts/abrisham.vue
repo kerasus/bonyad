@@ -18,7 +18,7 @@
     <v-main>
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
-        <expansion-menu v-if=" windowSize.x <= 768"/>
+        <expansion-menu class="expansion-menu"/>
         <!-- If using vue-router -->
         <Nuxt />
 
@@ -72,7 +72,7 @@ export default {
   watch: {
     // 'windowSize.x' : function (newValue) {
     //   this.drawer = newValue > 576;
-    // }
+    // },
   },
   computed: {
     isLoggedIn() {
@@ -198,6 +198,12 @@ export default {
   .container {
     padding: 15px;
   }
+  .side-menu{
+    display: none;
+  }
+  .v-main{
+    padding-right:0 !important;
+  }
 }
 
 @media screen and (max-width: 350px) {
@@ -206,6 +212,12 @@ export default {
 
 @media screen and (max-width: 320px) {
 
+}
+.expansion-menu{
+  display: none;
+  @media screen and (max-width: 768px){
+    display: block;
+  }
 }
 </style>
 
