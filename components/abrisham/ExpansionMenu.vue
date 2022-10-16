@@ -44,9 +44,13 @@
                   @click="changeSelectedItem(i)"
                 >
 
-                  <i
+                  <i v-if="i.icon"
                     class="fi menu-item-icon"
                     :class="'fi-rr-'+ i.icon"
+                  />
+                  <v-img v-if="i.photo"
+                    class="menu-item-photo"
+                    :src="i.photo"
                   />
 
                   <p class="expansion-paragraph">
@@ -54,22 +58,6 @@
                   </p>
                 </div>
               </div>
-              <v-row>
-                <v-col sm="6"
-                       cols="12">
-                  <a href="https://soalaa.com/" target="_blank">
-                    <v-img
-                      class="soalaa-logo"
-                      src="https://nodes.alaatv.com/aaa/landing/Soalaa/Logo/logo.png"
-                    >
-                    </v-img>
-                  </a>
-                </v-col>
-                <v-col sm="6"
-                       cols="12">
-                  سوالا
-                </v-col>
-              </v-row>
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -138,6 +126,14 @@ export default {
           id: 8,
           title: 'نقشه راه ابریشم',
           icon: 'world',
+          routeName: 'map',
+          selected: false
+        },
+        {
+          id: 9,
+          title: 'سوالا',
+          icon: null,
+          photo: 'https://nodes.alaatv.com/aaa/landing/Soalaa/Logo/logo.png',
           routeName: 'map',
           selected: false
         },
@@ -228,12 +224,14 @@ export default {
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
 
-        .menu-item-icon {
+        .menu-item-icon,
+        .menu-item-photo {
           position: absolute;
           top: 12px;
           right: 0;
           color: #b1ccee;
           font-size: 18px !important;
+          width: 18px;
         }
 
       }
