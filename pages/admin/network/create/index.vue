@@ -3,15 +3,10 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate />
     </v-overlay>
-    <v-progress-linear
-      :value="usage_number / usage_limit * 100"
-      color="blue-grey"
-      height="25"
-    >
-      <template v-slot:default="{ value }">
-        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
-      </template>
-    </v-progress-linear>
+    <create-limitation
+      :usage_limit="usage_limit"
+      :usage_number="usage_number"
+    />
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -147,9 +142,11 @@
 <script>
 import API_ADDRESS from "assets/Addresses";
 import {mixinCreateUsers} from '@/mixin/Mixins'
+import CreateLimitation from '/components/abrisham/createLimitation'
 
 export default {
   name: 'moshaverCreate',
+  components: {CreateLimitation},
   mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data () {
