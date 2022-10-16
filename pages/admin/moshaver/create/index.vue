@@ -284,6 +284,12 @@ export default {
             })
             setTimeout(() => {
               this.$refs.form.validate()
+              let that = this
+              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+                .then(resp => {
+                  that.usage_limit = resp.data.data.usage_limit
+                  that.usage_number = resp.data.data.usage_number
+                })
             }, 500)
           }).catch(err => {
             user.loading = false
@@ -340,10 +346,19 @@ export default {
         return this.cities.filter(city => city.province.id === provinceId)
       }
     },
+    userData() {
+      return this.$store.getters['Auth/user']
+    }
   },
   created() {
     this.initUserFormArray(true, 20)
     this.getUserFormData()
+    let that = this
+    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+      .then(resp => {
+        that.usage_limit = resp.data.data.usage_limit
+        that.usage_number = resp.data.data.usage_number
+      })
   }
 }
 </script>
