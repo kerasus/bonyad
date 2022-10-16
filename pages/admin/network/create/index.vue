@@ -255,7 +255,7 @@ export default {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-
+          this.loading = true
           this.$axios.post(API_ADDRESS.network.create, {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -268,6 +268,7 @@ export default {
             user.hasBeenSaved = true
             user.editable = false
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
@@ -278,14 +279,17 @@ export default {
             }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
               }
             })
-            Object.keys(err.response.data.errors).forEach(key => {
-              user[key + '_error'] = err.response.data.errors[key][0]
-            })
+            if (err?.response?.data?.errors) {
+              Object.keys(err.response.data.errors).forEach(key => {
+                user[key + '_error'] = err.response.data.errors[key][0]
+              })
+            }
             setTimeout(() => {
               this.$refs.form.validate()
             }, 500)

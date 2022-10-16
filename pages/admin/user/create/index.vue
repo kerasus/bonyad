@@ -292,11 +292,8 @@ export default {
         if (data && data[i]) {
           const gender_id = this.genders.find(gender => gender.title === data[i][2])
           const major_id = this.majors.find(major => major.title === data[i][3])
-          let province = this.provinces.find(province => province.title === data[i][10])
-          if (!province){
-            province = this.provinces.find(province => province.title === data[i][11])
-          }
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][11])
+          const province = this.provinces.find(province => province.title === data[i][11])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][12])
           if (!shahr_id) {
             shahr_id = this.cities.find(city => city.title === data[i][11])
           }
