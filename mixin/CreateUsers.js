@@ -31,7 +31,7 @@ const CreateUsersMixin = {
             item[j] = clipRows[i][j];
           }
         }
-        if (this.header.indexOf(item[0])!==-1){
+        if (this.header.indexOf(item[0]) !== -1 || item.length === 0) {
           continue
         }
         jsonObj.push(item);
