@@ -16,7 +16,7 @@
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
           <v-btn block color="green" dark
-                 @click="window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')">
+                 @click="downloadExcel">
             دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
@@ -189,6 +189,9 @@ export default {
     }
   },
   methods: {
+    downloadExcel () {
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')
+    },
     provinceSelectOnClick(user) {
       user.provinceDropDown = true
     },
