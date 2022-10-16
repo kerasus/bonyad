@@ -12,7 +12,7 @@
             <side-menu/>
         </v-navigation-drawer>
         <app-bar
-            :width="windowSize"
+            :width="500"
         />
         <!-- Sizes your content based upon application components -->
         <v-main>
