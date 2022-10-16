@@ -39,7 +39,6 @@ const CreateUsersMixin = {
       if (jsonObj.length > 0) {
         this.jsonObj = jsonObj;
         // toastr.success('اکسل کپی شد.');
-        console.log(this.jsonObj);
       } else {
         // toastr.error('عبارت کپی شده صحیح نمی باشد.');
       }
