@@ -134,6 +134,7 @@ export default {
           title: 'سوالا',
           icon: null,
           photo: 'https://nodes.alaatv.com/aaa/landing/Soalaa/Logo/logo.png',
+          href: 'https://soalaa.com/',
           routeName: 'map',
           selected: false
         },
@@ -159,6 +160,10 @@ export default {
   },
   methods: {
     changeSelectedItem(selected) {
+      if (selected.href) {
+        window.open(selected.href)
+        return
+      }
       this.menuItems.map(i => {
         if (i.id === selected.id) {
           return i.selected = true
