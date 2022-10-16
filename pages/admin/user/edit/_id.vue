@@ -167,6 +167,7 @@ export default {
       this.user.city = city[0]
     },
     edit() {
+      this.loading = true
       this.$axios.put(API_ADDRESS.moshaver.edit(this.$route.params.id),
         {
           firstName: this.user.first_name,
@@ -181,10 +182,11 @@ export default {
           shahr_id: this.user.city.id,
         })
         .then(resp => {
+          this.loading = false
           this.user = new User(resp.data)
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
+          this.loading = false
         })
     }
   }
