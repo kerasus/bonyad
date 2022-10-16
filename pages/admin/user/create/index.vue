@@ -14,10 +14,18 @@
     </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="5" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save" :style="{ marginRight: '20px' }">
+        <v-col md="12" class="vertialcally-center-items">
+          <v-btn block color="green" dark @click="downloadExcel">
+            دانلود نمونه اکسل
+            <v-icon class="mr-3">
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col md="5" class="vertialcally-center-items text-left  ">
+          <v-btn color="green" dark @click="save" :loading="loading" :style="{ marginRight: '20px' }">
             ذخیره
-            <v-icon :style="{ marginRight: '10px' }">
+            <v-icon class="mr-3">
               mdi-content-save
             </v-icon>
           </v-btn>
@@ -198,13 +206,14 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
+import {mixinCreateUsers} from '@/mixin/Mixins'
 
 export default {
   name: 'userCreate',
+  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
-      jsonObj: [],
       userForm: [],
       genders: [],
       majors: [],
@@ -212,7 +221,8 @@ export default {
       cities: [],
       loading: false,
       usage_limit: 0,
-      usage_number: 0
+      usage_number: 0,
+      // excel: {title: 'دانلود اکسل نمونه', loc: require('@/assets/sampleExcel/sample.xlsm')}
     }
   },
   head() {
@@ -221,6 +231,9 @@ export default {
     }
   },
   methods: {
+    downloadExcel() {
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28students%29.xlsx', '_blank')
+    },
     provinceSelectOnClick(user) {
       user.provinceDropDown = true
     },
@@ -244,9 +257,6 @@ export default {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
-        // if (data && data[i][0] === 'نام'){
-        //   continue;
-        // }
         this.userForm.push({
           firstName: data && data[i] ? data[i][0] : '',
           address: data && data[i] ? data[i][5] : '',
@@ -260,18 +270,18 @@ export default {
           firstName_error: false,
           lastName: data && data[i] ? data[i][1] : '',
           lastName_error: false,
-          gender_id: '',
+          gender_id: data && data[i] ? data[i][3] : '',
           gender_id_error: false,
-          major_id: '',
+          major_id: data && data[i] ? data[i][5] : '',
           major_id_error: false,
           mobile: data && data[i] ? data[i][4] : '',
           mobile_error: false,
           nationalCode: data && data[i] ? data[i][9] : '',
           nationalCode_error: false,
-          province: data && data[i] ?  Number(data[i][12]) : '',
+          province: '',
           provinceDropDown: false,
           province_error: false,
-          shahr_id: data && data[i] ? Number(data[i][14]) : '',
+          shahr_id: '',
           shahr_idDropdown: false,
           shahr_id_error: false,
           key: Date.now() + Math.random() * 10000,
@@ -280,10 +290,20 @@ export default {
           loading: false
         })
         if (data && data[i]) {
-          const gender_id = this.genders.filter(gender => gender.title === data[i][2])
-          const major_id = this.majors.filter(major => major.title === data[i][3])
-          this.userForm[i].gender_id = gender_id[0] ? gender_id[0].id : 0
-          this.userForm[i].major_id = major_id[0] ? major_id[0].id : 0
+          const gender_id = this.genders.find(gender => gender.title === data[i][2])
+          const major_id = this.majors.find(major => major.title === data[i][3])
+          const province = this.provinces.find(province => province.title === data[i][11])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][12])
+          if (!shahr_id) {
+            shahr_id = this.cities.find(city => city.title === data[i][11])
+          }
+          if (!shahr_id) {
+            shahr_id = this.cities.find(city => city.title === data[i][12])
+          }
+          this.userForm[i].gender_id = gender_id ? gender_id.id : 0
+          this.userForm[i].major_id = major_id ? major_id.id : 0
+          this.userForm[i].province = province ? province.id : 0
+          this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
         }
       }
     },
@@ -306,13 +326,32 @@ export default {
     },
 
 
-
     save() {
+      // ToDo: send this data for bulk
+      const sendData = {
+        users: this.userForm.map(user=> {
+          return {
+            firstName: user.firstName,
+            address: user.address,
+            phone: user.phone,
+            father_mobile: user.father_mobile,
+            mother_mobile: user.mother_mobile,
+            lastName: user.lastName,
+            mobile: user.mobile,
+            nationalCode: user.nationalCode,
+            gender_id: user.gender_id,
+            major_id: user.major_id,
+            shahr_id: user.shahr_id
+          }
+        }),
+        type: 'user' // user - moshaver - subnetwork - network
+      }
+
       this.userForm.forEach(user => {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-
+          this.loading = true
           this.$axios.post(API_ADDRESS.user.create, {
             firstName: user.firstName,
             address: user.address,
@@ -329,21 +368,23 @@ export default {
             user.hasBeenSaved = true
             user.editable = false
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
               }
             })
-            setTimeout(() => {
-              let that = this
-              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-                .then(resp => {
-                  that.usage_limit = resp.data.data.usage_limit
-                  that.usage_number = resp.data.data.usage_number
-                })
-            }, 500)
+            // setTimeout(() => {
+            // let that = this
+            // this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+            //   .then(resp => {
+            //     that.usage_limit = resp.data.data.usage_limit
+            //     that.usage_number = resp.data.data.usage_number
+            //   })
+            // }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
@@ -360,41 +401,8 @@ export default {
       })
     },
     onPaste(e) {
-      e.preventDefault();
-      let cb;
-      let clipText = '';
-      if (window.clipboardData && window.clipboardData.getData) {
-        cb = window.clipboardData;
-        clipText = cb.getData('Text');
-      } else if (e.clipboardData && e.clipboardData.getData) {
-        cb = e.clipboardData;
-        clipText = cb.getData('text/plain');
-      } else {
-        cb = e.originalEvent.clipboardData;
-        clipText = cb.getData('text/plain');
-      }
-      let clipRows = clipText.split('\n');
-      for (let i = 0; i < clipRows.length; i++) {
-        clipRows[i] = clipRows[i].split('\t');
-      }
-      let jsonObj = [];
-      for (let i = 0; i < clipRows.length - 1; i++) {
-        let item = {};
-        for (let j = 0; j < clipRows[i].length; j++) {
-          if (clipRows[i][j] !== '\r' && clipRows[i][j].length !== 0) {
-            item[j] = clipRows[i][j];
-          }
-        }
-        jsonObj.push(item);
-      }
-      if (jsonObj.length > 0) {
-        this.jsonObj = jsonObj;
-        // toastr.success('اکسل کپی شد.');
-        console.log(this.jsonObj);
-        this.initUserFormArray(true, 20, this.jsonObj)
-      } else {
-        // toastr.error('عبارت کپی شده صحیح نمی باشد.');
-      }
+      this.pasteData(e)
+      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
   },
   computed: {
@@ -425,17 +433,22 @@ export default {
   created() {
     this.initUserFormArray(true, 20)
     this.getUserFormData()
-    let that = this
-    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-      .then(resp => {
-        that.usage_limit = resp.data.data.usage_limit
-        that.usage_number = resp.data.data.usage_number
-      })
+    // let that = this
+    // this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+    //   .then(resp => {
+    //     that.usage_limit = resp.data.data.usage_limit
+    //     that.usage_number = resp.data.data.usage_number
+    //   })
   }
 }
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+  color: white !important;
+}
+
 .has-been-saved {
   background: rgba(0, 280, 0, 0.2);
 }

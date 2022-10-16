@@ -3,12 +3,29 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate />
     </v-overlay>
+    <v-progress-linear
+      :value="usage_number / usage_limit * 100"
+      color="blue-grey"
+      height="25"
+    >
+      <template v-slot:default="{ value }">
+        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
+      </template>
+    </v-progress-linear>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
-        <v-col md="2" class="vertialcally-center-items">
+        <v-col md="12" class="vertialcally-center-items">
+          <v-btn block color="green" dark @click="downloadExcel">
+            دانلود نمونه اکسل
+            <v-icon class="mr-3">
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col md="5" class="vertialcally-center-items">
           <v-btn color="green" dark @click="save">
             ذخیره
-            <v-icon :style="{ marginRight: '10px' }">
+            <v-icon class="mr-3">
               mdi-content-save
             </v-icon>
           </v-btn>
@@ -20,7 +37,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.firstName_error }" required type="text" v-model="user.firstName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام</span>
                 </label>
                 <span class="error-message" v-if="user.firstName_error">{{ user.firstName_error }}</span>
@@ -29,7 +46,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.lastName_error }" required type="text" v-model="user.lastName"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">نام خانوادگی</span>
                 </label>
                 <span class="error-message" v-if="user.lastName_error">{{ user.lastName_error }}</span>
@@ -50,7 +67,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.mobile_error }" required type="text" v-model="user.mobile"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">موبایل</span>
                 </label>
                 <span class="error-message" v-if="user.mobile_error">{{ user.mobile_error }}</span>
@@ -59,7 +76,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.nationalCode_error }" required type="text" v-model="user.nationalCode"  @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
                 <span class="error-message" v-if="user.nationalCode_error">{{ user.nationalCode_error }}</span>
@@ -99,7 +116,7 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.student_register_limit_error }" required v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
+                  <input @paste="onPaste" :class="{ 'has-error': user.student_register_limit_error }" required v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
                   <span class="placeholder">محدودیت ثبت نام</span>
                 </label>
                 <span class="error-message" v-if="user.student_register_limit_error">{{ user.student_register_limit_error }}</span>
@@ -129,9 +146,11 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
+import {mixinCreateUsers} from '@/mixin/Mixins'
 
 export default {
   name: 'moshaverCreate',
+  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data () {
     return {
@@ -140,7 +159,9 @@ export default {
       majors: [],
       provinces: [],
       cities: [],
-      loading: false
+      loading: false,
+      usage_limit: 0,
+      usage_number: 0,
     }
   },
   head() {
@@ -149,6 +170,9 @@ export default {
     }
   },
   methods: {
+    downloadExcel () {
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')
+    },
     provinceSelectOnClick (user) {
       user.provinceDropDown = true
     },
@@ -167,25 +191,25 @@ export default {
     shahr_idSelectOnChange (user) {
       user.shahr_idDropdown = false
     },
-    initUserFormArray(clean = true, amount = 20) {
+    initUserFormArray(clean = true, amount = 20, data) {
       if (clean) {
         this.userForm = []
       }
       for (let i = 0; i < amount; i++) {
         this.userForm.push({
-          firstName: '',
+          firstName: data && data[i] ? data[i][0] : '',
           firstNameMessage: '',
           firstName_error: false,
-          student_register_limit: '',
+          student_register_limit: data && data[i] ? Number(data[i][8]) : '',
           student_register_limitMessage: '',
           student_register_limit_error: '',
-          lastName: '',
+          lastName: data && data[i] ? data[i][1] : '',
           lastName_error: false,
           gender_id: '',
           gender_id_error: false,
-          mobile: '',
+          mobile: data && data[i] ? data[i][4] : '',
           mobile_error: false,
-          nationalCode: '',
+          nationalCode: data && data[i] ? data[i][5] : '',
           nationalCode_error: false,
           province: '',
           provinceDropDown: false,
@@ -198,6 +222,16 @@ export default {
           editable: true,
           loading: false
         })
+        if (data && data[i]) {
+          const gender_id = this.genders.find(gender => gender.title === data[i][2])
+          const major_id = this.majors.find(major => major.title === data[i][3])
+          const province = this.provinces.find(province => province.title === data[i][6])
+          let shahr_id = this.cities.find(city => city.title === data[i][7])
+          this.userForm[i].gender_id = gender_id ? gender_id.id : 0
+          this.userForm[i].major_id = major_id ? major_id.id : 0
+          this.userForm[i].province = province ? province.id : 0
+          this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
+        }
       }
     },
     isUserInfoComplete(user) {
@@ -221,7 +255,7 @@ export default {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-
+          this.loading = true
           this.$axios.post(API_ADDRESS.network.create, {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -234,6 +268,7 @@ export default {
             user.hasBeenSaved = true
             user.editable = false
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
@@ -244,14 +279,17 @@ export default {
             }, 500)
           }).catch(err => {
             user.loading = false
+            this.loading = false
             Object.keys(user).forEach(key => {
               if (key.includes('_error')) {
                 user[key] = false
               }
             })
-            Object.keys(err.response.data.errors).forEach(key => {
-              user[key + '_error'] = err.response.data.errors[key][0]
-            })
+            if (err?.response?.data?.errors) {
+              Object.keys(err.response.data.errors).forEach(key => {
+                user[key + '_error'] = err.response.data.errors[key][0]
+              })
+            }
             setTimeout(() => {
               this.$refs.form.validate()
             }, 500)
@@ -267,6 +305,10 @@ export default {
           })
         }
       })
+    },
+    onPaste(e){
+      this.pasteData(e)
+      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
   },
   computed: {
@@ -299,6 +341,11 @@ export default {
 </script>
 
 <style scoped>
+a{
+  text-decoration: none;
+  color: white !important;
+}
+
 .has-been-saved {
   background: rgba(0, 280, 0, 0.2);
 }
