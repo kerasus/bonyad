@@ -9,10 +9,12 @@
     />
     <v-alert v-if="limit_error_row"
              color="red"
-             dismissible
              type="error"
     >
       حداکثر 200 دانش آموز میتوانید وارد کنید
+      <v-icon left @click="limit_error_row=false">
+        mdi-close
+      </v-icon>
     </v-alert>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
@@ -226,6 +228,7 @@ export default {
       loading: false,
       usage_limit: 0,
       usage_number: 0,
+      valid: false
     }
   },
   head() {
@@ -295,8 +298,11 @@ export default {
         if (data && data[i]) {
           const gender_id = this.genders.find(gender => gender.title === data[i][2])
           const major_id = this.majors.find(major => major.title === data[i][3])
-          const province = this.provinces.find(province => province.title === data[i][11])
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][12])
+          let province = this.provinces.find(province => province.title === data[i][10])
+          if (!province) {
+            province = this.provinces.find(province => province.title === data[i][11])
+          }
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][11])
           if (!shahr_id) {
             shahr_id = this.cities.find(city => city.title === data[i][11])
           }
@@ -330,7 +336,6 @@ export default {
 
 
     save() {
-      // ToDo: send this data for bulk
       const sendData = {
         users: this.userForm.map(user => {
           return {
@@ -347,24 +352,32 @@ export default {
             shahr_id: user.shahr_id
           }
         }),
-        type: 'student' // student - moshaver - subnetwork - network
+        type: 'student'
       }
-
-      let that = this
-      if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
+      this.userForm.forEach(user => {
+        let that = this
+        if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
+          user.loading = true
+          this.valid = true
+        }
+      })
+      if (this.valid) {
         this.loading = true
-        this.$axios.post(API_ADDRESS.user.create, {
+        this.$axios.post(API_ADDRESS.user.bulkCreate, {
           users: sendData.users,
           type: sendData.type
         }).then(() => {
-          user.hasBeenSaved = true
-          user.editable = false
-          this.loading = false
-          Object.keys(user).forEach(key => {
-            if (key.includes('_error')) {
-              user[key] = false
-            }
+          this.userForm.forEach(user => {
+            user.hasBeenSaved = true
+            user.editable = false
+            Object.keys(user).forEach(key => {
+              console.log(key)
+              if (key.includes('_error')) {
+                user[key] = false
+              }
+            })
           })
+          this.loading = false
           setTimeout(() => {
             let that = this
             this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
@@ -374,16 +387,35 @@ export default {
               })
           }, 500)
         }).catch(err => {
-          user.loading = false
-          this.loading = false
-          Object.keys(user).forEach(key => {
-            if (key.includes('_error')) {
-              user[key] = false
+          this.userForm.forEach((user, userIndex) => {
+            user.loading = false
+            Object.keys(user).forEach(userKey => {
+              if (userKey.includes('_error')) {
+                user[userKey] = false
+              }
+            })
+
+            function getUserIndexAndInputNameFromKey(errorKey) {
+              const dataArray = errorKey.split('.')
+              if (dataArray.length < 3 || dataArray[0] !== 'users') {
+                return null
+              }
+
+              return {
+                index: dataArray[1],
+                key: dataArray[2]
+              }
             }
+
+            Object.keys(err.response.data.errors).forEach(errorKey => {
+              const errorData = getUserIndexAndInputNameFromKey(errorKey)
+              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
+                const error = err.response.data.errors[errorKey][0].split('.')
+                user[errorData.key + '_error'] = error[2]
+              }
+            })
           })
-          Object.keys(err.response.data.errors).forEach(key => {
-            user[key + '_error'] = err.response.data.errors[key][0]
-          })
+          this.loading = false
           setTimeout(() => {
             this.$refs.form.validate()
           }, 500)

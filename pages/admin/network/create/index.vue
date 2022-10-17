@@ -247,13 +247,10 @@ export default {
           this.cities = resp.data.data.cities
         })
     },
-    save () {
-      this.userForm.forEach(user => {
-        let that = this
-        if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
-          user.loading = true
-          this.loading = true
-          this.$axios.post(API_ADDRESS.network.create, {
+    save() {
+      const sendData = {
+        users: this.userForm.map(user => {
+          return {
             firstName: user.firstName,
             lastName: user.lastName,
             student_register_limit: user.student_register_limit,
@@ -261,45 +258,17 @@ export default {
             nationalCode: user.nationalCode,
             gender_id: user.gender_id,
             shahr_id: user.shahr_id
-          }).then(resp => {
-            user.hasBeenSaved = true
-            user.editable = false
-            user.loading = false
-            this.loading = false
-            Object.keys(user).forEach(key => {
-              if (key.includes('_error')) {
-                user[key] = false
-              }
-            })
-            setTimeout(() => {
-              this.$refs.form.validate()
-            }, 500)
-          }).catch(err => {
-            user.loading = false
-            this.loading = false
-            Object.keys(user).forEach(key => {
-              if (key.includes('_error')) {
-                user[key] = false
-              }
-            })
-            if (err?.response?.data?.errors) {
-              Object.keys(err.response.data.errors).forEach(key => {
-                user[key + '_error'] = err.response.data.errors[key][0]
-              })
-            }
-            setTimeout(() => {
-              this.$refs.form.validate()
-              let that = this
-              this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-                .then(resp => {
-                  that.usage_limit = resp.data.data.usage_limit
-                  that.usage_number = resp.data.data.usage_number
-                })
-            }, 500)
-          })
+          }
+        }),
+        type: 'network'
+      }
+      this.userForm.forEach(user => {
+        let that = this
+        if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
+          user.loading = true
+          this.valid = true
         } else if (user.firstName || user.lastName || user.student_register_limit || user.gender_id
-           || user.mobile  || user.nationalCode  ||
-          user.province  || user.shahr_id) {
+          || user.mobile || user.nationalCode || user.shahr_id) {
           this.$notify({
             type: 'error',
             duration: 10000,
@@ -308,6 +277,66 @@ export default {
           })
         }
       })
+      if (this.valid) {
+        this.loading = true
+        this.$axios.post(API_ADDRESS.subnetwork.bulkCreate, {
+          users: sendData.users,
+          type: sendData.type
+        }).then(r => {
+          console.log(r)
+          this.userForm.forEach(user => {
+            user.hasBeenSaved = true
+            user.editable = false
+            Object.keys(user).forEach(key => {
+              if (key.includes('_error')) {
+                user[key] = false
+              }
+            })
+          })
+          this.loading = false
+          setTimeout(() => {
+            let that = this
+            this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
+              .then(resp => {
+                that.usage_limit = resp.data.data.usage_limit
+                that.usage_number = resp.data.data.usage_number
+              })
+          }, 500)
+        }).catch(err => {
+          this.userForm.forEach((user, userIndex) => {
+            user.loading = false
+            Object.keys(user).forEach(userKey => {
+              if (userKey.includes('_error')) {
+                user[userKey] = false
+              }
+            })
+
+            function getUserIndexAndInputNameFromKey(errorKey) {
+              const dataArray = errorKey.split('.')
+              if (dataArray.length < 3 || dataArray[0] !== 'users') {
+                return null
+              }
+
+              return {
+                index: dataArray[1],
+                key: dataArray[2]
+              }
+            }
+
+            Object.keys(err.response.data.errors).forEach(errorKey => {
+              const errorData = getUserIndexAndInputNameFromKey(errorKey)
+              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
+                const error = err.response.data.errors[errorKey][0].split('.')
+                user[errorData.key + '_error'] = error[2]
+              }
+            })
+          })
+          this.loading = false
+          setTimeout(() => {
+            this.$refs.form.validate()
+          }, 500)
+        })
+      }
     },
     onPaste(e){
       this.pasteData(e)
@@ -532,7 +561,7 @@ border:1px solid grey;
   content: '';
   height: 3px;
   width: 0;
-  bottom: 0px;
+  bottom: 0;
   position: absolute;
   background: orange;
   transition: 0.2s ease all;
