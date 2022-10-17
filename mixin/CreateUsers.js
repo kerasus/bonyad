@@ -2,6 +2,7 @@ const CreateUsersMixin = {
   data() {
     return {
       jsonObj: [],
+      limit_error_row: false,
       header: ['نام', 'نام خانوادگی', 'جنسیت', 'رشته', 'موبایل', 'کد ملی', 'آدرس', 'تلفن', 'موبایل پدر', 'موبایل مادر', 'استان', 'province', 'شهر', 'محدودیت ثبت نام']
     }
   }, methods: {
@@ -36,11 +37,13 @@ const CreateUsersMixin = {
         }
         jsonObj.push(item);
       }
-      if (jsonObj.length > 0) {
+      if (jsonObj.length < 0) {
+        // toastr.error('عبارت کپی شده صحیح نمی باشد.');
+      } else if (jsonObj.length > 201) {
+        this.limit_error_row = true
+      } else {
         this.jsonObj = jsonObj;
         // toastr.success('اکسل کپی شد.');
-      } else {
-        // toastr.error('عبارت کپی شده صحیح نمی باشد.');
       }
     }
   }
