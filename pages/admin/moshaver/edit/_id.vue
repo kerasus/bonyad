@@ -138,7 +138,7 @@ export default {
           this.province = this.user.province.title
           this.city = this.user.city.title
           this.usage_limit=this.user.student_register_limit
-          this.usage_number=this.user.student_usage_number
+          this.usage_number=this.user.student_register_number
           this.getUserFormData()
         })
         .catch(err => {
@@ -200,7 +200,10 @@ export default {
         user_id: this.$route.params.id,
         student_register_limit: this.usage_limit
       }).then(resp => {
-        console.log(resp)
+        this.$notify({
+          type: 'success',
+          text: resp.data.data?.message ? resp.data.data.message : 'ظرفیت ثبت نام ویرایش شد.',
+        })
       }).catch(err => {
         console.log(err)
       })
