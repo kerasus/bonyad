@@ -61,34 +61,40 @@
       >ذخیره تغییرات
       </v-btn>
     </div>
-    <v-row>
-      <v-col cols="12"
-             md="4">
-        <v-text-field
-          class="mx-5"
-          label="ظرفیت ثبت نام"
-          v-model="usage_limit"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12"
-             md="4">
-        <v-text-field
-          class="mx-5"
-          label="ظرفیت باقی مانده"
-          readonly
-          v-model="usage_number"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12"
-             md="12">
-        <v-btn class="mx-10"
-               :loading="loadingLimit"
-               large
-               rounded
-               elevation="4"
-               @click="editLimit">
-          تغییر ظرفیت
-        </v-btn>
+    <v-row class="justify-center">
+      <v-col md="6" cols="12">
+        <v-card elevation="5" class="pa-5">
+          <v-row>
+            <v-col cols="12"
+                   md="4">
+              <v-text-field
+                class="mx-5"
+                label="ظرفیت ثبت نام"
+                v-model="usage_limit"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12"
+                   md="4">
+              <v-text-field
+                class="mx-5"
+                label="ظرفیت استفاده شده"
+                readonly
+                v-model="usage_number"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12"
+                   md="12">
+              <v-btn class="mx-10"
+                     :loading="loadingLimit"
+                     large
+                     rounded
+                     elevation="4"
+                     @click="editLimit">
+                تغییر ظرفیت
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
     </v-row>
   </div>
