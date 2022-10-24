@@ -17,6 +17,7 @@ const API_ADDRESS = {
     edit: (userId) => authServer + '/admin/bonyadEhsan/user/' + userId,
     update: authServer + '/admin/bonyadEhsan/user/',
     create: authServer + '/admin/bonyadEhsan/moshaver',
+    bulkCreate: authServer + '/admin/bonyadEhsan/groupUser',
     product: authServer + '/admin/bonyadEhsan/selectOption',
     base: authServer + '/user',
     mobile: {
@@ -33,10 +34,12 @@ const API_ADDRESS = {
     unpin: (userId) => authServer + '/livedescription/' + userId + '/unpin'
   },
   network: {
-    create: authServer + '/admin/bonyadEhsan/network'
+    create: authServer + '/admin/bonyadEhsan/network',
+    bulkCreate: authServer + '/admin/bonyadEhsan/groupUser',
   },
   subnetwork: {
-    create: authServer + '/admin/bonyadEhsan/subNetwork'
+    create: authServer + '/admin/bonyadEhsan/subNetwork',
+    bulkCreate: authServer + '/admin/bonyadEhsan/groupUser',
   },
   user: {
     info: authServer + '/admin/bonyadEhsan/user/myInfo',

@@ -3,15 +3,19 @@
     <v-overlay v-if="loading">
       <v-progress-circular indeterminate/>
     </v-overlay>
-    <v-progress-linear
-      :value="usage_number / usage_limit * 100"
-      color="blue-grey"
-      height="25"
+    <create-limitation
+      :usage_limit="usage_limit"
+      :usage_number="usage_number"
+    />
+    <v-alert v-if="limit_error_row"
+             color="red"
+             type="error"
     >
-      <template v-slot:default="{ value }">
-        <strong>ظرفیت ثبت نام: {{ usage_number }} / {{ usage_limit }}</strong>
-      </template>
-    </v-progress-linear>
+      حداکثر 200 دانش آموز میتوانید وارد کنید
+      <v-icon left @click="limit_error_row=false">
+        mdi-close
+      </v-icon>
+    </v-alert>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -207,9 +211,11 @@
 <script>
 import API_ADDRESS from "assets/Addresses";
 import {mixinCreateUsers} from '@/mixin/Mixins'
+import CreateLimitation from '/components/abrisham/createLimitation'
 
 export default {
   name: 'userCreate',
+  components: {CreateLimitation},
   mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data() {
@@ -222,7 +228,7 @@ export default {
       loading: false,
       usage_limit: 0,
       usage_number: 0,
-      // excel: {title: 'دانلود اکسل نمونه', loc: require('@/assets/sampleExcel/sample.xlsm')}
+      valid: false
     }
   },
   head() {
@@ -292,8 +298,11 @@ export default {
         if (data && data[i]) {
           const gender_id = this.genders.find(gender => gender.title === data[i][2])
           const major_id = this.majors.find(major => major.title === data[i][3])
-          const province = this.provinces.find(province => province.title === data[i][11])
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][12])
+          let province = this.provinces.find(province => province.title === data[i][10])
+          if (!province) {
+            province = this.provinces.find(province => province.title === data[i][11])
+          }
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][11])
           if (!shahr_id) {
             shahr_id = this.cities.find(city => city.title === data[i][11])
           }
@@ -327,9 +336,8 @@ export default {
 
 
     save() {
-      // ToDo: send this data for bulk
       const sendData = {
-        users: this.userForm.map(user=> {
+        users: this.userForm.map(user => {
           return {
             firstName: user.firstName,
             address: user.address,
@@ -344,65 +352,79 @@ export default {
             shahr_id: user.shahr_id
           }
         }),
-        type: 'user' // user - moshaver - subnetwork - network
+        type: 'student'
       }
-
       this.userForm.forEach(user => {
         let that = this
         if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
           user.loading = true
-          this.loading = true
-          this.$axios.post(API_ADDRESS.user.create, {
-            firstName: user.firstName,
-            address: user.address,
-            phone: user.phone,
-            father_mobile: user.father_mobile,
-            mother_mobile: user.mother_mobile,
-            lastName: user.lastName,
-            mobile: user.mobile,
-            nationalCode: user.nationalCode,
-            gender_id: user.gender_id,
-            major_id: user.major_id,
-            shahr_id: user.shahr_id
-          }).then(() => {
+          this.valid = true
+        }
+      })
+      if (this.valid) {
+        this.loading = true
+        this.$axios.post(API_ADDRESS.user.bulkCreate, {
+          users: sendData.users,
+          type: sendData.type
+        }).then(() => {
+          this.userForm.forEach(user => {
             user.hasBeenSaved = true
             user.editable = false
-            user.loading = false
-            this.loading = false
             Object.keys(user).forEach(key => {
+              console.log(key)
               if (key.includes('_error')) {
                 user[key] = false
               }
             })
-            setTimeout(() => {
+          })
+          this.loading = false
+          setTimeout(() => {
             let that = this
             this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
               .then(resp => {
                 that.usage_limit = resp.data.data.usage_limit
                 that.usage_number = resp.data.data.usage_number
               })
-            }, 500)
-          }).catch(err => {
+          }, 500)
+        }).catch(err => {
+          this.userForm.forEach((user, userIndex) => {
             user.loading = false
-            this.loading = false
-            Object.keys(user).forEach(key => {
-              if (key.includes('_error')) {
-                user[key] = false
+            Object.keys(user).forEach(userKey => {
+              if (userKey.includes('_error')) {
+                user[userKey] = false
               }
             })
-            Object.keys(err.response.data.errors).forEach(key => {
-              user[key + '_error'] = err.response.data.errors[key][0]
+
+            function getUserIndexAndInputNameFromKey(errorKey) {
+              const dataArray = errorKey.split('.')
+              if (dataArray.length < 3 || dataArray[0] !== 'users') {
+                return null
+              }
+
+              return {
+                index: dataArray[1],
+                key: dataArray[2]
+              }
+            }
+
+            Object.keys(err.response.data.errors).forEach(errorKey => {
+              const errorData = getUserIndexAndInputNameFromKey(errorKey)
+              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
+                const error = err.response.data.errors[errorKey][0].split('.')
+                user[errorData.key + '_error'] = error[2]
+              }
             })
-            setTimeout(() => {
-              this.$refs.form.validate()
-            }, 500)
           })
-        }
-      })
+          this.loading = false
+          setTimeout(() => {
+            this.$refs.form.validate()
+          }, 500)
+        })
+      }
     },
     onPaste(e) {
       this.pasteData(e)
-      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
+      this.initUserFormArray(true, this.jsonObj.length ? this.jsonObj.length : 20, this.jsonObj)
     }
   },
   computed: {
