@@ -53,6 +53,7 @@
       >
         <v-btn
           @click="createMessage"
+          :loading="loading"
         >
           ثبت پیام
         </v-btn>
@@ -76,7 +77,8 @@ export default {
       checkbox: false,
       disabled: false,
       productId: null,
-      entity_type: 'App\\Product'
+      entity_type: 'App\\Product',
+      loading: false
     }
   },
   created() {
@@ -107,6 +109,7 @@ export default {
       this.productId = product[0].id
     },
     createMessage() {
+      this.loading = true
       this.$axios.post(API_ADDRESS.liveDescription.create, {
         title: this.title,
         description: this.description,
@@ -116,9 +119,11 @@ export default {
       })
         .then(() => {
           this.$router.push({path: '/admin/liveDescription/list'})
+          this.loading = false
         })
         .catch(err => {
           console.log(err)
+          this.loading = false
         })
     }
   }
