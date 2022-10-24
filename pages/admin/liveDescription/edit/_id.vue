@@ -53,6 +53,7 @@
       >
         <v-btn
           @click="editMessage"
+          :loading="loading"
         >
           ثبت تغییرات
         </v-btn>
@@ -76,7 +77,8 @@ export default {
       checkbox: false,
       disabled: false,
       productId: null,
-      entity_type: ''
+      entity_type: '',
+      loading: false
     }
   },
   created() {
@@ -126,6 +128,7 @@ export default {
         })
     },
     editMessage() {
+      this.loading = true
       const userId = this.$route.params.id
       this.$axios.put(API_ADDRESS.liveDescription.edit(userId), {
         title: this.title,
@@ -134,12 +137,13 @@ export default {
         entity_type: this.entity_type,
         owner: 2
       })
-        .then(resp => {
-          console.log(resp.data)
+        .then(() => {
+          this.loading = false
           this.$router.push({path: '/admin/liveDescription/list'})
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
+          this.loading = false
+
         })
     }
   }
