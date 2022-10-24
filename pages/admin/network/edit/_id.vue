@@ -73,8 +73,8 @@
       ></v-select>
     </div>
     <div class="col-md-12">
-      <v-btn class="mx-5"
-             :loading="loading"
+      <v-btn class="mx-5 mb-5"
+             :loading="loadingEdit"
              large
              rounded
              elevation="4"
@@ -82,6 +82,36 @@
       >ذخیره تغییرات
       </v-btn>
     </div>
+    <v-row>
+      <v-col cols="12"
+             md="4">
+        <v-text-field
+          class="mx-5"
+          label="ظرفیت ثبت نام"
+          v-model="usage_limit"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12"
+             md="4">
+        <v-text-field
+          class="mx-5"
+          label="ظرفیت باقی مانده"
+          readonly
+          v-model="usage_number"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12"
+             md="12">
+        <v-btn class="mx-10"
+               :loading="loadingLimit"
+               large
+               rounded
+               elevation="4"
+               @click="editLimit">
+          تغییر ظرفیت
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -93,7 +123,10 @@ export default {
   name: "_id.vue",
   data() {
     return {
-      loading: false,
+      loadingEdit: false,
+      loadingLimit: false,
+      usage_limit: 0,
+      usage_number: 0,
       user: new User(),
       major: null,
       gender: null,
@@ -119,6 +152,8 @@ export default {
           this.gender = this.user.gender.title
           this.province = this.user.province.title
           this.city = this.user.city.title
+          this.usage_limit=this.user.student_register_limit
+          this.usage_number=this.user.student_usage_number
           this.getUserFormData()
         })
         .catch(err => {
@@ -176,6 +211,16 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    editLimit() {
+      this.$axios.post(API_ADDRESS.editLimit.base, {
+        user_id: this.$route.params.id,
+        student_register_limit: this.usage_limit
+      }).then(resp => {
+        console.log(resp)
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }

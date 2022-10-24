@@ -215,6 +215,8 @@ export default {
           firstNameMessage: '',
           firstName_error: false,
           student_register_limit: '',
+          student_register_number: '',
+          student_usage_number:'',
           student_register_limitMessage: '',
           student_register_limit_error: '',
           lastName: data && data[i] ? data[i][1] : '',
