@@ -31,6 +31,8 @@ class User extends Model {
       {key: 'token'},
       {key: 'has_admin_permission'},
       {key: 'has_educational_permission'},
+      {key: 'student_register_limit'},
+      {key: 'student_register_number'},
 
       {key: 'mobile_verified_at'},
       {key: 'wallet_balance'},

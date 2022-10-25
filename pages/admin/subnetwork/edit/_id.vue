@@ -73,8 +73,8 @@
       ></v-select>
     </div>
     <div class="col-md-12">
-      <v-btn class="mx-5"
-             :loading="loading"
+      <v-btn class="mx-5 mb-5"
+             :loading="loadingEdit"
              large
              rounded
              elevation="4"
@@ -82,6 +82,42 @@
       >ذخیره تغییرات
       </v-btn>
     </div>
+    <v-row class="justify-center">
+      <v-col md="6" cols="12">
+        <v-card elevation="5" class="pa-5">
+          <v-row>
+            <v-col cols="12"
+                   md="4">
+              <v-text-field
+                class="mx-5"
+                label="ظرفیت ثبت نام"
+                v-model="usage_limit"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12"
+                   md="4">
+              <v-text-field
+                class="mx-5"
+                label="ظرفیت استفاده شده"
+                readonly
+                v-model="usage_number"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12"
+                   md="12">
+              <v-btn class="mx-10"
+                     :loading="loadingLimit"
+                     large
+                     rounded
+                     elevation="4"
+                     @click="editLimit">
+                تغییر ظرفیت
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -93,7 +129,10 @@ export default {
   name: "_id.vue",
   data() {
     return {
-      loading: false,
+      loadingEdit: false,
+      loadingLimit: false,
+      usage_limit: 0,
+      usage_number: 0,
       user: new User(),
       major: null,
       gender: null,
@@ -119,6 +158,8 @@ export default {
           this.gender = this.user.gender.title
           this.province = this.user.province.title
           this.city = this.user.city.title
+          this.usage_limit=this.user.student_register_limit
+          this.usage_number=this.user.student_register_number
           this.getUserFormData()
         })
         .catch(err => {
@@ -157,6 +198,7 @@ export default {
       this.user.city = city[0]
     },
     edit() {
+      this.loading = true
       this.$axios.put(API_ADDRESS.moshaver.edit(this.$route.params.id),
         {
           firstName: this.user.first_name,
@@ -169,11 +211,25 @@ export default {
           shahr_id: this.user.city.id,
         })
         .then(resp => {
+          this.loading = false
           this.user = new User(resp.data)
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
+          this.loading = false
         })
+    },
+    editLimit() {
+      this.$axios.post(API_ADDRESS.editLimit.base, {
+        user_id: this.$route.params.id,
+        student_register_limit: this.usage_limit
+      }).then(resp => {
+        this.$notify({
+          type: 'success',
+          text: resp.data.data?.message ? resp.data.data.message : 'ظرفیت ثبت نام ویرایش شد.',
+        })
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
