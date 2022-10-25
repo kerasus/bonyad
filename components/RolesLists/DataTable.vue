@@ -1,5 +1,8 @@
 <template>
   <div>
+    <v-overlay v-if="loadingPage">
+      <v-progress-circular indeterminate/>
+    </v-overlay>
     <v-row :style="{ padding: '20px 10px' }">
       <v-col md="12" class="vertialcally-center-items">
         <v-btn block color="green" dark @click="getExcel">
@@ -56,6 +59,10 @@
         </div>
       </template>
     </v-data-table>
+    <v-row class="ma-5">
+      <span>تعداد کل : </span>
+      <span>{{totalRows}}</span>
+    </v-row>
   </div>
 </template>
 
@@ -93,6 +100,7 @@ export default {
   },
   data() {
     return {
+      loadingPage: false,
       download: '',
       options: {
         itemsPerPage: 25,
@@ -145,6 +153,7 @@ export default {
         })
     },
     getUsersOfBonyad() {
+      this.loadingPage = true
       const id = this.getUserOfBonyadId()
       const mode = this.getUserOfBonyadParam()
       this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode, this.options.page))
@@ -154,6 +163,7 @@ export default {
           this.totalRows = response.data.meta.total
           this.totalRows = response.data.meta.total
           this.options.itemsPerPage = response.data.meta.per_page
+          this.loadingPage = false
         })
     },
     getUserOfBonyadParam() {
@@ -206,7 +216,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-a{
+a {
   text-decoration: none;
   color: white !important;
 }
