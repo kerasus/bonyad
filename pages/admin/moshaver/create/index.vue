@@ -26,13 +26,6 @@
             </v-icon>
           </v-btn>
         </v-col>
-        <v-col md="5" class="text-right">
-          <v-file-input
-            @change="addExcel"
-            truncate-length="50"
-            placeholder="import excel file"
-          />
-        </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
         <v-row v-for="user in userForm" :key="user.key">
@@ -368,8 +361,6 @@ export default {
       }
     },
     onPaste(e) {
-      // const importExcel = new ReadExcel(e, this.keys)
-      // importExcel.getData()
       this.pasteData(e)
       this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
