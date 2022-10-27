@@ -167,8 +167,6 @@
 import API_ADDRESS from "assets/Addresses";
 import {mixinCreateUsers} from '@/mixin/Mixins'
 import CreateLimitation from '/components/abrisham/createLimitation'
-import ReadExcel from '@/assets/importExcel/readExcel'
-import * as XLSX from "xlsx"
 
 export default {
   name: 'moshaverCreate',
@@ -277,29 +275,8 @@ export default {
           this.cities = resp.data.data.cities
         })
     },
-    addExcel(event){
-      console.log(typeof event)
-      this.file = event
-      let fileReader = new FileReader();
-      fileReader.readAsArrayBuffer(this.file);
-      fileReader.onload = (e) => {
-        this.arrayBuffer = fileReader.result;
-        const data = new Uint8Array(this.arrayBuffer);
-        const arr = [];
-        for (let i = 0; i !== data.length; ++i)
-          arr[i] = String.fromCharCode(data[i]);
-        const bstr = arr.join("");
-        const workbook = XLSX.read(bstr, {type: "binary"});
-        const first_sheet_name = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[first_sheet_name];
-        console.log(XLSX.utils.sheet_to_json(worksheet, { raw: true }));
-        const arraylist = XLSX.utils.sheet_to_json(worksheet, {raw: true});
-        // this.filelist = [];
-        console.log(this.filelist);
-      };
-    },
     save() {
-      const availableUsers = this.userForm.filter(user=>user.firstName)
+      const availableUsers = this.userForm.filter(user=>user.mobile)
       const sendData = {
         users: availableUsers.map(user => {
           return {
