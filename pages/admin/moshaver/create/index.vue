@@ -26,12 +26,6 @@
             </v-icon>
           </v-btn>
         </v-col>
-        <v-col md="5" class="text-right">
-          <v-file-input
-            truncate-length="50"
-            placeholder="import excel file"
-          ></v-file-input>
-        </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
         <v-row v-for="user in userForm" :key="user.key">
@@ -174,6 +168,7 @@ export default {
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
+      keys:['نام','نام خانوادگی','جنسیت','موبایل','کد ملی','استان','شهر','محدودیت ثبت نام'],
       userForm: [],
       genders: [],
       majors: [],
@@ -274,8 +269,9 @@ export default {
         })
     },
     save() {
+      const availableUsers = this.userForm.filter(user=>user.mobile)
       const sendData = {
-        users: this.userForm.map(user => {
+        users: availableUsers.map(user => {
           return {
             firstName: user.firstName,
             lastName: user.lastName,
