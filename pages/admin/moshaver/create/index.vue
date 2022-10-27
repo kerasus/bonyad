@@ -160,6 +160,7 @@
 import API_ADDRESS from "assets/Addresses";
 import {mixinCreateUsers} from '@/mixin/Mixins'
 import CreateLimitation from '/components/abrisham/createLimitation'
+import ReadExcel from "assets/importExcel/readExcel";
 
 export default {
   name: 'moshaverCreate',
@@ -361,8 +362,10 @@ export default {
       }
     },
     onPaste(e) {
-      this.pasteData(e)
-      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
+      const importExcel = new ReadExcel(e, this.keys)
+      importExcel.getData()
+      // this.pasteData(e)
+      // this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
   },
   computed: {
