@@ -336,8 +336,9 @@ export default {
 
 
     save() {
+      const availableUsers = this.userForm.filter(user=>user.firstName)
       const sendData = {
-        users: this.userForm.map(user => {
+        users: availableUsers.map(user => {
           return {
             firstName: user.firstName,
             address: user.address,

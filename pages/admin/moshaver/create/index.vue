@@ -28,9 +28,10 @@
         </v-col>
         <v-col md="5" class="text-right">
           <v-file-input
+            @change="addExcel"
             truncate-length="50"
             placeholder="import excel file"
-          ></v-file-input>
+          />
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -166,6 +167,8 @@
 import API_ADDRESS from "assets/Addresses";
 import {mixinCreateUsers} from '@/mixin/Mixins'
 import CreateLimitation from '/components/abrisham/createLimitation'
+import ReadExcel from '@/assets/importExcel/readExcel'
+import * as XLSX from "xlsx"
 
 export default {
   name: 'moshaverCreate',
@@ -174,6 +177,7 @@ export default {
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
+      keys:['نام','نام خانوادگی','جنسیت','موبایل','کد ملی','استان','شهر','محدودیت ثبت نام'],
       userForm: [],
       genders: [],
       majors: [],
@@ -273,9 +277,31 @@ export default {
           this.cities = resp.data.data.cities
         })
     },
+    addExcel(event){
+      console.log(typeof event)
+      this.file = event
+      let fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(this.file);
+      fileReader.onload = (e) => {
+        this.arrayBuffer = fileReader.result;
+        const data = new Uint8Array(this.arrayBuffer);
+        const arr = [];
+        for (let i = 0; i !== data.length; ++i)
+          arr[i] = String.fromCharCode(data[i]);
+        const bstr = arr.join("");
+        const workbook = XLSX.read(bstr, {type: "binary"});
+        const first_sheet_name = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[first_sheet_name];
+        console.log(XLSX.utils.sheet_to_json(worksheet, { raw: true }));
+        const arraylist = XLSX.utils.sheet_to_json(worksheet, {raw: true});
+        // this.filelist = [];
+        console.log(this.filelist);
+      };
+    },
     save() {
+      const availableUsers = this.userForm.filter(user=>user.firstName)
       const sendData = {
-        users: this.userForm.map(user => {
+        users: availableUsers.map(user => {
           return {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -365,6 +391,8 @@ export default {
       }
     },
     onPaste(e) {
+      // const importExcel = new ReadExcel(e, this.keys)
+      // importExcel.getData()
       this.pasteData(e)
       this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
     }
