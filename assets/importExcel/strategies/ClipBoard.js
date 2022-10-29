@@ -2,17 +2,14 @@ class ClipBoard {
   constructor(data, keys) {
     this.data = data
     this.keys = keys
-    this.jsonObj = []
-    this.limit_error_row = false
     this.header = ['نام', 'نام خانوادگی', 'جنسیت', 'رشته', 'موبایل', 'کد ملی', 'آدرس', 'تلفن', 'موبایل پدر', 'موبایل مادر', 'استان', 'province', 'شهر', 'محدودیت ثبت نام']
   }
 
   isSuitable() {
-    return true
+    return this.data.type === 'paste';
   }
 
   getData() {
-    console.log(this.keys)
     this.data.preventDefault();
     let cb;
     let clipText = '';
@@ -44,15 +41,17 @@ class ClipBoard {
       jsonObj.push(item);
     }
 
-    if (jsonObj.length < 0) {
+    if (jsonObj.length > 0) {
+      return jsonObj
       // toastr.error('عبارت کپی شده صحیح نمی باشد.');
-    } else if (jsonObj.length > 201) {
-      this.limit_error_row = true
-    } else {
-      console.log(jsonObj)
-      this.jsonObj = jsonObj;
-      // toastr.success('اکسل کپی شد.');
     }
+    // else if (jsonObj.length > 201) {
+    //   this.limit_error_row = true
+    // } else {
+    //   return jsonObj
+      // console.log(jsonObj)
+      // toastr.success('اکسل کپی شد.');
+    // }
   }
 }
 

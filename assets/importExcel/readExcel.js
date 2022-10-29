@@ -1,10 +1,12 @@
 import ClipBoard from './strategies/ClipBoard'
-import ImportExcel from './strategies/importExcel'
+import ImportExcel from './strategies/ImportExcel'
 
 class ReadExcel {
   constructor(data, keys) {
     this.data = data
     this.keys = keys
+    this.finalData = []
+    this.limit_error_row = false
     this.strategies = [
       ClipBoard,
       ImportExcel
@@ -14,20 +16,20 @@ class ReadExcel {
   }
 
   setStrategiesInstance() {
-    // this.strategies.forEach(strategy => {
-    //   const instance = new strategy(this.data, this.keys)
-    //   if (instance.isSuitable()) {
-    //     this.strategyInstance = instance
-    //   }
-    // })
+    this.strategies.forEach(strategy => {
+      const instance = new strategy(this.data, this.keys)
+      if (instance.isSuitable()) {
+        this.strategyInstance = instance
+      }
+    })
   }
 
-  getData() {
-    return ClipBoard.getData()
+  async getData() {
+    this.finalData = await this.strategyInstance.getData()
+    if (this.finalData.length > 200) {
+      this.limit_error_row = true
+    }
   }
 }
 
-
-// const importExcel = new ReadExcel(data, keys) => keys : ['qwe', 'wrew', ...]
-// importExcel.getData()
 export default ReadExcel

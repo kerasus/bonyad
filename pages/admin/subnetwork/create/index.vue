@@ -1,12 +1,21 @@
 <template>
   <v-row class="user-create">
-    <v-overlay v-if="loading">
+    <v-overlay v-if="loading || importLoading">
       <v-progress-circular indeterminate/>
     </v-overlay>
     <create-limitation
       :usage_limit="usage_limit"
       :usage_number="usage_number"
     />
+    <v-alert v-if="limit_error_row"
+             color="red"
+             type="error"
+    >
+      حداکثر 200 دانش آموز میتوانید وارد کنید
+      <v-icon left @click="limit_error_row=false">
+        mdi-close
+      </v-icon>
+    </v-alert>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -25,6 +34,13 @@
               mdi-content-save
             </v-icon>
           </v-btn>
+        </v-col>
+        <v-col md="5" class="text-right">
+          <v-file-input
+            @change="addExcel"
+            truncate-length="50"
+            placeholder="import excel file"
+          />
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -160,16 +176,18 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
-import {mixinCreateUsers} from '@/mixin/Mixins'
 import CreateLimitation from '/components/abrisham/createLimitation'
+import ReadExcel from "assets/importExcel/readExcel";
 
 export default {
   name: 'moshaverCreate',
   components: {CreateLimitation},
-  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
+      importLoading: false,
+      limit_error_row: false,
+      keys: ['firstName', 'lastName', 'gender', 'mobile', 'nationalCode', 'province', 'city', 'registerLimit'],
       userForm: [],
       genders: [],
       majors: [],
@@ -213,19 +231,21 @@ export default {
       }
       for (let i = 0; i < amount; i++) {
         this.userForm.push({
-          firstName: data && data[i] ? data[i][0] : '',
+          firstName: data && data[i] ? data[i][0] || data[i]['نام'] : '',
           firstNameMessage: '',
           firstName_error: false,
-          student_register_limit: data && data[i] ? Number(data[i][8]) : '',
+          student_register_limit: data && data[i] ? Number(data[i][7]) || data[i]['محدودیت ثبت نام'] : '',
+          student_register_number: '',
+          student_usage_number: '',
           student_register_limitMessage: '',
           student_register_limit_error: '',
-          lastName: data && data[i] ? data[i][1] : '',
+          lastName: data && data[i] ? data[i][1] || data[i]['نام خانوادگي'] : '',
           lastName_error: false,
           gender_id: '',
           gender_id_error: false,
-          mobile: data && data[i] ? data[i][4] : '',
+          mobile: data && data[i] ? data[i][3] || data[i]['موبايل'] : '',
           mobile_error: false,
-          nationalCode: data && data[i] ? data[i][5] : '',
+          nationalCode: data && data[i] ? data[i][4] || data[i]['كد ملي'] : '',
           nationalCode_error: false,
           province: '',
           provinceDropDown: false,
@@ -239,12 +259,10 @@ export default {
           loading: false
         })
         if (data && data[i]) {
-          const gender_id = this.genders.find(gender => gender.title === data[i][2])
-          const major_id = this.majors.find(major => major.title === data[i][3])
-          const province = this.provinces.find(province => province.title === data[i][6])
-          let shahr_id = this.cities.find(city => city.title === data[i][7])
+          const gender_id = this.genders.find(gender => gender.title === data[i][2] || data[i]['جنسيت'])
+          const province = this.provinces.find(province => province.title === data[i][5] || data[i]['استان'])
+          let shahr_id = this.cities.find(city => city.title === data[i][6] || data[i]['شهر'])
           this.userForm[i].gender_id = gender_id ? gender_id.id : 0
-          this.userForm[i].major_id = major_id ? major_id.id : 0
           this.userForm[i].province = province ? province.id : 0
           this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
         }
@@ -357,9 +375,25 @@ export default {
         })
       }
     },
-    onPaste(e) {
-      this.pasteData(e)
-      this.initUserFormArray(true, this.jsonObj.length, this.jsonObj)
+    async addExcel(event) {
+      if (event) {
+        this.importLoading = true
+        const importExcel = new ReadExcel(event, this.keys)
+        await importExcel.getData()
+        this.limit_error_row=importExcel.limit_error_row
+        if (!this.limit_error_row) {
+          this.initUserFormArray(true, importExcel.finalData.length, importExcel.finalData)
+        }
+        this.importLoading = false
+      }
+    },
+    async onPaste(event) {
+      const importExcel = new ReadExcel(event, this.keys)
+      await importExcel.getData()
+      this.limit_error_row=importExcel.limit_error_row
+      if (!this.limit_error_row) {
+        this.initUserFormArray(true, importExcel.finalData.length, importExcel.finalData)
+      }
     }
   },
   computed: {
