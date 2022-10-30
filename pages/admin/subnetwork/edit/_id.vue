@@ -144,7 +144,6 @@ export default {
           this.usage_limit = this.user.student_register_limit
           this.usage_number = this.user.student_register_number
           this.getUserFormData()
-          this.loading = false
         })
         .catch(err => {
           this.loading = false
@@ -160,6 +159,7 @@ export default {
           this.availableCities = this.cities.filter(city =>
             city.province.id === this.user.province.id
           )
+          this.loading = false
         })
     },
     changeProvince() {

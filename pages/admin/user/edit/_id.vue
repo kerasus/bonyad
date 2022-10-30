@@ -135,7 +135,6 @@ export default {
           this.province = this.user.province.title
           this.city = this.user.city.title
           this.getUserFormData()
-          this.loading = false
         })
         .catch(err => {
           this.loading = false
@@ -152,6 +151,7 @@ export default {
           this.availableCities = this.cities.filter(city =>
             city.province.id === this.user.province.id
           )
+          this.loading = false
         })
     },
     changeProvince() {
@@ -190,7 +190,7 @@ export default {
           shahr_id: this.user.city.id,
         })
         .then(resp => {
-          this.loadingEdit = true
+          this.loadingEdit = false
           this.user = new User(resp.data)
           this.$notify({
             type: 'success',
@@ -198,7 +198,7 @@ export default {
           })
         })
         .catch(() => {
-          this.loadingEdit = true
+          this.loadingEdit = false
         })
     }
   }
