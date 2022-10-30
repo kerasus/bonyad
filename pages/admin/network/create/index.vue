@@ -38,7 +38,7 @@
           <v-file-input
             @change="addExcel"
             truncate-length="50"
-            placeholder="import excel file"
+            placeholder="بارگزاری اطلاعات با اکسل"
           />
         </v-col>
       </v-row>
