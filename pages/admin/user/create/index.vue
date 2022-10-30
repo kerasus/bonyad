@@ -1,6 +1,6 @@
 <template>
   <v-row class="user-create">
-    <v-overlay v-if="loading">
+    <v-overlay v-if="loading || importLoading">
       <v-progress-circular indeterminate/>
     </v-overlay>
     <create-limitation
@@ -33,6 +33,13 @@
               mdi-content-save
             </v-icon>
           </v-btn>
+        </v-col>
+        <v-col md="5" class="text-right">
+          <v-file-input
+            @change="addExcel"
+            truncate-length="50"
+            placeholder="بارگزاری اطلاعات با اکسل"
+          />
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -210,16 +217,17 @@
 
 <script>
 import API_ADDRESS from "assets/Addresses";
-import {mixinCreateUsers} from '@/mixin/Mixins'
 import CreateLimitation from '/components/abrisham/createLimitation'
+import ReadExcel from "assets/importExcel/readExcel";
 
 export default {
   name: 'userCreate',
   components: {CreateLimitation},
-  mixins: [mixinCreateUsers],
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
+      importLoading:false,
+      limit_error_row: false,
       userForm: [],
       genders: [],
       majors: [],
@@ -264,25 +272,25 @@ export default {
       }
       for (let i = 0; i < amount; i++) {
         this.userForm.push({
-          firstName: data && data[i] ? data[i][0] : '',
-          address: data && data[i] ? data[i][5] : '',
+          firstName: data && data[i] ? data[i][0] || data[i]['نام'] : '',
+          address: data && data[i] ? data[i][5] || data[i]['آدرس'] : '',
           address_error: false,
-          phone: data && data[i] ? data[i][6] : '',
+          phone: data && data[i] ? data[i][6] || data[i]['تلفن'] : '',
           phone_error: false,
-          father_mobile: data && data[i] ? data[i][7] : '',
+          father_mobile: data && data[i] ? data[i][7] || data[i]['موبايل پدر'] : '',
           father_mobile_error: false,
-          mother_mobile: data && data[i] ? data[i][8] : '',
+          mother_mobile: data && data[i] ? data[i][8] || data[i]['موبايل مادر'] : '',
           mother_mobile_error: false,
           firstName_error: false,
-          lastName: data && data[i] ? data[i][1] : '',
+          lastName: data && data[i] ? data[i][1] || data[i]['نام خانوادگي'] : '',
           lastName_error: false,
-          gender_id: data && data[i] ? data[i][3] : '',
+          gender_id: '',
           gender_id_error: false,
-          major_id: data && data[i] ? data[i][5] : '',
+          major_id: data && data[i] ? data[i][5] || data[i]['نام'] : '',
           major_id_error: false,
-          mobile: data && data[i] ? data[i][4] : '',
+          mobile: data && data[i] ? data[i][4] || data[i]['موبايل'] : '',
           mobile_error: false,
-          nationalCode: data && data[i] ? data[i][9] : '',
+          nationalCode: data && data[i] ? data[i][10] || data[i]['كد ملي'] : '',
           nationalCode_error: false,
           province: '',
           provinceDropDown: false,
@@ -296,18 +304,18 @@ export default {
           loading: false
         })
         if (data && data[i]) {
-          const gender_id = this.genders.find(gender => gender.title === data[i][2])
-          const major_id = this.majors.find(major => major.title === data[i][3])
-          let province = this.provinces.find(province => province.title === data[i][10])
+          const gender_id = this.genders.find(gender => gender.title === data[i][2] || data[i]['جنسيت'])
+          const major_id = this.majors.find(major => major.title === data[i][3] || data[i]['رشته'])
+          let province = this.provinces.find(province => province.title === data[i][10] || data[i]['استان'])
           if (!province) {
-            province = this.provinces.find(province => province.title === data[i][11])
+            province = this.provinces.find(province => province.title === data[i][11] || data[i]['استان'])
           }
-          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][11])
+          let shahr_id = this.cities.find(city => city.title + '\r' === data[i][11] || data[i]['شهر'])
           if (!shahr_id) {
-            shahr_id = this.cities.find(city => city.title === data[i][11])
+            shahr_id = this.cities.find(city => city.title === data[i][11] || data[i]['شهر'])
           }
           if (!shahr_id) {
-            shahr_id = this.cities.find(city => city.title === data[i][12])
+            shahr_id = this.cities.find(city => city.title === data[i][12] || data[i]['شهر'])
           }
           this.userForm[i].gender_id = gender_id ? gender_id.id : 0
           this.userForm[i].major_id = major_id ? major_id.id : 0
@@ -423,9 +431,25 @@ export default {
         })
       }
     },
-    onPaste(e) {
-      this.pasteData(e)
-      this.initUserFormArray(true, this.jsonObj.length ? this.jsonObj.length : 20, this.jsonObj)
+    async addExcel(event) {
+      if (event) {
+        this.importLoading=true
+        const importExcel = new ReadExcel(event, this.keys)
+        await importExcel.getData()
+        this.limit_error_row=importExcel.limit_error_row
+        if (!this.limit_error_row) {
+          this.initUserFormArray(true, importExcel.finalData.length, importExcel.finalData)
+        }
+        this.importLoading=false
+      }
+    },
+    async onPaste(event) {
+      const importExcel = new ReadExcel(event, this.keys)
+      await importExcel.getData()
+      this.limit_error_row=importExcel.limit_error_row
+      if (!this.limit_error_row) {
+        this.initUserFormArray(true, importExcel.finalData.length, importExcel.finalData)
+      }
     }
   },
   computed: {
