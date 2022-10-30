@@ -1,5 +1,8 @@
 <template>
   <div class="row">
+    <v-overlay v-if="loading">
+      <v-progress-circular indeterminate/>
+    </v-overlay>
     <div class="col-md-3">
       <v-text-field
         v-model="user.first_name"
@@ -22,30 +25,9 @@
       ></v-select>
     </div>
     <div class="col-md-3">
-      <v-select
-        v-model="major"
-        :items="majors"
-        item-text="title"
-        label="رشته"
-        @change="changeMajor"
-      ></v-select>
-    </div>
-    <div class="col-md-3">
       <v-text-field
         v-model="user.mobile"
         label="موبایل"
-      />
-    </div>
-    <div class="col-md-3">
-      <v-text-field
-        v-model="user.address"
-        label="آدرس"
-      />
-    </div>
-    <div class="col-md-3">
-      <v-text-field
-        v-model="user.phone"
-        label="تلفن"
       />
     </div>
     <div class="col-md-3">
@@ -129,6 +111,7 @@ export default {
   name: "_id.vue",
   data() {
     return {
+      loading: false,
       loadingEdit: false,
       loadingLimit: false,
       usage_limit: 0,
@@ -150,11 +133,11 @@ export default {
   },
   methods: {
     userCurrentInformation() {
+      this.loading = true
       const userId = this.$route.params.id
       this.$axios.get(API_ADDRESS.moshaver.edit(userId))
         .then((resp) => {
           this.user = new User(resp.data.data)
-          this.major = this.user.major.title
           this.gender = this.user.gender.title
           this.province = this.user.province.title
           this.city = this.user.city.title
@@ -163,6 +146,7 @@ export default {
           this.getUserFormData()
         })
         .catch(err => {
+          this.loading = false
           console.log(err)
         })
     },
@@ -170,12 +154,12 @@ export default {
       this.$axios.get(API_ADDRESS.user.formData)
         .then((resp) => {
           this.genders = resp.data.data.genders
-          this.majors = resp.data.data.majors
           this.provinces = resp.data.data.provinces
           this.cities = resp.data.data.cities
           this.availableCities = this.cities.filter(city =>
             city.province.id === this.user.province.id
           )
+          this.loading = false
         })
     },
     changeProvince() {
@@ -198,36 +182,41 @@ export default {
       this.user.city = city[0]
     },
     edit() {
-      this.loading = true
+      this.loadingEdit = true
       this.$axios.put(API_ADDRESS.moshaver.edit(this.$route.params.id),
         {
           firstName: this.user.first_name,
           lastName: this.user.last_name,
-          phone: this.user.phone,
-          address: this.user.address,
+          mobile: this.user.mobile,
           nationalCode: this.user.nationalCode,
-          major_id: this.user.major.id,
           gender_id: this.user.gender.id,
           shahr_id: this.user.city.id,
         })
         .then(resp => {
-          this.loading = false
+          this.loadingEdit = false
           this.user = new User(resp.data)
+          this.$notify({
+            type: 'success',
+            text: resp.data.data?.message ? resp.data.data.message : 'اطلاعات با موفقیت ویرایش شد.',
+          })
         })
         .catch(() => {
-          this.loading = false
+          this.loadingEdit = false
         })
     },
     editLimit() {
+      this.loadingLimit = true
       this.$axios.post(API_ADDRESS.editLimit.base, {
         user_id: this.$route.params.id,
         student_register_limit: this.usage_limit
       }).then(resp => {
+        this.loadingLimit = false
         this.$notify({
           type: 'success',
           text: resp.data.data?.message ? resp.data.data.message : 'ظرفیت ثبت نام ویرایش شد.',
         })
       }).catch(err => {
+        this.loadingLimit = false
         console.log(err)
       })
     }
