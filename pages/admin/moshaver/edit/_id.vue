@@ -1,5 +1,8 @@
 <template>
   <div class="row">
+    <v-overlay v-if="loading">
+      <v-progress-circular indeterminate/>
+    </v-overlay>
     <div class="col-md-3">
       <v-text-field
         v-model="user.first_name"
@@ -108,6 +111,7 @@ export default {
   name: "_id.vue",
   data() {
     return {
+      loading: false,
       loadingEdit: false,
       loadingLimit: false,
       usage_limit: 0,
@@ -129,6 +133,7 @@ export default {
   },
   methods: {
     userCurrentInformation() {
+      this.loading = true
       const userId = this.$route.params.id
       this.$axios.get(API_ADDRESS.moshaver.edit(userId))
         .then((resp) => {
@@ -139,8 +144,10 @@ export default {
           this.usage_limit=this.user.student_register_limit
           this.usage_number=this.user.student_register_number
           this.getUserFormData()
+          this.loading = false
         })
         .catch(err => {
+          this.loading = false
           console.log(err)
         })
     },
@@ -188,21 +195,28 @@ export default {
         .then(resp => {
           this.loadingEdit = false
           this.user = new User(resp.data)
+          this.$notify({
+            type: 'success',
+            text: resp.data.data?.message ? resp.data.data.message : 'اطلاعات با موفقیت ویرایش شد.',
+          })
         })
         .catch(() => {
           this.loadingEdit = false
         })
     },
     editLimit() {
+      this.loadingLimit = true
       this.$axios.post(API_ADDRESS.editLimit.base, {
         user_id: this.$route.params.id,
         student_register_limit: this.usage_limit
       }).then(resp => {
+        this.loadingLimit = false
         this.$notify({
           type: 'success',
           text: resp.data.data?.message ? resp.data.data.message : 'ظرفیت ثبت نام ویرایش شد.',
         })
       }).catch(err => {
+        this.loadingLimit = false
         console.log(err)
       })
     }
