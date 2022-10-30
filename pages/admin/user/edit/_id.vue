@@ -1,5 +1,8 @@
 <template>
   <div class="row">
+    <v-overlay v-if="loading">
+      <v-progress-circular indeterminate/>
+    </v-overlay>
     <div class="col-md-3">
       <v-text-field
         v-model="user.first_name"
@@ -85,7 +88,7 @@
       ></v-select>
     </div>
     <v-btn class="mx-5"
-           :loading="loading"
+           :loading="loadingEdit"
            large
            rounded
            elevation="4"
@@ -104,6 +107,7 @@ export default {
   data() {
     return {
       loading: false,
+      loadingEdit: false,
       user: new User(),
       major: null,
       gender: null,
@@ -121,6 +125,7 @@ export default {
   },
   methods: {
     userCurrentInformation() {
+      this.loading = true
       const userId = this.$route.params.id
       this.$axios.get(API_ADDRESS.moshaver.edit(userId))
         .then((resp) => {
@@ -130,8 +135,10 @@ export default {
           this.province = this.user.province.title
           this.city = this.user.city.title
           this.getUserFormData()
+          this.loading = false
         })
         .catch(err => {
+          this.loading = false
           console.log(err)
         })
     },
@@ -167,7 +174,7 @@ export default {
       this.user.city = city[0]
     },
     edit() {
-      this.loading = true
+      this.loadingEdit = true
       this.$axios.put(API_ADDRESS.moshaver.edit(this.$route.params.id),
         {
           firstName: this.user.first_name,
@@ -183,11 +190,15 @@ export default {
           shahr_id: this.user.city.id,
         })
         .then(resp => {
-          this.loading = false
+          this.loadingEdit = true
           this.user = new User(resp.data)
+          this.$notify({
+            type: 'success',
+            text: resp.data.data?.message ? resp.data.data.message : 'اطلاعات با موفقیت ویرایش شد.',
+          })
         })
         .catch(() => {
-          this.loading = false
+          this.loadingEdit = true
         })
     }
   }
