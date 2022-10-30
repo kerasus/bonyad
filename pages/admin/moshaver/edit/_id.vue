@@ -133,7 +133,6 @@ export default {
       this.$axios.get(API_ADDRESS.moshaver.edit(userId))
         .then((resp) => {
           this.user = new User(resp.data.data)
-          this.major = this.user.major.title
           this.gender = this.user.gender.title
           this.province = this.user.province.title
           this.city = this.user.city.title
@@ -149,7 +148,6 @@ export default {
       this.$axios.get(API_ADDRESS.user.formData)
         .then((resp) => {
           this.genders = resp.data.data.genders
-          this.majors = resp.data.data.majors
           this.provinces = resp.data.data.provinces
           this.cities = resp.data.data.cities
           this.availableCities = this.cities.filter(city =>
@@ -182,7 +180,7 @@ export default {
         {
           firstName: this.user.first_name,
           lastName: this.user.last_name,
-          phone: this.user.phone,
+          mobile: this.user.mobile,
           nationalCode: this.user.nationalCode,
           gender_id: this.user.gender.id,
           shahr_id: this.user.city.id,

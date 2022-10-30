@@ -22,30 +22,9 @@
       ></v-select>
     </div>
     <div class="col-md-3">
-      <v-select
-        v-model="major"
-        :items="majors"
-        item-text="title"
-        label="رشته"
-        @change="changeMajor"
-      ></v-select>
-    </div>
-    <div class="col-md-3">
       <v-text-field
         v-model="user.mobile"
         label="موبایل"
-      />
-    </div>
-    <div class="col-md-3">
-      <v-text-field
-        v-model="user.address"
-        label="آدرس"
-      />
-    </div>
-    <div class="col-md-3">
-      <v-text-field
-        v-model="user.phone"
-        label="تلفن"
       />
     </div>
     <div class="col-md-3">
@@ -154,7 +133,6 @@ export default {
       this.$axios.get(API_ADDRESS.moshaver.edit(userId))
         .then((resp) => {
           this.user = new User(resp.data.data)
-          this.major = this.user.major.title
           this.gender = this.user.gender.title
           this.province = this.user.province.title
           this.city = this.user.city.title
@@ -170,7 +148,6 @@ export default {
       this.$axios.get(API_ADDRESS.user.formData)
         .then((resp) => {
           this.genders = resp.data.data.genders
-          this.majors = resp.data.data.majors
           this.provinces = resp.data.data.provinces
           this.cities = resp.data.data.cities
           this.availableCities = this.cities.filter(city =>
@@ -203,10 +180,8 @@ export default {
         {
           firstName: this.user.first_name,
           lastName: this.user.last_name,
-          phone: this.user.phone,
-          address: this.user.address,
+          mobile: this.user.mobile,
           nationalCode: this.user.nationalCode,
-          major_id: this.user.major.id,
           gender_id: this.user.gender.id,
           shahr_id: this.user.city.id,
         })
