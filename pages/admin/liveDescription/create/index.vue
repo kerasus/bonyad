@@ -40,12 +40,9 @@
         cols="12"
         md="12"
       >
-        <v-textarea
-          solo
-          name="input-7-4"
-          label="پیام مشاور"
-          v-model="description"
-        ></v-textarea>
+        <client-only>
+          <vue-editor v-model="description" />
+        </client-only>
       </v-col>
       <v-col
         cols="12"
@@ -63,11 +60,13 @@
 </template>
 
 <script>
-
 import API_ADDRESS from "assets/Addresses";
+import { VueEditor } from "vue2-editor";
+
 
 export default {
   name: "liveDescriptionCreate",
+  components: {VueEditor},
   data() {
     return {
       title: '',
@@ -78,7 +77,7 @@ export default {
       disabled: false,
       productId: null,
       entity_type: 'App\\Product',
-      loading: false
+      loading: false,
     }
   },
   created() {
@@ -125,7 +124,7 @@ export default {
           console.log(err)
           this.loading = false
         })
-    }
+    },
   }
 }
 </script>
