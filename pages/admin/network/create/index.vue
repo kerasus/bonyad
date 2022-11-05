@@ -254,7 +254,7 @@ export default {
     }
   },
   created() {
-    this.create = new CreateUser(this.userData.id, this.$axios, this.keys)
+    this.create = new CreateUser(this.userData.id, this.$axios, this.keys, this.$notify)
   }
 }
 </script>

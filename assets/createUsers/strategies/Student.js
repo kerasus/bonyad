@@ -1,10 +1,11 @@
 import API_ADDRESS from "assets/Addresses";
 
 class Student {
-  constructor(userId, axios, keys) {
+  constructor(userId, axios, keys, notify) {
     this.userId = userId
     this.axios = axios
     this.keys = keys
+    this.notify = notify
     this.genders = []
     this.majors = []
     this.provinces = []
@@ -140,7 +141,7 @@ class Student {
       this.axios.post(API_ADDRESS.user.bulkCreate, {
         users: sendData.users,
         type: sendData.type
-      }).then(() => {
+      }).then((response) => {
         this.userForm.forEach(user => {
           user.hasBeenSaved = true
           user.editable = false
@@ -159,6 +160,10 @@ class Student {
               that.usage_number = resp.data.data.usage_number
             })
         }, 500)
+        this.notify({
+          type: 'success',
+          text: response.data.data?.message ? response.data.data.message : 'کاربران با موفقیت افزوده شدند',
+        })
       }).catch(err => {
         this.userForm.forEach((user, userIndex) => {
           user.loading = false

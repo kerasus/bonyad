@@ -1,10 +1,11 @@
 import API_ADDRESS from "assets/Addresses";
 
 class Network_Subnetwork_Moshaver {
-  constructor(userId, axios, keys) {
+  constructor(userId, axios, keys, notify) {
     this.userId = userId
     this.axios = axios
     this.keys = keys
+    this.notify = notify
     this.genders = []
     this.majors = []
     this.provinces = []
@@ -90,14 +91,6 @@ class Network_Subnetwork_Moshaver {
       if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
         user.loading = true
         this.valid = true
-      } else if (user.firstName || user.lastName || user.student_register_limit || user.gender_id
-        || user.mobile || user.nationalCode || user.shahr_id) {
-        this.$notify({
-          type: 'error',
-          duration: 10000,
-          title: 'توجه',
-          text: 'پر کردن تمامی فیلدهای یک سطر الزامی ست'
-        })
       }
     })
     if (this.valid) {
@@ -105,8 +98,7 @@ class Network_Subnetwork_Moshaver {
       this.axios.post(API_ADDRESS.subnetwork.bulkCreate, {
         users: sendData.users,
         type: sendData.type
-      }).then(r => {
-        console.log(r)
+      }).then(response => {
         this.userForm.forEach(user => {
           user.hasBeenSaved = true
           user.editable = false
@@ -125,9 +117,14 @@ class Network_Subnetwork_Moshaver {
               that.usage_number = resp.data.data.usage_number
             })
         }, 500)
+        this.notify({
+          type: 'success',
+          text: response.data.data?.message ? response.data.data.message : 'کاربران با موفقیت افزوده شدند',
+        })
       }).catch(err => {
         this.userForm.forEach((user, userIndex) => {
           user.loading = false
+          this.loading = false
           Object.keys(user).forEach(userKey => {
             if (userKey.includes('_error')) {
               user[userKey] = false
