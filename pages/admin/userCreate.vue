@@ -1,6 +1,6 @@
 <template>
   <v-row class="user-create">
-    <v-overlay v-if="create.strategyInstance.loading || create.importLoading">
+    <v-overlay v-if="user.strategyInstance.loading || create.importLoading">
       <v-progress-circular indeterminate/>
     </v-overlay>
     <create-limitation
@@ -19,16 +19,16 @@
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
-          <v-btn block color="green" dark
-                 @click="downloadExcel">
+          <v-btn block color="green" dark @click="downloadExcel">
             دانلود نمونه اکسل
             <v-icon class="mr-3">
               mdi-download
             </v-icon>
           </v-btn>
         </v-col>
-        <v-col md="5" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save" :loading="create.strategyInstance.loading">
+        <v-col md="5" class="vertialcally-center-items text-left  ">
+          <v-btn color="green" dark @click="save" :loading="create.strategyInstance.loading"
+                 :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon class="mr-3">
               mdi-content-save
@@ -39,13 +39,13 @@
           <v-file-input
             @change="addExcel"
             truncate-length="50"
-            placeholder="بارگزاری اطلاعات با اکسل"
+            placeholder="import excel file"
           />
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
         <v-row v-for="user in create.strategyInstance.userForm" :key="user.key">
-          <v-col md="11" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
+          <v-col :style="{ maxWidth: '95vw' }" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
             <div class="input-box">
               <div class="form-input">
                 <label>
@@ -71,15 +71,29 @@
                 <select class="select-text" required v-model="user.gender_id"
                         :class="{ 'has-error': user.gender_id_error }">
                   <option value="" disabled selected></option>
-                  <option v-for="(item, index) in create.strategyInstance.genders" :key="index" :value="item.id">{{
-                      item.title
-                    }}
+                  <option v-for="(item, index) in create.strategyInstance.genders" :key="index" :value="item.id">
+                    {{ item.title }}
                   </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
                 <label class="select-label">جنسیت</label>
                 <span class="error-message" v-if="user.gender_id_error">{{ user.gender_id_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="select">
+                <select class="select-text" required v-model="user.major_id"
+                        :class="{ 'has-error': user.major_id_error }">
+                  <option value="" disabled selected></option>
+                  <option v-for="(item, index) in create.strategyInstance.majors" :key="index" :value="item.id">
+                    {{ item.title }}
+                  </option>
+                </select>
+                <span class="select-highlight"></span>
+                <span class="select-bar"></span>
+                <label class="select-label">رشته</label>
+                <span class="error-message" v-if="user.major_id_error">{{ user.major_id_error }}</span>
               </div>
             </div>
             <div class="input-box">
@@ -95,7 +109,47 @@
             <div class="input-box">
               <div class="form-input">
                 <label>
-                  <input :class="{ 'has-error': user.nationalCode_error }" required type="text"
+                  <input @paste="onPaste" :class="{ 'has-error': user.address_error }" required type="text"
+                         v-model="user.address" @change="user.hasBeenSaved = false">
+                  <span class="placeholder">آدرس</span>
+                </label>
+                <span class="error-message" v-if="user.address_error">{{ user.address_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input @paste="onPaste" :class="{ 'has-error': user.phone_error }" required type="text"
+                         v-model="user.phone" @change="user.hasBeenSaved = false">
+                  <span class="placeholder">تلفن</span>
+                </label>
+                <span class="error-message" v-if="user.phone_error">{{ user.phone_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input @paste="onPaste" :class="{ 'has-error': user.father_mobile_error }" required type="text"
+                         v-model="user.father_mobile" @change="user.hasBeenSaved = false">
+                  <span class="placeholder">موبایل پدر</span>
+                </label>
+                <span class="error-message" v-if="user.father_mobile_error">{{ user.father_mobile_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input @paste="onPaste" :class="{ 'has-error': user.mother_mobile_error }" required type="text"
+                         v-model="user.mother_mobile" @change="user.hasBeenSaved = false">
+                  <span class="placeholder">موبایل مادر</span>
+                </label>
+                <span class="error-message" v-if="user.mother_mobile_error">{{ user.mother_mobile_error }}</span>
+              </div>
+            </div>
+            <div class="input-box">
+              <div class="form-input">
+                <label>
+                  <input @paste="onPaste" :class="{ 'has-error': user.nationalCode_error }" required type="text"
                          v-model="user.nationalCode" @change="user.hasBeenSaved = false">
                   <span class="placeholder">کد ملی</span>
                 </label>
@@ -144,19 +198,8 @@
                 <span class="error-message" v-if="user.shahr_id_error">{{ user.shahr_id_error }}</span>
               </div>
             </div>
-            <div class="input-box">
-              <div class="form-input">
-                <label>
-                  <input @paste="onPaste" :class="{ 'has-error': user.student_register_limit_error }" required
-                         v-model="user.student_register_limit" type="number" @change="user.hasBeenSaved = false">
-                  <span class="placeholder">محدودیت ثبت نام</span>
-                </label>
-                <span class="error-message"
-                      v-if="user.student_register_limit_error">{{ user.student_register_limit_error }}</span>
-              </div>
-            </div>
           </v-col>
-          <v-col md="1" class="options">
+          <v-col :style="{ maxWidth: '5vw' }" class="options">
             <v-progress-circular
               indeterminate
               color="grey"
@@ -178,294 +221,23 @@
 </template>
 
 <script>
-import CreateLimitation from '/components/abrisham/createLimitation'
 import CreateUser from "assets/createUsers/createUser";
-
+import CreateLimitation from '/components/abrisham/createLimitation'
 
 export default {
-  name: 'moshaverCreate',
+  name: "create.vue",
   components: {CreateLimitation},
-  middleware: ['auth', 'redirectAdmin'],
-  data() {
+  date() {
     return {
-      create: null,
-      keys: ['firstName', 'lastName', 'gender', 'mobile', 'nationalCode', 'province', 'city', 'registerLimit']
-    }
-  },
-  head() {
-    return {
-      title: 'ثبت نام مشاوران'
-    }
-  },
-  methods: {
-    downloadExcel() {
-      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28moshaver%29.xlsx', '_blank')
-    },
-    provinceSelectOnClick(user) {
-      user.provinceDropDown = true
-    },
-    provinceSelectOnBlur(user) {
-      user.provinceDropDown = false
-    },
-    provinceSelectOnChange(user) {
-      user.provinceDropDown = false
-    },
-    shahr_idSelectOnClick(user) {
-      user.shahr_idDropdown = true
-    },
-    shahr_idSelectOnBlur(user) {
-      user.shahr_idDropdown = false
-    },
-    shahr_idSelectOnChange(user) {
-      user.shahr_idDropdown = false
-    },
-    save() {
-      this.create.strategyInstance.save()
-    },
-    addExcel(event) {
-      this.create.addExcel(event)
-    },
-    onPaste(event) {
-      this.create.onPaste(event)
-    }
-  },
-  computed: {
-    provincesComputed() {
-      return (show, provinceId) => {
-        if (!show && !provinceId) {
-          return []
-        } else if (!show && provinceId) {
-          return this.create.strategyInstance.provinces.filter(province => province.id === provinceId)
-        }
-        return this.create.strategyInstance.provinces
-      }
-    },
-    selectedProvinceCity() {
-      return (provinceId, show = true, cityId) => {
-        if (!provinceId || (!show && !cityId)) {
-          return []
-        } else if (!show && cityId) {
-          return this.create.strategyInstance.cities.filter(city => city.id === cityId)
-        }
-        return this.create.strategyInstance.cities.filter(city => city.province.id === provinceId)
-      }
-    },
-    userData() {
-      return this.$store.getters['Auth/user']
+      user: new CreateUser(this.userData.id, this.$axios)
     }
   },
   created() {
-    this.create = new CreateUser(this.userData.id, this.$axios, this.keys, this.$notify)
+    console.log(this.user.strategyInstance)
   }
 }
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-  color: white !important;
-}
-
-.has-been-saved {
-  background: rgba(0, 280, 0, 0.2);
-}
-
-.has-error {
-  border-color: red !important;
-}
-
-.error-message {
-  color: red;
-  font-size: 14px;
-}
-
-.input-box {
-  padding: 0 10px;
-  width: 100%;
-}
-
-.user-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-
-.options {
-
-}
-
-.vertialcally-center-items {
-  display: flex;
-  align-items: center;
-}
-</style>
-
-<style lang="scss">
-
-.form-input {
-  width: 100%;
-
-
-  label {
-    position: relative;
-    display: block;
-    width: 100%;
-    min-height: 30px + 15px;
-  }
-
-  .placeholder {
-    position: absolute;
-    display: block;
-    color: grey;
-    top: 8px;
-    z-index: 2;
-    font-size: 16px;
-    transition: all 200ms ease-in-out;
-    cursor: text;
-    right: 10px;
-    background-color: #fff;
-    padding: 0 5px;
-  }
-
-  input {
-    position: absolute;
-    padding: 0 10px;
-    z-index: 1;
-    width: 100%;
-    font-size: 16px;
-    border: 1px solid grey;
-    border-radius: 5px;
-    transition: border-color 200ms ease-in-out;
-    outline: none;
-    margin: 0;
-  }
-
-  input {
-    height: 40px;
-  }
-
-  input:focus,
-  input:valid,
-  textarea:focus,
-  textarea:valid {
-    & + .placeholder {
-      top: -10px;
-      cursor: inherit;
-      font-size: 14px;
-      color: orange;
-    }
-
-    border: 1px solid grey;
-  }
-}
-
-
-.select {
-  position: relative;
-  width: 100%;
-}
-
-.select-text {
-  position: relative;
-  font-family: inherit;
-  background-color: transparent;
-  width: 100%;
-  padding: 6px 10px 5px 0;
-  font-size: 18px;
-  border-radius: 5px;
-  border: 1px solid grey;
-}
-
-/* Remove focus */
-.select-text:focus {
-  outline: none;
-  border: 1px solid grey;
-}
-
-/* Use custom arrow */
-.select .select-text {
-  appearance: none;
-  -webkit-appearance: none
-}
-
-.select:after {
-  position: absolute;
-  top: 18px;
-  left: 14px;
-  /* Styling the down arrow */
-  width: 0;
-  height: 0;
-  padding: 0;
-  content: '';
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid grey;
-  pointer-events: none;
-}
-
-
-/* LABEL ======================================= */
-.select-label {
-  color: grey;
-  font-size: 16px;
-  font-weight: normal;
-  position: absolute;
-  pointer-events: none;
-  right: 10px;
-  top: 7px;
-  transition: 0.2s ease-in-out all;
-  background-color: #fff;
-  z-index: 2;
-  padding: 0 5px;
-}
-
-/* active state */
-.select-text:focus ~ .select-label, .select-text:valid ~ .select-label {
-  color: orange;
-  top: -10px;
-  transition: 0.2s ease all;
-  font-size: 14px;
-}
-
-/* BOTTOM BARS ================================= */
-.select-bar {
-  position: relative;
-  display: block;
-  width: 100%;
-}
-
-.select-bar:before, .select-bar:after {
-  content: '';
-  height: 3px;
-  width: 0;
-  bottom: 0;
-  position: absolute;
-  background: orange;
-  transition: 0.2s ease all;
-}
-
-.select-bar:before {
-  left: 50%;
-}
-
-.select-bar:after {
-  right: 50%;
-}
-
-/* active state */
-.select-text:focus ~ .select-bar:before, .select-text:focus ~ .select-bar:after {
-  width: 50%;
-}
-
-/* HIGHLIGHTER ================================== */
-.select-highlight {
-  position: absolute;
-  height: 60%;
-  width: 100px;
-  top: 25%;
-  left: 0;
-  pointer-events: none;
-  opacity: 0.5;
-}
 
 </style>

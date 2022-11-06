@@ -5,7 +5,7 @@
     </v-overlay>
     <v-row :style="{ padding: '20px 10px' }">
       <v-col md="12" class="vertialcally-center-items">
-        <v-btn block color="green" dark @click="getExcel">
+        <v-btn block color="green" dark @click="getExcel" :loading="excelLoading">
           دانلود خروجی اکسل
           <v-icon class="mr-3">
             mdi-download
@@ -101,6 +101,7 @@ export default {
   data() {
     return {
       loadingPage: false,
+      excelLoading: false,
       download: '',
       options: {
         itemsPerPage: 25,
@@ -142,13 +143,16 @@ export default {
   },
   methods: {
     getExcel() {
+      this.excelLoading = true
       const mode = this.getUserOfBonyadParam()
       this.$axios.get(API_ADDRESS.exam.usersOfBonyad, {params: {action: mode, excel_export: true}})
         .then(resp => {
           let route = resp.data.data.export_file_url
+          this.excelLoading = false
           window.open(route, '_blank');
         })
         .catch(err => {
+          this.excelLoading = false
           console.log(err)
         })
     },
