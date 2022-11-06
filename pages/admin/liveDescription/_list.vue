@@ -1,5 +1,8 @@
 <template>
   <div>
+    <v-overlay v-if="pageLoading">
+      <v-progress-circular indeterminate/>
+    </v-overlay>
     <div class="header">
       <h2 class="mb-2">
         لیست پیام های مشاور
@@ -81,6 +84,7 @@ export default {
   name: "messagesList",
   data() {
     return {
+      pageLoading: false,
       sortBy: 'has_pinned',
       sortDesc: true,
       pinLoading: false,
@@ -118,6 +122,7 @@ export default {
   },
   methods: {
     getMessagesList() {
+      this.pageLoading = true
       this.$axios.get(API_ADDRESS.liveDescription.create, {
         params: {owner: 2, length: 9999}
       })
@@ -125,9 +130,11 @@ export default {
           this.items = resp.data.data
           this.totalRows = resp.data.meta.total
           // this.options.itemsPerPage = resp.data.meta.per_page
+          this.pageLoading = false
         })
         .catch(err => {
           console.log(err)
+          this.pageLoading = false
         })
     },
     deleteMessage(messageId) {
