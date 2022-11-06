@@ -2,7 +2,7 @@ class ClipBoard {
   constructor(data, keys) {
     this.data = data
     this.keys = keys
-    this.header = ['نام', 'نام خانوادگی', 'جنسیت', 'رشته', 'موبایل', 'کد ملی', 'آدرس', 'تلفن', 'موبایل پدر', 'موبایل مادر', 'استان', 'province', 'شهر', 'محدودیت ثبت نام']
+    this.header = ['نام', 'نام خانوادگي', 'جنسيت', 'رشته', 'موبايل', 'كد ملي', 'آدرس', 'تلفن', 'موبایل پدر', 'موبایل مادر', 'استان', 'province', 'شهر', 'محدودیت ثبت نام']
   }
 
   isSuitable() {
@@ -31,7 +31,8 @@ class ClipBoard {
     for (let i = 0; i < clipRows.length - 1; i++) {
       let item = [];
       for (let j = 0; j < clipRows[i].length; j++) {
-        if (clipRows[i][j] !== '\r' && clipRows[i][j].length !== 0) {
+        console.log(clipRows[i][j].length, clipRows[i][j])
+        if (clipRows[i][j] !== '\r' && clipRows[i][j].length !== 0 && clipRows[i][j] !== '#N/A') {
           item[j] = clipRows[i][j];
         }
       }
@@ -43,15 +44,7 @@ class ClipBoard {
 
     if (jsonObj.length > 0) {
       return jsonObj
-      // toastr.error('عبارت کپی شده صحیح نمی باشد.');
     }
-    // else if (jsonObj.length > 201) {
-    //   this.limit_error_row = true
-    // } else {
-    //   return jsonObj
-      // console.log(jsonObj)
-      // toastr.success('اکسل کپی شد.');
-    // }
   }
 }
 

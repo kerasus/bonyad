@@ -1,13 +1,13 @@
 <template>
   <v-row class="user-create">
-    <v-overlay v-if="loading || importLoading">
+    <v-overlay v-if="create.loading || create.importLoading">
       <v-progress-circular indeterminate/>
     </v-overlay>
     <create-limitation
-      :usage_limit="usage_limit"
-      :usage_number="usage_number"
+      :usage_limit="create.usage_limit"
+      :usage_number="create.usage_number"
     />
-    <v-alert v-if="limit_error_row"
+    <v-alert v-if="create.limit_error_row"
              color="red"
              type="error"
     >
@@ -27,7 +27,7 @@
           </v-btn>
         </v-col>
         <v-col md="5" class="vertialcally-center-items">
-          <v-btn color="green" dark @click="save">
+          <v-btn color="green" dark @click="save" :loading="create.strategyInstance.loading">
             ذخیره
             <v-icon class="mr-3">
               mdi-content-save
@@ -43,7 +43,7 @@
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
-        <v-row v-for="user in userForm" :key="user.key">
+        <v-row v-for="user in create.strategyInstance.userForm" :key="user.key">
           <v-col md="11" class="user-row" :class="{ 'has-been-saved': user.hasBeenSaved }">
             <div class="input-box">
               <div class="form-input">
@@ -70,7 +70,10 @@
                 <select class="select-text" required v-model="user.gender_id"
                         :class="{ 'has-error': user.gender_id_error }">
                   <option value="" disabled selected></option>
-                  <option v-for="(item, index) in genders" :key="index" :value="item.id">{{ item.title }}</option>
+                  <option v-for="(item, index) in create.strategyInstance.genders" :key="index" :value="item.id">{{
+                      item.title
+                    }}
+                  </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
@@ -174,9 +177,8 @@
 </template>
 
 <script>
-import API_ADDRESS from "assets/Addresses";
 import CreateLimitation from '/components/abrisham/createLimitation'
-import ReadExcel from "assets/importExcel/readExcel";
+import CreateUser from "assets/createUsers/createUser";
 
 export default {
   name: 'moshaverCreate',
@@ -184,17 +186,9 @@ export default {
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
-      importLoading: false,
-      limit_error_row: false,
-      keys: ['firstName', 'lastName', 'gender', 'mobile', 'nationalCode', 'province', 'city', 'registerLimit'],
-      userForm: [],
-      genders: [],
-      majors: [],
-      provinces: [],
-      cities: [],
+      create: null,
       loading: false,
-      usage_limit: 0,
-      usage_number: 0,
+      keys: ['firstName', 'lastName', 'gender', 'mobile', 'nationalCode', 'province', 'city', 'registerLimit']
     }
   },
   head() {
@@ -224,174 +218,14 @@ export default {
     shahr_idSelectOnChange(user) {
       user.shahr_idDropdown = false
     },
-    initUserFormArray(clean = true, amount = 20, data) {
-      if (clean) {
-        this.userForm = []
-      }
-      for (let i = 0; i < amount; i++) {
-        this.userForm.push({
-          firstName: data && data[i] ? data[i][0] || data[i]['نام'] : '',
-          firstNameMessage: '',
-          firstName_error: false,
-          student_register_limit: data && data[i] ? Number(data[i][7]) || data[i]['محدودیت ثبت نام'] : '',
-          student_register_limitMessage: '',
-          student_register_limit_error: '',
-          lastName: data && data[i] ? data[i][1] || data[i]['نام خانوادگي'] : '',
-          lastName_error: false,
-          gender_id: '',
-          gender_id_error: false,
-          mobile: data && data[i] ? data[i][4] || data[i]['موبايل'] : '',
-          mobile_error: false,
-          nationalCode: data && data[i] ? data[i][5] || data[i]['كد ملي'] : '',
-          nationalCode_error: false,
-          province: '',
-          provinceDropDown: false,
-          province_error: false,
-          shahr_id: '',
-          shahr_idDropdown: false,
-          shahr_id_error: false,
-          key: Date.now() + Math.random() * 10000,
-          hasBeenSaved: false,
-          editable: true,
-          loading: false
-        })
-        if (data && data[i]) {
-          const gender_id = this.genders.find(gender => gender.title === data[i][2] || data[i]['جنسيت'])
-          const province = this.provinces.find(province => province.title === data[i][5] || data[i]['استان'])
-          let shahr_id = this.cities.find(city => city.title === data[i][6] || data[i]['شهر'])
-          this.userForm[i].gender_id = gender_id ? gender_id.id : 0
-          this.userForm[i].province = province ? province.id : 0
-          this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
-        }
-      }
-    },
-    isUserInfoComplete(user) {
-      return !!(user.firstName || user.student_register_limit || user.lastName || user.gender_id
-        || user.mobile || user.nationalCode ||
-        user.province || user.shahr_id);
-    },
-    getUserFormData() {
-      this.loading = true
-      this.$axios.get(API_ADDRESS.user.formData)
-        .then((resp) => {
-          this.loading = false
-          this.genders = resp.data.data.genders
-          this.majors = resp.data.data.majors
-          this.provinces = resp.data.data.provinces
-          this.cities = resp.data.data.cities
-        })
-    },
     save() {
-      const availableUsers = this.userForm.filter(user=>user.mobile)
-      const sendData = {
-        users: availableUsers.map(user => {
-          return {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            student_register_limit: user.student_register_limit,
-            mobile: user.mobile,
-            nationalCode: user.nationalCode,
-            gender_id: user.gender_id,
-            shahr_id: user.shahr_id
-          }
-        }),
-        type: 'network'
-      }
-      this.userForm.forEach(user => {
-        let that = this
-        if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
-          user.loading = true
-          this.valid = true
-        } else if (user.firstName || user.lastName || user.student_register_limit || user.gender_id
-          || user.mobile || user.nationalCode || user.shahr_id) {
-          this.$notify({
-            type: 'error',
-            duration: 10000,
-            title: 'توجه',
-            text: 'پر کردن تمامی فیلدهای یک سطر الزامی ست'
-          })
-        }
-      })
-      if (this.valid) {
-        this.loading = true
-        this.$axios.post(API_ADDRESS.subnetwork.bulkCreate, {
-          users: sendData.users,
-          type: sendData.type
-        }).then(r => {
-          console.log(r)
-          this.userForm.forEach(user => {
-            user.hasBeenSaved = true
-            user.editable = false
-            Object.keys(user).forEach(key => {
-              if (key.includes('_error')) {
-                user[key] = false
-              }
-            })
-          })
-          this.loading = false
-          setTimeout(() => {
-            let that = this
-            this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-              .then(resp => {
-                that.usage_limit = resp.data.data.usage_limit
-                that.usage_number = resp.data.data.usage_number
-              })
-          }, 500)
-        }).catch(err => {
-          this.userForm.forEach((user, userIndex) => {
-            user.loading = false
-            Object.keys(user).forEach(userKey => {
-              if (userKey.includes('_error')) {
-                user[userKey] = false
-              }
-            })
-
-            function getUserIndexAndInputNameFromKey(errorKey) {
-              const dataArray = errorKey.split('.')
-              if (dataArray.length < 3 || dataArray[0] !== 'users') {
-                return null
-              }
-
-              return {
-                index: dataArray[1],
-                key: dataArray[2]
-              }
-            }
-
-            Object.keys(err.response.data.errors).forEach(errorKey => {
-              const errorData = getUserIndexAndInputNameFromKey(errorKey)
-              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
-                const error = err.response.data.errors[errorKey][0].split('.')
-                user[errorData.key + '_error'] = error[2]
-              }
-            })
-          })
-          this.loading = false
-          setTimeout(() => {
-            this.$refs.form.validate()
-          }, 500)
-        })
-      }
+      this.create.strategyInstance.save()
     },
-    async addExcel(event) {
-      if (event) {
-        this.importLoading = true
-        const importExcel = new ReadExcel(event, this.keys)
-        await importExcel.getData()
-        this.limit_error_row = importExcel.limit_error_row
-        if (!this.limit_error_row) {
-          this.initUserFormArray(true, importExcel.finalData.length, importExcel.finalData)
-        }
-        this.importLoading = false
-      }
+    addExcel(event) {
+      this.create.addExcel(event)
     },
-    async onPaste(event) {
-      const importExcel = new ReadExcel(event, this.keys)
-      await importExcel.getData()
-      this.limit_error_row = importExcel.limit_error_row
-      if (!this.limit_error_row) {
-        this.initUserFormArray(true, importExcel.finalData.length, importExcel.finalData)
-      }
+    onPaste(event) {
+      this.create.onPaste(event)
     }
   },
   computed: {
@@ -400,9 +234,9 @@ export default {
         if (!show && !provinceId) {
           return []
         } else if (!show && provinceId) {
-          return this.provinces.filter(province => province.id === provinceId)
+          return this.create.strategyInstance.provinces.filter(province => province.id === provinceId)
         }
-        return this.provinces
+        return this.create.strategyInstance.provinces
       }
     },
     selectedProvinceCity() {
@@ -410,9 +244,9 @@ export default {
         if (!provinceId || (!show && !cityId)) {
           return []
         } else if (!show && cityId) {
-          return this.cities.filter(city => city.id === cityId)
+          return this.create.strategyInstance.cities.filter(city => city.id === cityId)
         }
-        return this.cities.filter(city => city.province.id === provinceId)
+        return this.create.strategyInstance.cities.filter(city => city.province.id === provinceId)
       }
     },
     userData() {
@@ -420,14 +254,7 @@ export default {
     }
   },
   created() {
-    this.initUserFormArray(true, 20)
-    this.getUserFormData()
-    let that = this
-    this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-      .then(resp => {
-        that.usage_limit = resp.data.data.usage_limit
-        that.usage_number = resp.data.data.usage_number
-      })
+    this.create = new CreateUser(this.userData.id, this.$axios, this.keys, this.$notify)
   }
 }
 </script>
