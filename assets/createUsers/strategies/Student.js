@@ -1,10 +1,10 @@
 import API_ADDRESS from "assets/Addresses";
 
 class Student {
-  constructor(userId, axios, keys, notify) {
+  constructor(userId, axios, type, notify) {
     this.userId = userId
     this.axios = axios
-    this.keys = keys
+    this.type = type
     this.notify = notify
     this.genders = []
     this.majors = []
@@ -13,13 +13,12 @@ class Student {
     this.userForm = []
     this.loading = false
     this.valid = false
-    this.studentKeys = ['firstName', 'lastName', 'gender', 'major', 'mobile', 'address', 'phone', 'fatherMobile', 'motherMobile', 'nationalCode', 'province', 'city']
     this.getUserFormData()
     this.initUserFormArray(true, 20)
   }
 
   isSuitable() {
-    return JSON.stringify(this.studentKeys) === JSON.stringify(this.keys);
+    return this.type === 'student'
   }
 
   initUserFormArray(clean = true, amount = 20, data) {
@@ -145,6 +144,7 @@ class Student {
         this.userForm.forEach(user => {
           user.hasBeenSaved = true
           user.editable = false
+          user.loading = false
           Object.keys(user).forEach(key => {
             if (key.includes('_error')) {
               user[key] = false
