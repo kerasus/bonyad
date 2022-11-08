@@ -185,7 +185,7 @@ export default {
   data() {
     return {
       create: null,
-      keys: ['firstName', 'lastName', 'gender', 'mobile', 'nationalCode', 'province', 'city', 'registerLimit']
+      type: 'subnetwork'
     }
   },
   head() {
@@ -195,7 +195,7 @@ export default {
   },
   methods: {
     downloadExcel() {
-      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28subNetwork%26network%29.xlsx', '_blank')
+      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28moshaver%29.xlsx', '_blank')
     },
     provinceSelectOnClick(user) {
       user.provinceDropDown = true
@@ -251,7 +251,7 @@ export default {
     }
   },
   created() {
-    this.create = new CreateUser(this.userData.id, this.$axios, this.keys, this.$notify)
+    this.create = new CreateUser(this.userData.id, this.$axios, this.type, this.$notify)
   }
 }
 </script>

@@ -1,10 +1,10 @@
 import API_ADDRESS from "assets/Addresses";
 
 class Network_Subnetwork_Moshaver {
-  constructor(userId, axios, keys, notify) {
+  constructor(userId, axios, type, notify) {
     this.userId = userId
     this.axios = axios
-    this.keys = keys
+    this.type = type
     this.notify = notify
     this.genders = []
     this.majors = []
@@ -13,13 +13,14 @@ class Network_Subnetwork_Moshaver {
     this.userForm = []
     this.loading = false
     this.valid = false
-    this.studentKeys = ['firstName', 'lastName', 'gender', 'mobile', 'nationalCode', 'province', 'city', 'registerLimit']
     this.getUserFormData()
     this.initUserFormArray(true, 20)
   }
 
   isSuitable() {
-    return JSON.stringify(this.studentKeys) === JSON.stringify(this.keys);
+    if (this.type === 'moshaver' || this.type === 'network' || this.type === 'subnetwork') {
+      return true
+    }
   }
 
   initUserFormArray(clean = true, amount = 20, data) {
@@ -84,7 +85,7 @@ class Network_Subnetwork_Moshaver {
           shahr_id: user.shahr_id
         }
       }),
-      type: 'network'
+      type: this.type
     }
     this.userForm.forEach(user => {
       let that = this
@@ -102,6 +103,7 @@ class Network_Subnetwork_Moshaver {
         this.userForm.forEach(user => {
           user.hasBeenSaved = true
           user.editable = false
+          user.loading = false
           Object.keys(user).forEach(key => {
             if (key.includes('_error')) {
               user[key] = false
