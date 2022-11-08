@@ -226,7 +226,7 @@ export default {
   data() {
     return {
       create: null,
-      keys: ['firstName', 'lastName', 'gender', 'major', 'mobile', 'address', 'phone', 'fatherMobile', 'motherMobile', 'nationalCode', 'province', 'city']
+      type: 'student'
     }
   },
   head() {
@@ -292,7 +292,7 @@ export default {
     }
   },
   created() {
-    this.create = new CreateUser(this.userData.id, this.$axios, this.keys, this.$notify)
+    this.create = new CreateUser(this.userData.id, this.$axios, this.type, this.$notify)
   }
 }
 </script>
