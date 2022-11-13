@@ -176,11 +176,9 @@ class Network_Subnetwork_Moshaver {
         // }, 500)
       })
     }
-    this.axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userId)
-      .then(resp => {
-        this.usage_limit = resp.data.data.usage_limit
-        this.usage_number = resp.data.data.usage_number
-      })
+    setTimeout(()=>{
+      this.getRegisterLimit()
+    },500)
   }
 
   getUserFormData() {

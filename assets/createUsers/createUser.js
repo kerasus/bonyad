@@ -11,8 +11,6 @@ class CreateUser {
     this.importLoading = false
     this.limit_error_row = 0
     this.loading = false
-    this.usage_limit = 0
-    this.usage_number = 0
     this.strategies = [
       Student,
       Network_Subnetwork_Moshaver
