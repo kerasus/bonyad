@@ -31,7 +31,6 @@ class ClipBoard {
     for (let i = 0; i < clipRows.length - 1; i++) {
       let item = [];
       for (let j = 0; j < clipRows[i].length; j++) {
-        console.log(clipRows[i][j].length, clipRows[i][j])
         if (clipRows[i][j] !== '\r' && clipRows[i][j].length !== 0 && clipRows[i][j] !== '#N/A') {
           item[j] = clipRows[i][j];
         }

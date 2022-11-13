@@ -4,8 +4,8 @@
       <v-progress-circular indeterminate/>
     </v-overlay>
     <create-limitation
-      :usage_limit="create.usage_limit"
-      :usage_number="create.usage_number"
+      :usage_limit="create.strategyInstance.usage_limit"
+      :usage_number="create.strategyInstance.usage_number"
     />
     <v-alert v-if="create.limit_error_row"
              color="red"
@@ -16,6 +16,9 @@
         mdi-close
       </v-icon>
     </v-alert>
+    <v-col md="12" class="text-center">
+      <h2 class="mt-3">صفحه ثبت دانش آموز</h2>
+    </v-col>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">

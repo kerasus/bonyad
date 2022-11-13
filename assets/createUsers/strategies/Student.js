@@ -11,14 +11,26 @@ class Student {
     this.provinces = []
     this.cities = []
     this.userForm = []
+    this.usage_limit = 0
+    this.usage_number = 0
     this.loading = false
     this.valid = false
+    this.getRegisterLimit()
     this.getUserFormData()
     this.initUserFormArray(true, 20)
   }
 
   isSuitable() {
     return this.type === 'student'
+  }
+
+  getRegisterLimit() {
+    let that = this
+    this.axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userId)
+      .then(resp => {
+        that.usage_limit = resp.data.data.usage_limit
+        that.usage_number = resp.data.data.usage_number
+      })
   }
 
   initUserFormArray(clean = true, amount = 20, data) {
@@ -152,21 +164,16 @@ class Student {
           })
         })
         this.loading = false
-        setTimeout(() => {
-          let that = this
-          this.axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userId)
-            .then(resp => {
-              that.usage_limit = resp.data.data.usage_limit
-              that.usage_number = resp.data.data.usage_number
-            })
-        }, 500)
         this.notify({
           type: 'success',
           text: response.data.data?.message ? response.data.data.message : 'کاربران با موفقیت افزوده شدند',
         })
       }).catch(err => {
+        console.log(err.response)
         this.userForm.forEach((user, userIndex) => {
+          user.hasBeenSaved = false
           user.loading = false
+          this.loading = false
           Object.keys(user).forEach(userKey => {
             if (userKey.includes('_error')) {
               user[userKey] = false
@@ -184,21 +191,26 @@ class Student {
               key: dataArray[2]
             }
           }
+          if (err.response.data.errors){
+            Object.keys(err.response.data.errors).forEach(errorKey => {
+              const errorData = getUserIndexAndInputNameFromKey(errorKey)
+              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
+                const error = err.response.data.errors[errorKey][0].split('.')
+                user[errorData.key + '_error'] = error[2]
+              }
+            })
+          }
 
-          Object.keys(err.response.data.errors).forEach(errorKey => {
-            const errorData = getUserIndexAndInputNameFromKey(errorKey)
-            if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
-              const error = err.response.data.errors[errorKey][0].split('.')
-              user[errorData.key + '_error'] = error[2]
-            }
-          })
         })
         this.loading = false
-        setTimeout(() => {
-          this.$refs.form.validate()
-        }, 500)
+        // setTimeout(() => {
+        //   this.$refs.form.validate()
+        // }, 500)
       })
     }
+    setTimeout(()=>{
+      this.getRegisterLimit()
+    },500)
   }
 
 }

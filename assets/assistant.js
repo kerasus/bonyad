@@ -52,16 +52,20 @@ let Assistant = function () {
       messages.push(AjaxResponseMessages.getMessage(err.data.error.code))
     } else if (typeof err.data.message === 'string') {
       messages.push(err.data.message)
-    } else if (err.data) {
-      for (const [key, value] of Object.entries(err.data)) {
-        if (typeof value === 'string') {
-          messages.push(value)
-        } else {
-          messages = messages.concat(getMessagesFromArrayWithRecursion(value))
-        }
-        // console.log(`${key}: ${value}`);
-      }
     }
+    else if(err.data.data.error){
+      messages.push(err.data.data.error)
+    }
+    // else if (err.data) {
+    //   for (const [key, value] of Object.entries(err.data)) {
+    //     if (typeof value === 'string') {
+    //       messages.push(value)
+    //     } else {
+    //       messages = messages.concat(getMessagesFromArrayWithRecursion(value))
+    //     }
+    //     // console.log(`${key}: ${value}`);
+    //   }
+    // }
 
     return messages
   }
