@@ -11,8 +11,11 @@ class Network_Subnetwork_Moshaver {
     this.provinces = []
     this.cities = []
     this.userForm = []
+    this.usage_limit = 0
+    this.usage_number = 0
     this.loading = false
     this.valid = false
+    this.getRegisterLimit()
     this.getUserFormData()
     this.initUserFormArray(true, 20)
   }
@@ -21,6 +24,15 @@ class Network_Subnetwork_Moshaver {
     if (this.type === 'moshaver' || this.type === 'network' || this.type === 'subnetwork') {
       return true
     }
+  }
+
+  getRegisterLimit() {
+    let that = this
+    this.axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userId)
+      .then(resp => {
+        that.usage_limit = resp.data.data.usage_limit
+        that.usage_number = resp.data.data.usage_number
+      })
   }
 
   initUserFormArray(clean = true, amount = 20, data) {
@@ -55,9 +67,18 @@ class Network_Subnetwork_Moshaver {
         loading: false
       })
       if (data && data[i]) {
-        const gender_id = this.genders.find(gender => gender.title === data[i][2] || data[i]['جنسيت'])
-        const province = this.provinces.find(province => province.title === data[i][5] || data[i]['استان'])
-        let shahr_id = this.cities.find(city => city.title === data[i][6] || data[i]['شهر'])
+        let gender_id = this.genders.find(gender => gender.title === data[i][2])
+        if (!gender_id) {
+          gender_id = this.genders.find(gender => gender.title === data[i]['جنسيت'])
+        }
+        let province = this.provinces.find(province => province.title === data[i][5])
+        if (!province) {
+          province = this.provinces.find(province => province.title === data[i]['استان'])
+        }
+        let shahr_id = this.cities.find(city => city.title === data[i][6])
+        if (!shahr_id) {
+          shahr_id = this.cities.find(city => city.title === data[i]['شهر'])
+        }
         this.userForm[i].gender_id = gender_id ? gender_id.id : 0
         this.userForm[i].province = province ? province.id : 0
         this.userForm[i].shahr_id = shahr_id ? shahr_id.id : 0
@@ -111,20 +132,13 @@ class Network_Subnetwork_Moshaver {
           })
         })
         this.loading = false
-        setTimeout(() => {
-          let that = this
-          this.axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userId)
-            .then(resp => {
-              that.usage_limit = resp.data.data.usage_limit
-              that.usage_number = resp.data.data.usage_number
-            })
-        }, 500)
         this.notify({
           type: 'success',
           text: response.data.data?.message ? response.data.data.message : 'کاربران با موفقیت افزوده شدند',
         })
       }).catch(err => {
         this.userForm.forEach((user, userIndex) => {
+          user.hasBeenSaved = false
           user.loading = false
           this.loading = false
           Object.keys(user).forEach(userKey => {
@@ -145,21 +159,26 @@ class Network_Subnetwork_Moshaver {
             }
           }
 
-          Object.keys(err.response.data.errors).forEach(errorKey => {
-            const errorData = getUserIndexAndInputNameFromKey(errorKey)
-            if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
-              const error = err.response.data.errors[errorKey][0].split('.')
-              user[errorData.key + '_error'] = error[2]
-            }
-          })
+          if (err.response.data.errors) {
+            Object.keys(err.response.data.errors).forEach(errorKey => {
+              const errorData = getUserIndexAndInputNameFromKey(errorKey)
+              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
+                const error = err.response.data.errors[errorKey][0].split('.')
+                user[errorData.key + '_error'] = error[2]
+              }
+            })
+          }
         })
         this.loading = false
-        setTimeout(() => {
-          this.$refs.form.validate()
-          console.log('vvv')
-        }, 500)
+        // setTimeout(() => {
+        //   this.$refs.form.validate()
+        //   console.log('vvv')
+        // }, 500)
       })
     }
+    setTimeout(()=>{
+      this.getRegisterLimit()
+    },500)
   }
 
   getUserFormData() {
