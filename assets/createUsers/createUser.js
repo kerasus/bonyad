@@ -18,7 +18,6 @@ class CreateUser {
       Network_Subnetwork_Moshaver
     ]
     this.strategyInstance = null
-    this.getRegisterLimit()
     this.setStrategiesInstance()
   }
 
@@ -29,15 +28,6 @@ class CreateUser {
         this.strategyInstance = instance
       }
     })
-  }
-
-  getRegisterLimit() {
-    let that = this
-    this.axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userId)
-      .then(resp => {
-        that.usage_limit = resp.data.data.usage_limit
-        that.usage_number = resp.data.data.usage_number
-      })
   }
 
   async addExcel(event) {
