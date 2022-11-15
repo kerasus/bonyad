@@ -125,14 +125,14 @@ class Student {
     const sendData = {
       users: availableUsers.map(user => {
         return {
-          firstName: user.firstName,
-          address: user.address,
-          phone: user.phone,
-          father_mobile: user.father_mobile,
-          mother_mobile: user.mother_mobile,
-          lastName: user.lastName,
-          mobile: user.mobile,
-          nationalCode: user.nationalCode,
+          firstName: user.firstName.toString(),
+          address: user.address.toString(),
+          phone: user.phone.toString(),
+          father_mobile: user.father_mobile.toString(),
+          mother_mobile: user.mother_mobile.toString(),
+          lastName: user.lastName.toString(),
+          mobile: user.mobile.toString(),
+          nationalCode: user.nationalCode.toString(),
           gender_id: user.gender_id,
           major_id: user.major_id,
           shahr_id: user.shahr_id
