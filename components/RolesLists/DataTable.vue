@@ -106,6 +106,7 @@ export default {
   },
   data() {
     return {
+      timer: null,
       loadingPage: false,
       excelLoading: false,
       excleProgress: 0,
@@ -148,25 +149,26 @@ export default {
     },
     deep: true,
   },
+  beforeDestroy() {
+    clearTimeout(this.timer)
+  },
   methods: {
     getExcel() {
       this.excelLoading = true
       const mode = this.getUserOfBonyadParam()
       this.$axios.get(API_ADDRESS.exam.usersOfBonyad, {params: {action: mode, excel_export: true}})
         .then(resp => {
-          console.log(resp)
-          this.sendFakeRequest(resp.data.data.id)
+          this.excelProgressRequest(resp.data.data.id)
       })
       .catch(err => {
         this.excelLoading = false
         console.log(err)
       })
     },
-    sendFakeRequest(id) {
-        setTimeout(()=>{
+    excelProgressRequest(id) {
+        this.timer = setTimeout(()=>{
           this.$axios.get(API_ADDRESS.exam.checkExport(id))
             .then(resp => {
-              console.log(resp.data.data.progress)
               this.excleProgress = Math.floor(resp.data.data.progress)
               if (resp.data.data.link){
                 setTimeout(()=>{
@@ -175,7 +177,7 @@ export default {
                   this.excleProgress = 0
                 },500)
               } else {
-                this.sendFakeRequest(id)
+                this.excelProgressRequest(id)
               }
             })
             .catch(err=>{
