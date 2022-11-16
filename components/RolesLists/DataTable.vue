@@ -172,7 +172,7 @@ export default {
               this.excleProgress = Math.floor(resp.data.data.progress)
               if (resp.data.data.link){
                 setTimeout(()=>{
-                  window.open(resp.data.data.link)
+                  window.open(resp.data.data.link, '_self')
                   this.excelLoading = false
                   this.excleProgress = 0
                 },500)
