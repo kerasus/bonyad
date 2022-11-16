@@ -1,9 +1,14 @@
 <template>
   <div>
-    <v-overlay v-if="loadingPage">
+    <v-overlay v-if="loadingPage" z-index="1">
       <v-progress-circular indeterminate/>
     </v-overlay>
-    <v-row :style="{ padding: '20px 10px' }">
+    <div class="header justify-center">
+      <h2 class="mb-2">
+        {{ tableTitle }}
+      </h2>
+    </div>
+    <v-row :style="{ padding: '10px 10px' }">
       <v-col md="12" class="vertialcally-center-items">
         <v-btn block color="green" dark @click="getExcel" :loading="excelLoading">
           دانلود خروجی اکسل
@@ -13,11 +18,12 @@
         </v-btn>
       </v-col>
     </v-row>
-    <div class="header">
-      <h2 class="mb-2">
-        {{ tableTitle }}
-      </h2>
-    </div>
+    <v-progress-linear v-if="excelLoading" class="progress-linear mb-2" reverse :value="excleProgress" color="primary"
+                       height="25">
+      <template v-slot:default="{ value }">
+        <strong>{{ value }}%</strong>
+      </template>
+    </v-progress-linear>
     <v-data-table
       :footer-props="{
         disableItemsPerPage: true,
@@ -61,7 +67,7 @@
     </v-data-table>
     <v-row class="ma-5">
       <span>تعداد کل : </span>
-      <span>{{totalRows}}</span>
+      <span>{{ totalRows }}</span>
     </v-row>
   </div>
 </template>
@@ -102,6 +108,7 @@ export default {
     return {
       loadingPage: false,
       excelLoading: false,
+      excleProgress: 0,
       download: '',
       options: {
         itemsPerPage: 25,
@@ -147,14 +154,35 @@ export default {
       const mode = this.getUserOfBonyadParam()
       this.$axios.get(API_ADDRESS.exam.usersOfBonyad, {params: {action: mode, excel_export: true}})
         .then(resp => {
-          let route = resp.data.data.export_file_url
-          this.excelLoading = false
-          window.open(route, '_blank');
-        })
-        .catch(err => {
-          this.excelLoading = false
-          console.log(err)
-        })
+          console.log(resp)
+          this.sendFakeRequest(resp.data.data.id)
+      })
+      .catch(err => {
+        this.excelLoading = false
+        console.log(err)
+      })
+    },
+    sendFakeRequest(id) {
+        setTimeout(()=>{
+          this.$axios.get(API_ADDRESS.exam.checkExport(id))
+            .then(resp => {
+              console.log(resp.data.data.progress)
+              this.excleProgress = Math.floor(resp.data.data.progress)
+              if (resp.data.data.link){
+                setTimeout(()=>{
+                  window.open(resp.data.data.link)
+                  this.excelLoading = false
+                  this.excleProgress = 0
+                },500)
+              } else {
+                this.sendFakeRequest(id)
+              }
+            })
+            .catch(err=>{
+              console.log(err)
+              this.excelLoading = false
+            })
+        },2000)
     },
     getUsersOfBonyad() {
       this.loadingPage = true
@@ -168,7 +196,9 @@ export default {
           this.totalRows = response.data.meta.total
           this.options.itemsPerPage = response.data.meta.per_page
           this.loadingPage = false
-        })
+        }).catch(()=>{
+        this.loadingPage = false
+      })
     },
     getUserOfBonyadParam() {
       if (!this.doesRouteHaveId()) {
@@ -223,6 +253,13 @@ export default {
 a {
   text-decoration: none;
   color: white !important;
+}
+
+.progress-linear {
+  position: sticky;
+  top: 80px;
+  z-index: 5;
+  border-radius: 15px;
 }
 
 .header {
