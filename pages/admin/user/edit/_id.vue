@@ -1,6 +1,6 @@
 <template>
   <div class="ma-3">
-    <edit-data />
+    <edit-data :is-student="true"/>
   </div>
 </template>
 
