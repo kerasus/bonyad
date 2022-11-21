@@ -56,7 +56,7 @@
       >
         <v-icon>mdi-logout</v-icon>
       </v-btn>
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title v-text="title" class="header" />
       <v-spacer />
       <v-btn
         v-if="false"
