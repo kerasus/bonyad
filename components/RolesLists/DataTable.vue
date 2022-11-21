@@ -62,6 +62,17 @@
             :to="goToEdit(item.id)"
           >ویرایش اطلاعات
           </v-btn>
+          <v-btn
+            v-if="isUserPermittedToDelete"
+            class="ma-2"
+            color="error"
+            @click="deleteUser(item.id)"
+          >
+            <v-icon left>
+              mdi-delete
+            </v-icon>
+            حذف کاربر
+          </v-btn>
         </div>
       </template>
     </v-data-table>
@@ -153,6 +164,19 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    deleteUser(userId) {
+      this.$axios.delete(API_ADDRESS.delete.base(userId))
+        .then(resp => {
+          this.getUsersOfBonyad()
+          this.$notify({
+            type: 'success',
+            text: resp.data?.message ? resp.data.message : 'کاربر با موفقیت حذف شد',
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     getExcel() {
       this.excelLoading = true
       const mode = this.getUserOfBonyadParam()
@@ -188,9 +212,8 @@ export default {
     },
     getUsersOfBonyad() {
       this.loadingPage = true
-      const id = this.getUserOfBonyadId()
       const mode = this.getUserOfBonyadParam()
-      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode, this.options.page))
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(null, mode, this.options.page))
         .then((response) => {
           response.data.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
           this.rows = response.data.data
@@ -220,6 +243,11 @@ export default {
     }
   },
   computed: {
+    isUserPermittedToDelete() {
+      const user = this.$store.getters['Auth/user']
+      console.log(user)
+      return user.hasPermission('bonyadDeleteUsers')
+    },
     getNextRoutePath() {
       return (id) => {
         return {

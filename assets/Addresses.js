@@ -16,6 +16,9 @@ const API_ADDRESS = {
   editLimit:{
     base: authServer + '/admin/bonyadEhsan/studentLimit'
   },
+  delete: {
+    base: (userId) => authServer + '/admin/bonyadEhsan/delete/' + userId
+  },
   moshaver: {
     edit: (userId) => authServer + '/admin/bonyadEhsan/user/' + userId,
     update: authServer + '/admin/bonyadEhsan/user/',
