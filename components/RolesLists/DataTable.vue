@@ -3,6 +3,42 @@
     <v-overlay v-if="loadingPage" z-index="1">
       <v-progress-circular indeterminate/>
     </v-overlay>
+    <div class="text-center">
+      <v-dialog
+        v-model="dialog"
+        width="500"
+      >
+
+        <v-card>
+          <v-card-title class="text-h5 grey lighten-2 headline">
+            تأیید نهایی
+          </v-card-title>
+
+          <v-card-text>
+            آیا از حذف این کاربر مطمئن هستید؟
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              @click="deleteUser"
+            >
+              بله
+            </v-btn>
+            <v-btn
+              color="primary"
+              text
+              @click="dialog = false"
+            >
+              خیر
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
     <div class="header justify-center">
       <h2 class="mb-2">
         {{ tableTitle }}
@@ -62,6 +98,17 @@
             :to="goToEdit(item.id)"
           >ویرایش اطلاعات
           </v-btn>
+          <v-btn
+            v-if="isUserPermittedToDelete"
+            class="ma-2"
+            color="error"
+            @click="showConfirmMessage(item.id)"
+          >
+            <v-icon left>
+              mdi-delete
+            </v-icon>
+            حذف کاربر
+          </v-btn>
         </div>
       </template>
     </v-data-table>
@@ -106,6 +153,9 @@ export default {
   },
   data() {
     return {
+      id: null,
+      deleteComfirm: false,
+      dialog: false,
       timer: null,
       loadingPage: false,
       excelLoading: false,
@@ -135,7 +185,6 @@ export default {
         {text: 'عملیات', value: 'actions'},
       ],
       rows: [],
-      dialog: false,
       notifications: false,
       sound: true,
       widgets: false
@@ -153,44 +202,61 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    showConfirmMessage(userId) {
+      this.dialog = true
+      this.id = userId
+    },
+    deleteUser() {
+      this.dialog = false
+      this.$axios.delete(API_ADDRESS.delete.base(this.id))
+        .then(resp => {
+          this.getUsersOfBonyad()
+          this.$notify({
+            type: 'success',
+            text: resp.data?.message ? resp.data.message : 'کاربر با موفقیت حذف شد',
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     getExcel() {
       this.excelLoading = true
       const mode = this.getUserOfBonyadParam()
       this.$axios.get(API_ADDRESS.exam.usersOfBonyad, {params: {action: mode, excel_export: true}})
         .then(resp => {
           this.excelProgressRequest(resp.data.data.id)
-      })
-      .catch(err => {
-        this.excelLoading = false
-        console.log(err)
-      })
+        })
+        .catch(err => {
+          this.excelLoading = false
+          console.log(err)
+        })
     },
     excelProgressRequest(id) {
-        this.timer = setTimeout(()=>{
-          this.$axios.get(API_ADDRESS.exam.checkExport(id))
-            .then(resp => {
-              this.excleProgress = Math.floor(resp.data.data.progress)
-              if (resp.data.data.link){
-                setTimeout(()=>{
-                  window.open(resp.data.data.link, '_self')
-                  this.excelLoading = false
-                  this.excleProgress = 0
-                },500)
-              } else {
-                this.excelProgressRequest(id)
-              }
-            })
-            .catch(err=>{
-              console.log(err)
-              this.excelLoading = false
-            })
-        },2000)
+      this.timer = setTimeout(() => {
+        this.$axios.get(API_ADDRESS.exam.checkExport(id))
+          .then(resp => {
+            this.excleProgress = Math.floor(resp.data.data.progress)
+            if (resp.data.data.link) {
+              setTimeout(() => {
+                window.open(resp.data.data.link, '_self')
+                this.excelLoading = false
+                this.excleProgress = 0
+              }, 500)
+            } else {
+              this.excelProgressRequest(id)
+            }
+          })
+          .catch(err => {
+            console.log(err)
+            this.excelLoading = false
+          })
+      }, 2000)
     },
     getUsersOfBonyad() {
       this.loadingPage = true
-      const id = this.getUserOfBonyadId()
       const mode = this.getUserOfBonyadParam()
-      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(id, mode, this.options.page))
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(null, mode, this.options.page))
         .then((response) => {
           response.data.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
           this.rows = response.data.data
@@ -198,7 +264,7 @@ export default {
           this.totalRows = response.data.meta.total
           this.options.itemsPerPage = response.data.meta.per_page
           this.loadingPage = false
-        }).catch(()=>{
+        }).catch(() => {
         this.loadingPage = false
       })
     },
@@ -220,6 +286,11 @@ export default {
     }
   },
   computed: {
+    isUserPermittedToDelete() {
+      const user = this.$store.getters['Auth/user']
+      console.log(user)
+      return user.hasPermission('bonyadDeleteUsers')
+    },
     getNextRoutePath() {
       return (id) => {
         return {
