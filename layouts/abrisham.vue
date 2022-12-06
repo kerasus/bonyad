@@ -9,7 +9,8 @@
       disable-resize-watcher
       :width="drawerSize"
     >
-      <side-menu/>
+      <side-menu :unreadMessages="unreadMessages"
+                 @readAll="readAll"/>
     </v-navigation-drawer>
     <app-bar
       :width="windowSize.width"
@@ -18,7 +19,9 @@
     <v-main>
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
-        <expansion-menu v-if=" windowSize.width <= 768"/>
+        <expansion-menu v-if="windowSize.width <= 768"
+                        :unreadMessages="unreadMessages"
+                        @readAll="readAll"/>
         <!-- If using vue-router -->
         <Nuxt/>
 
@@ -65,6 +68,7 @@ export default {
   components: {SideMenu, AppBar, ExpansionMenu, Auth, Modal, UserInfoForm},
   data() {
     return {
+      unreadMessages: 0,
       drawer: true,
       showUserInfoFormModalStatus: false,
       windowSize: {
@@ -83,9 +87,6 @@ export default {
     isLoggedIn() {
       return this.$store.getters["Auth/isLoggedIn"]
     },
-    // windowSize() {
-    //   return {x: window.innerWidth, y: window.innerHeight}
-    // },
     drawerSize() {
       if (this.windowSize.width >= 1920) {
         return 130
@@ -127,14 +128,28 @@ export default {
     this.initUserInfoIfLoggedIn()
   },
   mounted() {
+    this.countUnreadMessages()
     // this.windowSize.width = window.innerWidth;
   },
   destroyed() {
     window.removeEventListener("resize", this.resizeHandler);
   },
   methods: {
+    readAll() {
+      this.unreadMessages = 0
+    },
+    countUnreadMessages() {
+      this.$axios.get('alaa/api/v2/bonyadEhsan/notification?read=unread&owner_id=1')
+        .then(resp => {
+          this.unreadMessages = resp.data.meta.total
+          console.log(this.unreadMessages)
+        })
+        .catch(err => {
+          console.log(err.response)
+        })
+    },
     resizeHandler(e) {
-      this.width = window.innerWidth
+      this.windowSize.width = window.innerWidth
     },
     setToken() {
       // this.$axios.defaults.headers.common['Accept'] = 'application/json '
