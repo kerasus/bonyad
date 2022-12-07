@@ -120,13 +120,15 @@ export default {
   },
   methods: {
     readAllMessages() {
-      this.$axios.post('alaa/api/v2/bonyadEhsan/notification/readAll')
-        .then(() => {
-          this.$emit('readAll')
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      if (this.user.hasPermission('bonyadReadNotification')) {
+        this.$axios.post('alaa/api/v2/bonyadEhsan/notification/readAll')
+          .then(() => {
+            this.$emit('readAll')
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
     },
   }
 }

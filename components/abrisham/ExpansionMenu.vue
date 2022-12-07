@@ -189,7 +189,8 @@ export default {
         })
     },
     changeSelectedItem(selected) {
-      if (selected.badge) {
+      const user = this.$store.getters['Auth/user']
+      if (selected.badge && user.hasPermission('bonyadReadNotification')) {
         this.readAllMessages()
       }
       if (selected.href) {
@@ -205,9 +206,7 @@ export default {
       this.$router.push({path: selected.routeName})
     },
     setHeader(route) {
-      console.log(route)
       this.menuItems.map(i => {
-        console.log(route === 'Abrisham-' + i.routeName)
         if (route === 'Abrisham-' + i.routeName) {
           i.selected = true
         }

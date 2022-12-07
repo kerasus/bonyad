@@ -19,6 +19,7 @@
     <v-main>
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
+        <notifications position="top center" class="notification-title notification-content"/>
         <expansion-menu v-if="windowSize.width <= 768"
                         :unreadMessages="unreadMessages"
                         @readAll="readAll"/>
@@ -61,6 +62,7 @@ import AppBar from '@/components/abrisham/AppBar';
 import SideMenu from '@/components/abrisham/SideMenu';
 import ExpansionMenu from '@/components/abrisham/ExpansionMenu';
 import '@/static/fonts/FlatIcons/uicons-regular-rounded/css/uicons-regular-rounded.css'
+import Assistant from "assets/assistant";
 
 export default {
   name: 'abrisham',
@@ -142,7 +144,13 @@ export default {
       this.$axios.get('alaa/api/v2/bonyadEhsan/notification?read=unread&owner_id=1')
         .then(resp => {
           this.unreadMessages = resp.data.meta.total
-          console.log(this.unreadMessages)
+          if (this.unreadMessages !== 0) {
+            this.$notify({
+              type: 'success',
+              title: 'توجه',
+              text: 'شما ' + this.unreadMessages + ' پیام خوانده نشده دارید'
+            })
+          }
         })
         .catch(err => {
           console.log(err.response)
