@@ -14,11 +14,19 @@
             flat
             class="expansion-header"
           >
-            <i
-              v-if="updateHeaderData[0]"
-              class="fi menu-header-icon"
-              :class="'fi-rr-' + updateHeaderData[0].icon"
-            />
+            <!--            <v-badge-->
+            <!--              v-if="item.badge"-->
+            <!--              :content="messages"-->
+            <!--              :value="messages"-->
+            <!--              color="orange"-->
+            <!--              overlap>-->
+            <!--              <i-->
+            <!--                v-if="updateHeaderData[0]"-->
+            <!--                class="fi menu-header-icon"-->
+            <!--                :class="'fi-rr-' + updateHeaderData[0].icon"-->
+            <!--              />-->
+            <!--            </v-badge>-->
+
             <p class="menu-header-text expansion-paragraph" v-if="updateHeaderData[0]">
               {{ updateHeaderData[0].title }}
             </p>
@@ -43,16 +51,21 @@
                   class="d-flex justify-center menu-header-text"
                   @click="changeSelectedItem(i)"
                 >
-
+                  <v-badge
+                    v-if="i.badge"
+                    :content="unreadMessages"
+                    :value="unreadMessages"
+                    color="orange"
+                    overlap>
+                  </v-badge>
                   <i v-if="i.icon"
-                    class="fi menu-item-icon"
-                    :class="'fi-rr-'+ i.icon"
+                     class="fi menu-item-icon"
+                     :class="'fi-rr-'+ i.icon"
                   />
                   <v-img v-if="i.photo"
-                    class="menu-item-photo"
-                    :src="i.photo"
+                         class="menu-item-photo"
+                         :src="i.photo"
                   />
-
                   <p class="expansion-paragraph">
                     {{ i.title }}
                   </p>
@@ -84,7 +97,7 @@ export default {
           id: 2,
           title: 'فیلم ها',
           icon: 'play-alt',
-          routeName: 'UserAbrishamProgress',
+          routeName: 'userAbrishamProgress',
           selected: true
         },
         {
@@ -120,6 +133,7 @@ export default {
           title: 'اخبار و اطلاعیه',
           icon: 'envelope',
           routeName: 'news',
+          badge: true,
           selected: false
         },
         {
@@ -142,6 +156,12 @@ export default {
       routeName: ''
     }
   },
+  props: {
+    unreadMessages: {
+      type: Number,
+      default: 0
+    }
+  },
   created() {
     this.setHeader(this.$route.name)
   },
@@ -159,7 +179,20 @@ export default {
 
   },
   methods: {
+    readAllMessages() {
+      this.$axios.post('alaa/api/v2/bonyadEhsan/notification/readAll')
+        .then(() => {
+          this.$emit('readAll')
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     changeSelectedItem(selected) {
+      const user = this.$store.getters['Auth/user']
+      if (selected.badge && user.hasPermission('bonyadReadNotification')) {
+        this.readAllMessages()
+      }
       if (selected.href) {
         window.open(selected.href)
         return
@@ -170,15 +203,14 @@ export default {
         }
         return i.selected = false
       })
-      this.$router.push({path: 'Abrisham/' + selected.routeName})
+      this.$router.push({path: selected.routeName})
     },
     setHeader(route) {
-
       this.menuItems.map(i => {
-        if ('Abrisham-' + i.routeName === route) {
-          return i.selected = true
+        if (route === 'Abrisham-' + i.routeName) {
+          i.selected = true
         }
-        return i.selected = false
+        i.selected = false
       })
     }
 
