@@ -1,11 +1,12 @@
 import API_ADDRESS from "assets/Addresses";
 
 class Student {
-  constructor(userId, axios, type, notify) {
+  constructor(userId, axios, type, notify, register_type) {
     this.userId = userId
     this.axios = axios
     this.type = type
     this.notify = notify
+    this.register_type = register_type
     this.genders = []
     this.majors = []
     this.provinces = []
@@ -138,7 +139,8 @@ class Student {
           shahr_id: user.shahr_id
         }
       }),
-      type: 'student'
+      type: 'student',
+      register_type: this.register_type
     }
     this.userForm.forEach(user => {
       let that = this
@@ -151,7 +153,8 @@ class Student {
       this.loading = true
       this.axios.post(API_ADDRESS.user.bulkCreate, {
         users: sendData.users,
-        type: sendData.type
+        type: sendData.type,
+        register_type: sendData.register_type
       }).then((response) => {
         this.userForm.forEach(user => {
           user.hasBeenSaved = true

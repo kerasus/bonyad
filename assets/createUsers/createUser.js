@@ -3,11 +3,12 @@ import Network_Subnetwork_Moshaver from "./strategies/Network_Subnetwork_Moshave
 import ReadExcel from "assets/importExcel/readExcel";
 
 class CreateUser {
-  constructor(userId, axios, type, notify) {
+  constructor(userId, axios, type, notify, register_type) {
     this.userId = userId
     this.axios = axios
     this.type = type
     this.notify = notify
+    this.register_type = register_type
     this.importLoading = false
     this.limit_error_row = 0
     this.loading = false
@@ -21,7 +22,12 @@ class CreateUser {
 
   setStrategiesInstance() {
     this.strategies.forEach(strategy => {
-      const instance = new strategy(this.userId, this.axios, this.type, this.notify)
+      let instance
+      if (strategy === Student) {
+        instance = new strategy(this.userId, this.axios, this.type, this.notify, this.register_type)
+      } else {
+        instance = new strategy(this.userId, this.axios, this.type, this.notify)
+      }
       if (instance.isSuitable()) {
         this.strategyInstance = instance
       }
