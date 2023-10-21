@@ -56,7 +56,7 @@
       >
         <v-icon>mdi-logout</v-icon>
       </v-btn>
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title v-text="title" class="header" />
       <v-spacer />
       <v-btn
         v-if="false"
@@ -71,7 +71,7 @@
     </v-app-bar>
     <v-main>
       <v-container fluid>
-        <notifications />
+        <notifications position="top center" class="notification-title notification-content"/>
         <Nuxt />
       </v-container>
     </v-main>
@@ -205,6 +205,7 @@ export default {
     let that = this
     this.$axios.interceptors.response.use(undefined, function (error) {
       const messages = Assistant.handleAxiosError(error, that.$notify)
+      console.log(messages)
       messages.forEach((item) => {
         that.$notify({
           title: 'توجه!',
@@ -245,6 +246,14 @@ export default {
 </script>
 
 <style>
+.notification-title {
+  text-align: right !important;
+  margin-bottom: 5px;
+}
+.notification-content{
+  text-align: right !important;
+
+}
 .v-application .body-1,
 .v-application .body-2,
 .v-application .subtitle-1,

@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div style="position: relative;">
+    <v-overlay :absolute="true"
+               :value="statisticsLoading"
+    >
+      کمی صبر کنید...
+    </v-overlay>
     <v-select
       v-model="selectedMajor"
       :items="majors"
@@ -23,7 +28,7 @@
       :headers="headers"
       :items="rows"
       :items-per-page="5"
-      class="elevation-1"
+      class="elevation-1 userRanksTable"
     />
     <div class="watchTimeCard">
       میزان مشاهده فیلم ها به دقیقه:
@@ -41,6 +46,7 @@ export default {
   components: {highcharts: Chart},
   data() {
     return {
+      statisticsLoading: false,
       watchTime: 0,
       selectedMajor: 1,
       majors: [
@@ -92,9 +98,13 @@ export default {
           }
         },
         xAxis: {
-          categories: [],
+          labels: {
+            enabled: false
+          },
+          // categories: [],
           accessibility: {
-            rangeDescription: 'Range: 2010 to 2020'
+            description: 'آزمون ها',
+            rangeDescription: 'آزمون ها'
           }
         },
         legend: {
@@ -104,9 +114,7 @@ export default {
         },
         plotOptions: {
           series: {
-            label: {
-              connectorAllowed: false
-            },
+            relativeXValue: true
             // pointStart: 2010
           }
         },
@@ -145,9 +153,14 @@ export default {
     }
   },
   created() {
+    this.statisticsLoading = true
     this.getStatistics()
       .then(() => {
+        this.statisticsLoading = false
         this.setCartData()
+      })
+      .catch(()=>{
+        this.statisticsLoading = false
       })
   },
   computed: {
@@ -156,10 +169,15 @@ export default {
     }
   },
   methods: {
-    onChangeMajor () {
+    onChangeMajor() {
+      this.statisticsLoading = true
       this.getStatistics()
         .then(() => {
+          this.statisticsLoading = false
           this.setCartData()
+        })
+        .catch(()=>{
+          this.statisticsLoading = false
         })
     },
     getUserOfBonyadId() {
@@ -181,12 +199,20 @@ export default {
       this.setRankChartAxis()
     },
     setRankChartSeries() {
-      this.series(this.flatData.rankChart.map(item=>{
+      const seriesData = this.flatData.rankChart.map(item => {
+        let counter = 1
         return {
           name: item.title,
-          data: item.data
+          data: item.data.map(dataItem => {
+            return {
+              name: dataItem.title,
+              x: counter++,
+              y: dataItem.value
+            }
+          })
         }
-      }))
+      })
+      this.series(seriesData)
     },
     setRankChartAxis() {
       let config = []
@@ -196,7 +222,32 @@ export default {
       this.loadxAxis(config)
     },
     setUserTable() {
+      this.flatData.userTable.forEach(row => {
+        row.lessons.forEach(lesson => {
+          row[lesson.title] = lesson.value
+        })
+      })
       this.rows = this.flatData.userTable
+      this.headers = this.getAllHeadersFromRanks(this.rows)
+    },
+    getAllHeadersFromRanks(ranks) {
+      const allHeaders = [{
+        text: 'نام آزمون',
+        align: 'center',
+        value: 'title',
+      }]
+      ranks.forEach(exam => {
+        exam.lessons.forEach(lesson => {
+          if (!allHeaders.find(header => header.text === lesson.title)) {
+            allHeaders.push({
+              text: lesson.title,
+              value: lesson.title
+            })
+          }
+        })
+      })
+
+      return allHeaders
     },
     setAverageRank() {
       this.averageRank = this.flatData.averageRank
@@ -210,7 +261,7 @@ export default {
       this.flatData = {
         rankChart: rankChart.data.data,
         userTable: userTable.data.data,
-        averageRank: averageRank.data.data
+        averageRank: averageRank.data[0].data
       }
     },
     getRankChart() {
@@ -236,5 +287,18 @@ export default {
   border-radius: 6px;
   background-color: #f7941d;
   color: white;
+}
+</style>
+
+<style lang="scss">
+.userRanksTable {
+  tbody {
+    tr {
+      td:not(:first-child) {
+        direction: ltr;
+        text-align: right;
+      }
+    }
+  }
 }
 </style>

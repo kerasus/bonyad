@@ -7,6 +7,7 @@ const CreateUsersMixin = {
     }
   }, methods: {
     pasteData(e) {
+      console.log(e)
       e.preventDefault();
       let cb;
       let clipText = '';
@@ -42,6 +43,7 @@ const CreateUsersMixin = {
       } else if (jsonObj.length > 201) {
         this.limit_error_row = true
       } else {
+        console.log(jsonObj)
         this.jsonObj = jsonObj;
         // toastr.success('اکسل کپی شد.');
       }

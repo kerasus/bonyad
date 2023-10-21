@@ -144,6 +144,7 @@ export default {
             }
         }
         .chip-part {
+          display: flex !important;
             .chip-box {
                 font-size: 16px;
                 font-weight: 500;

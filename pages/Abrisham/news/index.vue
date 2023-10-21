@@ -121,6 +121,7 @@
               <v-pagination
                 v-model="page"
                 :length="unpinNewsLastPage"
+                @input="updatePage"
               ></v-pagination>
             </v-col>
           </v-row>
@@ -163,6 +164,7 @@ export default {
   components: {NewsList, NewsBanner},
   data() {
     return {
+      nextPage: '',
       pinNews: new LiveDescriptionList(),
       pinNewsNextPage: 1,
       pinNewsLastPage: null,
@@ -266,6 +268,15 @@ export default {
     }
   },
   methods: {
+    updatePage(pageIndex){
+      this.$axios.get('alaa/api/v2/livedescription?owner=2&length=3&liveDescriptionPage=' + pageIndex)
+        .then(response=>{
+          this.unpinNews = new LiveDescriptionList(response.data.data)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
     getNewPinLiveDesctiption() {
       if (this.pinNewsLastPage !== null && parseInt(this.pinNewsLastPage) < parseInt(this.pinNewsNextPage)) {
         return
@@ -292,9 +303,9 @@ export default {
         .then((response) => {
           this.unpinNewsNextPage = parseInt(response.data.meta.current_page) + 1
           this.unpinNewsLastPage = response.data.meta.last_page
-          console.log(this.unpinNewsLastPage)
           this.unpinNews = new LiveDescriptionList(response.data.data)
           this.unpinNews.loading = false
+          this.nextPage = response.data.links.next
         })
         .catch(() => {
           this.unpinNews.loading = false

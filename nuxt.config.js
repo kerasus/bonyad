@@ -47,7 +47,8 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    "vue2-editor/nuxt"
   ],
 
   axios: {
@@ -89,7 +90,7 @@ export default {
   },
 
   server: {
-    // port: 8000, // default: 3000
+    port: process.env.VUE_APP_PORT, // default: 3000
     host: '0.0.0.0', // default: localhost,
     timing: false
   },
