@@ -26,13 +26,16 @@
             </v-icon>
           </v-btn>
         </v-col>
-        <v-col md="5" class="vertialcally-center-items text-left  ">
+        <v-col md="2" class="vertialcally-center-items text-left">
           <v-btn color="green" dark @click="save" :loading="loading" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon class="mr-3">
               mdi-content-save
             </v-icon>
           </v-btn>
+        </v-col>
+        <v-col md="2" class="">
+          <v-select label="نوع ثبت نام دانش آموزان" :items="donateItems" v-model="register_type" item-text="label" item-value="value"/>
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -220,6 +223,8 @@ export default {
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
+      donateItems: [{value: 'product', label: 'محصول'}, {value: 'exam', label: 'آزمون'}],
+      register_type: 'product',
       userForm: [],
       genders: [],
       majors: [],
@@ -353,7 +358,8 @@ export default {
             shahr_id: user.shahr_id
           }
         }),
-        type: 'student'
+        type: 'student',
+        register_type: this.register_type
       }
       this.userForm.forEach(user => {
         let that = this
@@ -366,7 +372,8 @@ export default {
         this.loading = true
         this.$axios.post(API_ADDRESS.user.bulkCreate, {
           users: sendData.users,
-          type: sendData.type
+          type: sendData.type,
+          register_type: sendData.register_type
         }).then(() => {
           this.userForm.forEach(user => {
             user.hasBeenSaved = true
