@@ -45,7 +45,7 @@
           />
         </v-col>
         <v-col md="2" class="">
-          <v-select label="نوع ثبت نام دانش آموزان" :items="donateItems" v-model="register_type" item-text="label" item-value="value"/>
+          <v-select label="نوع ثبت نام دانش آموزان" :items="registerItems" v-model="register_type" item-text="label" item-value="value"/>
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -231,7 +231,7 @@ export default {
   middleware: ['auth', 'redirectAdmin'],
   data() {
     return {
-      donateItems: [{value: 'product', label: 'محصول'}, {value: 'exam', label: 'آزمون'}],
+      registerItems: [{value: 'product', label: 'محصول'}, {value: 'exam', label: 'آزمون'}],
       register_type: 'product',
       userForm: [],
       genders: [],
