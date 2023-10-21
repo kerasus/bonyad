@@ -20,9 +20,22 @@
             class="menu-indicator"
           />
           <router-link
-            :to="{path: item.path} "
+            :to="{path: item.path}"
           >
-            <i
+            <v-badge
+              v-if="item.badge"
+              :content="unreadMessages"
+              :value="unreadMessages"
+              color="orange"
+              overlap
+            >
+              <i
+                class="fi"
+                :class="['fi-rr-' + item.icon , $route.path === '/abrisham/' + item.routeName ? 'activate' :'']"
+                @click="readAllMessages"
+              />
+            </v-badge>
+            <i v-else
               class="fi"
               :class="['fi-rr-' + item.icon , $route.path === '/abrisham/' + item.routeName ? 'activate' :'']"
             />
@@ -77,12 +90,19 @@ export default {
         {
           icon: 'envelope',
           path: '/abrisham/news',
+          badge: true
         },
         {
           icon: 'world',
           path: '/abrisham/map',
         },
       ]
+    }
+  },
+  props: {
+    unreadMessages: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
@@ -98,7 +118,19 @@ export default {
       })
     }
   },
-  methods: {}
+  methods: {
+    readAllMessages() {
+      if (this.user.hasPermission('bonyadReadNotification')) {
+        this.$axios.post('alaa/api/v2/bonyadEhsan/notification/readAll')
+          .then(() => {
+            this.$emit('readAll')
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    },
+  }
 }
 </script>
 
@@ -110,6 +142,7 @@ export default {
 
   .footer {
     align-self: center;
+
     .soalaa-logo {
       width: 40px;
     }

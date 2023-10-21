@@ -16,6 +16,9 @@ const API_ADDRESS = {
   editLimit:{
     base: authServer + '/admin/bonyadEhsan/studentLimit'
   },
+  delete: {
+    base: (userId) => authServer + '/admin/bonyadEhsan/delete/' + userId
+  },
   moshaver: {
     edit: (userId) => authServer + '/admin/bonyadEhsan/user/' + userId,
     update: authServer + '/admin/bonyadEhsan/user/',
@@ -82,6 +85,9 @@ const API_ADDRESS = {
     userExamsList: lumenServer + '/examAndUser',
     takhminRotbe: lumenServer + '/exam-report/rankSimulator',
     analysisVideo: lumenServer + '/exam-question/attach/sub-category',
+    checkExport (id){
+      return authServer + '/exam/check-export/' + id
+    },
     getUsersOfBonyad (id, mode, pageNumber) {
       if (mode) {
         return authServer + '/exam/getUsersOfBonyad?action=' + mode + '&page=' + pageNumber

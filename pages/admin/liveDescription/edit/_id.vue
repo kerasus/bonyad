@@ -40,12 +40,9 @@
         cols="12"
         md="12"
       >
-        <v-textarea
-          v-model="description"
-          solo
-          name="input-7-4"
-          label="پیام مشاور"
-        ></v-textarea>
+        <client-only>
+          <vue-editor v-model="description" />
+        </client-only>
       </v-col>
       <v-col
         cols="12"
@@ -65,9 +62,11 @@
 <script>
 
 import API_ADDRESS from "assets/Addresses";
+import { VueEditor } from "vue2-editor";
 
 export default {
   name: "_id.vue",
+  components: {VueEditor},
   data() {
     return {
       title: '',

@@ -228,7 +228,7 @@ export default {
             return contentList[0]
         },
         getLessons () {
-          this.$axios.get('/alaa/api/v2/abrisham/lessons')
+          this.$axios.get('/alaa/api/v2/bonyadEhsan/abrisham/lessons')
                 .then( response => {
                     response.data.data.forEach( (item, index) => {
                         this.majors.push({

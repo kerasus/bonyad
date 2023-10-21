@@ -1,24 +1,21 @@
 <template>
   <v-row class="user-create">
-    <v-overlay v-if="create.strategyInstance.loading || create.importLoading">
+    <v-overlay v-if="user.strategyInstance.loading || create.importLoading">
       <v-progress-circular indeterminate/>
     </v-overlay>
     <create-limitation
-      :usage_limit="create.strategyInstance.usage_limit"
-      :usage_number="create.strategyInstance.usage_number"
+      :usage_limit="create.usage_limit"
+      :usage_number="create.usage_number"
     />
     <v-alert v-if="create.limit_error_row"
              color="red"
              type="error"
     >
       حداکثر 200 دانش آموز میتوانید وارد کنید
-      <v-icon left @click="create.limit_error_row=false">
+      <v-icon left @click="limit_error_row=false">
         mdi-close
       </v-icon>
     </v-alert>
-    <v-col md="12" class="text-center">
-      <h2 class="mt-3">صفحه ثبت دانش آموز</h2>
-    </v-col>
     <v-col md="12">
       <v-row :style="{ padding: '20px 10px' }">
         <v-col md="12" class="vertialcally-center-items">
@@ -30,7 +27,8 @@
           </v-btn>
         </v-col>
         <v-col md="5" class="vertialcally-center-items text-left  ">
-          <v-btn color="green" dark @click="save" :loading="create.strategyInstance.loading" :style="{ marginRight: '20px' }">
+          <v-btn color="green" dark @click="save" :loading="create.strategyInstance.loading"
+                 :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon class="mr-3">
               mdi-content-save
@@ -41,11 +39,8 @@
           <v-file-input
             @change="addExcel"
             truncate-length="50"
-            placeholder="بارگزاری اطلاعات با اکسل"
+            placeholder="import excel file"
           />
-        </v-col>
-        <v-col md="2" class="">
-          <v-select label="نوع ثبت نام دانش آموزان" :items="donateItems" v-model="register_type" item-text="label" item-value="value"/>
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -76,7 +71,9 @@
                 <select class="select-text" required v-model="user.gender_id"
                         :class="{ 'has-error': user.gender_id_error }">
                   <option value="" disabled selected></option>
-                  <option v-for="(item, index) in create.strategyInstance.genders" :key="index" :value="item.id">{{ item.title }}</option>
+                  <option v-for="(item, index) in create.strategyInstance.genders" :key="index" :value="item.id">
+                    {{ item.title }}
+                  </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
@@ -89,7 +86,9 @@
                 <select class="select-text" required v-model="user.major_id"
                         :class="{ 'has-error': user.major_id_error }">
                   <option value="" disabled selected></option>
-                  <option v-for="(item, index) in create.strategyInstance.majors" :key="index" :value="item.id">{{ item.title }}</option>
+                  <option v-for="(item, index) in create.strategyInstance.majors" :key="index" :value="item.id">
+                    {{ item.title }}
+                  </option>
                 </select>
                 <span class="select-highlight"></span>
                 <span class="select-bar"></span>
@@ -222,389 +221,23 @@
 </template>
 
 <script>
-import CreateLimitation from '/components/abrisham/createLimitation'
 import CreateUser from "assets/createUsers/createUser";
+import CreateLimitation from '/components/abrisham/createLimitation'
 
 export default {
-  name: 'userCreate',
+  name: "create.vue",
   components: {CreateLimitation},
-  middleware: ['auth', 'redirectAdmin'],
-  data() {
+  date() {
     return {
-      donateItems: [{value: 'product', label: 'محصول'}, {value: 'exam', label: 'آزمون'}],
-      register_type: 'product',
-      userForm: [],
-      genders: [],
-      majors: [],
-      provinces: [],
-      cities: [],
-      loading: false,
-      usage_limit: 0,
-      usage_number: 0,
-      valid: false
-    }
-  },
-  head() {
-    return {
-      title: 'ثبت نام کاربران'
-    }
-  },
-  methods: {
-    downloadExcel() {
-      window.open('https://nodes.alaatv.com/upload/bonyad/sample%28students%29.xlsx', '_blank')
-    },
-    provinceSelectOnClick(user) {
-      user.provinceDropDown = true
-    },
-    provinceSelectOnBlur(user) {
-      user.provinceDropDown = false
-    },
-    provinceSelectOnChange(user) {
-      user.provinceDropDown = false
-    },
-    shahr_idSelectOnClick(user) {
-      user.shahr_idDropdown = true
-    },
-    shahr_idSelectOnBlur(user) {
-      user.shahr_idDropdown = false
-    },
-    shahr_idSelectOnChange(user) {
-      user.shahr_idDropdown = false
-    },
-    save() {
-      const availableUsers = this.userForm.filter(user=>user.mobile)
-      const sendData = {
-        users: availableUsers.map(user => {
-          return {
-            firstName: user.firstName,
-            address: user.address,
-            phone: user.phone,
-            father_mobile: user.father_mobile,
-            mother_mobile: user.mother_mobile,
-            lastName: user.lastName,
-            mobile: user.mobile,
-            nationalCode: user.nationalCode,
-            gender_id: user.gender_id,
-            major_id: user.major_id,
-            shahr_id: user.shahr_id
-          }
-        }),
-        type: 'student',
-        register_type: this.register_type
-      }
-      this.userForm.forEach(user => {
-        let that = this
-        if (!user.hasBeenSaved && that.isUserInfoComplete(user)) {
-          user.loading = true
-          this.valid = true
-        }
-      })
-      if (this.valid) {
-        this.loading = true
-        this.$axios.post(API_ADDRESS.user.bulkCreate, {
-          users: sendData.users,
-          type: sendData.type,
-          register_type: sendData.register_type
-        }).then(() => {
-          this.userForm.forEach(user => {
-            user.hasBeenSaved = true
-            user.editable = false
-            Object.keys(user).forEach(key => {
-              console.log(key)
-              if (key.includes('_error')) {
-                user[key] = false
-              }
-            })
-          })
-          this.loading = false
-          setTimeout(() => {
-            let that = this
-            this.$axios.get('/alaa/api/v2/admin/bonyadEhsan/consultant/' + this.userData.id)
-              .then(resp => {
-                that.usage_limit = resp.data.data.usage_limit
-                that.usage_number = resp.data.data.usage_number
-              })
-          }, 500)
-        }).catch(err => {
-          this.userForm.forEach((user, userIndex) => {
-            user.loading = false
-            Object.keys(user).forEach(userKey => {
-              if (userKey.includes('_error')) {
-                user[userKey] = false
-              }
-            })
-
-            function getUserIndexAndInputNameFromKey(errorKey) {
-              const dataArray = errorKey.split('.')
-              if (dataArray.length < 3 || dataArray[0] !== 'users') {
-                return null
-              }
-
-              return {
-                index: dataArray[1],
-                key: dataArray[2]
-              }
-            }
-
-            Object.keys(err.response.data.errors).forEach(errorKey => {
-              const errorData = getUserIndexAndInputNameFromKey(errorKey)
-              if (errorData && parseInt(errorData.index) === parseInt(userIndex)) {
-                const error = err.response.data.errors[errorKey][0].split('.')
-                user[errorData.key + '_error'] = error[2]
-              }
-            })
-          })
-          this.loading = false
-          setTimeout(() => {
-            this.$refs.form.validate()
-          }, 500)
-        })
-      }
-    },
-    addExcel(event) {
-      this.create.addExcel(event)
-    },
-    onPaste(event) {
-      this.create.onPaste(event)
-    }
-  },
-  computed: {
-    provincesComputed() {
-      return (show, provinceId) => {
-        if (!show && !provinceId) {
-          return []
-        } else if (!show && provinceId) {
-          return this.create.strategyInstance.provinces.filter(province => province.id === provinceId)
-        }
-        return this.create.strategyInstance.provinces
-      }
-    },
-    selectedProvinceCity() {
-      return (provinceId, show = true, cityId) => {
-        if (!provinceId || (!show && !cityId)) {
-          return []
-        } else if (!show && cityId) {
-          return this.create.strategyInstance.cities.filter(city => city.id === cityId)
-        }
-        return this.create.strategyInstance.cities.filter(city => city.province.id === provinceId)
-      }
-    },
-    userData() {
-      return this.$store.getters['Auth/user']
+      user: new CreateUser(this.userData.id, this.$axios)
     }
   },
   created() {
-    this.create = new CreateUser(this.userData.id, this.$axios, this.type, this.$notify)
+    console.log(this.user.strategyInstance)
   }
 }
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-  color: white !important;
-}
-
-.has-been-saved {
-  background: rgba(0, 280, 0, 0.2);
-}
-
-.has-error {
-  border-color: red !important;
-}
-
-.error-message {
-  color: red;
-  font-size: 14px;
-}
-
-.input-box {
-  padding: 0 10px;
-  width: 100%;
-}
-
-.user-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-
-.options {
-
-}
-
-.vertialcally-center-items {
-  display: flex;
-  align-items: center;
-}
-</style>
-
-<style lang="scss">
-
-.form-input {
-  width: 100%;
-
-
-  label {
-    position: relative;
-    display: block;
-    width: 100%;
-    min-height: 30px + 15px;
-  }
-
-  .placeholder {
-    position: absolute;
-    display: block;
-    color: grey;
-    top: 8px;
-    z-index: 2;
-    font-size: 16px;
-    transition: all 200ms ease-in-out;
-    cursor: text;
-    right: 10px;
-    background-color: #fff;
-    padding: 0 5px;
-  }
-
-  input {
-    position: absolute;
-    padding: 0 10px;
-    z-index: 1;
-    width: 100%;
-    font-size: 16px;
-    border: 1px solid grey;
-    border-radius: 5px;
-    transition: border-color 200ms ease-in-out;
-    outline: none;
-    margin: 0;
-  }
-
-  input {
-    height: 40px;
-  }
-
-  input:focus,
-  input:valid,
-  textarea:focus,
-  textarea:valid {
-    & + .placeholder {
-      top: -10px;
-      cursor: inherit;
-      font-size: 14px;
-      color: orange;
-    }
-
-    border: 1px solid grey;
-  }
-}
-
-
-.select {
-  position: relative;
-  width: 100%;
-}
-
-.select-text {
-  position: relative;
-  font-family: inherit;
-  background-color: transparent;
-  width: 100%;
-  padding: 6px 10px 5px 0;
-  font-size: 18px;
-  border-radius: 5px;
-  border: 1px solid grey;
-}
-
-/* Remove focus */
-.select-text:focus {
-  outline: none;
-  border: 1px solid grey;
-}
-
-/* Use custom arrow */
-.select .select-text {
-  appearance: none;
-  -webkit-appearance: none
-}
-
-.select:after {
-  position: absolute;
-  top: 18px;
-  left: 14px;
-  /* Styling the down arrow */
-  width: 0;
-  height: 0;
-  padding: 0;
-  content: '';
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid grey;
-  pointer-events: none;
-}
-
-
-/* LABEL ======================================= */
-.select-label {
-  color: grey;
-  font-size: 16px;
-  font-weight: normal;
-  position: absolute;
-  pointer-events: none;
-  right: 10px;
-  top: 7px;
-  transition: 0.2s ease-in-out all;
-  background-color: #fff;
-  z-index: 2;
-  padding: 0 5px;
-}
-
-/* active state */
-.select-text:focus ~ .select-label, .select-text:valid ~ .select-label {
-  color: orange;
-  top: -10px;
-  transition: 0.2s ease all;
-  font-size: 14px;
-}
-
-/* BOTTOM BARS ================================= */
-.select-bar {
-  position: relative;
-  display: block;
-  width: 100%;
-}
-
-.select-bar:before, .select-bar:after {
-  content: '';
-  height: 3px;
-  width: 0;
-  bottom: 0;
-  position: absolute;
-  background: orange;
-  transition: 0.2s ease all;
-}
-
-.select-bar:before {
-  left: 50%;
-}
-
-.select-bar:after {
-  right: 50%;
-}
-
-/* active state */
-.select-text:focus ~ .select-bar:before, .select-text:focus ~ .select-bar:after {
-  width: 50%;
-}
-
-/* HIGHLIGHTER ================================== */
-.select-highlight {
-  position: absolute;
-  height: 60%;
-  width: 100px;
-  top: 25%;
-  left: 0;
-  pointer-events: none;
-  opacity: 0.5;
-}
 
 </style>
