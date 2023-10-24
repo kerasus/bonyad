@@ -29,7 +29,7 @@
             </v-icon>
           </v-btn>
         </v-col>
-        <v-col md="5" class="vertialcally-center-items text-left  ">
+        <v-col md="3" class="vertialcally-center-items text-left  ">
           <v-btn color="green" dark @click="save" :loading="create.strategyInstance.loading" :style="{ marginRight: '20px' }">
             ذخیره
             <v-icon class="mr-3">
@@ -37,12 +37,15 @@
             </v-icon>
           </v-btn>
         </v-col>
-        <v-col md="5" class="text-right">
+        <v-col md="3" class="text-right">
           <v-file-input
             @change="addExcel"
             truncate-length="50"
             placeholder="بارگزاری اطلاعات با اکسل"
           />
+        </v-col>
+        <v-col md="3" class="">
+          <v-select label="نوع ثبت نام دانش آموزان" :items="registerItems" v-model="register_type" item-text="label" item-value="value"/>
         </v-col>
       </v-row>
       <v-form ref="form" lazy-validation>
@@ -229,7 +232,9 @@ export default {
   data() {
     return {
       create: null,
-      type: 'student'
+      type: 'student',
+      registerItems: [{value: 'product', label: 'محصول'}, {value: 'exam', label: 'آزمون'}],
+      register_type: 'product',
     }
   },
   head() {
@@ -260,6 +265,7 @@ export default {
       user.shahr_idDropdown = false
     },
     save() {
+      this.create.strategyInstance.register_type = this.register_type
       this.create.strategyInstance.save()
     },
     addExcel(event) {
@@ -295,7 +301,7 @@ export default {
     }
   },
   created() {
-    this.create = new CreateUser(this.userData.id, this.$axios, this.type, this.$notify)
+    this.create = new CreateUser(this.userData.id, this.$axios, this.type, this.$notify, this.register_type)
   }
 }
 </script>
