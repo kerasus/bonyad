@@ -186,7 +186,7 @@ export default {
               this.$router.push({path: '/'})
             } else {
               // this.$router.push({path: '/abrisham/UserAbrishamProgress'})
-              this.$router.push({path: '/panel/ehsan-abrisham2'})
+              window.location.href = '/panel/ehsan-abrisham2'
             }
 
           }).catch(() => {
