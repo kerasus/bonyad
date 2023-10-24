@@ -23,11 +23,8 @@ class CreateUser {
   setStrategiesInstance() {
     this.strategies.forEach(strategy => {
       let instance
-      if (strategy === Student) {
-        instance = new strategy(this.userId, this.axios, this.type, this.notify, this.register_type)
-      } else {
-        instance = new strategy(this.userId, this.axios, this.type, this.notify)
-      }
+      const registerType = strategy === Student ? this.register_type : null
+      instance = new strategy(this.userId, this.axios, this.type, this.notify, registerType)
       if (instance.isSuitable()) {
         this.strategyInstance = instance
       }
