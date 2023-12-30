@@ -75,40 +75,46 @@
     >
       <template v-slot:item.actions="{ item }">
         <div class="btns">
-          <v-btn
-            v-if="showResultBtn"
-            class="ma-2"
-            color="light-blue lighten-1"
-            :to="getResultRoute(item.id)"
+          <v-menu
+            bottom
+            left
           >
-            نتایج
-          </v-btn>
-          <v-btn
-            v-if="showNextListBtn"
-            class="ma-2"
-            color="secondary"
-            :to="getNextRoutePath(item.id)"
-          >
-            {{ nextPageInfo.btnName }}
-          </v-btn>
-          <v-btn
-            class="ma-5"
-            color="orange"
-            elevation="2"
-            :to="goToEdit(item.id)"
-          >ویرایش اطلاعات
-          </v-btn>
-          <v-btn
-            v-if="isUserPermittedToDelete"
-            class="ma-2"
-            color="error"
-            @click="showConfirmMessage(item.id)"
-          >
-            <v-icon left>
-              mdi-delete
-            </v-icon>
-            حذف کاربر
-          </v-btn>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item :to="getResultRoute(item.id)">
+                <v-list-item-title class="text-center blue-grey--text text--darken-4">
+                  نتایج
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item :to="getNextRoutePath(item.id)">
+                <v-list-item-title class="text-center blue-grey--text text--darken-4">
+                  {{ nextPageInfo.btnName }}
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item :to="goToEdit(item.id)">
+                <v-list-item-title class="text-center blue-grey--text text--darken-4">
+                  ویرایش اطلاعات
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="showConfirmMessage(item.id)">
+                <v-list-item-title>
+                  <v-icon left>
+                    mdi-delete
+                  </v-icon>
+                  حذف کاربر
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
       </template>
     </v-data-table>
@@ -269,10 +275,12 @@ export default {
       })
     },
     getUserOfBonyadParam() {
-      if (!this.doesRouteHaveId()) {
-        return 'show-' + this.pageName + 's'
-      }
-      return null
+      return 'show-' + this.pageName + 's'
+
+      // if (!this.doesRouteHaveId()) {
+      //   return 'show-' + this.pageName + 's'
+      // }
+      // return null
     },
     getUserOfBonyadId() {
       // return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list') ? this.$route.params.list : this.user.id
@@ -288,12 +296,15 @@ export default {
   computed: {
     isUserPermittedToDelete() {
       const user = this.$store.getters['Auth/user']
-      console.log(user)
       return user.hasPermission('bonyadDeleteUsers')
     },
     getNextRoutePath() {
       return (id) => {
-        return {
+        return this.nextPageInfo.routeName === 'user' ?
+        {
+          path: '/admin/moshaver/' + id + '/' + this.nextPageInfo.routeName
+        }:
+        {
           path: '/admin/' + this.nextPageInfo.routeName + '/' + id
         }
       }
