@@ -16,7 +16,7 @@
     "core-js": "^3.19.3",
     "font-awesome": "^4.7.0",
     "highcharts-vue": "^1.4.0",
-    "js-abstract-model": "^0.1.30",
+    "js-abstract-model": "^0.1.36",
     "leaflet": "^1.7.1",
     "lottie-web": "^5.8.1",
     "moment-jalaali": "^0.9.4",

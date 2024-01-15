@@ -146,7 +146,10 @@ const API_ADDRESS = {
     },
     examBookletUpload (exam_id) {
       return lumenServer + '/exam-question/booklet-file/' + exam_id
-    }
+    },
+    getPaperSheetsHistory: '/soalaa/api/v1/exam/get-paper-sheets-history',
+    presignedUrlPaperSheet: '/soalaa/api/v1/exam/presigned-url-paper-sheet',
+    correctPaperSheet: '/soalaa/api/v1/exam/correct-paper-sheet'
   },
   log: {
     base: lumenServer + '/activity-log',

@@ -193,11 +193,17 @@ export default {
           title: 'پیام مشاور',
           to: '/admin/LiveDescription/list',
           permission: 'insertLiveDescription'
+        },
+        {
+          icon: 'mdi-format-list-bulleted',
+          title: 'آپلود فایل آزمون و مشاهده نتایج',
+          to: '/admin/quizOperation',
+          permission: 'putMinioUpload'
         }
       ],
       miniVariant: false,
       right: true,
-      rightDrawer: false,
+      rightDrawer: true,
       title: 'بنیاد احسان'
     }
   },
