@@ -60,7 +60,7 @@ export default {
   proxy: {
     [process.env.AUTH_INTERNAL_API_SERVER]: { target: process.env.AUTH_TARGET_API_SERVER, pathRewrite: {['^'+process.env.AUTH_INTERNAL_API_SERVER]: ''} },
     [process.env.LUMEN_INTERNAL_API_SERVER]: { target: process.env.LUMEN_TARGET_API_SERVER, pathRewrite: {['^'+process.env.LUMEN_INTERNAL_API_SERVER]: ''} },
-    ['/soalaa']: { target: 'https://office.alaa.tv:8090' }
+    [process.env.SOALAA_INTERNAL_API_SERVER]: { target: process.env.SOALAA_TARGET_API_SERVER }
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
