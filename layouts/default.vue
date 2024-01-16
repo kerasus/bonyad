@@ -207,7 +207,7 @@ export default {
       title: 'بنیاد احسان'
     }
   },
-  created() {
+  created () {
     let that = this
     this.$axios.interceptors.response.use(undefined, function (error) {
       const messages = Assistant.handleAxiosError(error, that.$notify)
@@ -232,13 +232,23 @@ export default {
     if (token) {
       this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     }
+
+    this.rightDrawer = this.$route.name !== 'Login'
   },
   computed: {
+    currentRouteName () {
+      return this.$route.name
+    },
     isLoginPage () {
       return this.$route.path === '/login'
     },
     user () {
       return this.$store.getters["Auth/user"]
+    }
+  },
+  watch: {
+    currentRouteName () {
+      this.rightDrawer = this.$route.name !== 'Login'
     }
   },
   methods: {

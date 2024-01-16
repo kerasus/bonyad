@@ -133,7 +133,7 @@ export default {
       return this.$store.getters['Auth/user']
     }
   },
-  created() {
+  created () {
     // if (this.getToken()) {
     //   this.getUserData( () => { this.redirectTo() })
     // }
