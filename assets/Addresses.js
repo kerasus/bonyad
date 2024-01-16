@@ -149,7 +149,8 @@ const API_ADDRESS = {
     },
     getPaperSheetsHistory: '/soalaa/api/v1/exam/get-paper-sheets-history',
     presignedUrlPaperSheet: '/soalaa/api/v1/exam/presigned-url-paper-sheet',
-    correctPaperSheet: '/soalaa/api/v1/exam/correct-paper-sheet'
+    correctPaperSheet: '/soalaa/api/v1/exam/correct-paper-sheet',
+    bonyadExamReport: '/soalaa/api/v1/exam-report/bonyad/show?page=1'
   },
   log: {
     base: lumenServer + '/activity-log',
