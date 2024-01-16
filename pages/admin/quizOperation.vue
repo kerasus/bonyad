@@ -1,12 +1,13 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row class="d-flex justify-center align-center">
       <v-col cols="12" class="d-flex justify-center">
         <h2 class="mb-2">
           آپلود فایل آزمون و مشاهده نتایج
         </h2>
       </v-col>
-      <v-col cols="12">
+      <v-col sm="12"
+        lg="9">
         <v-file-input
           v-model="files"
           chips
@@ -19,57 +20,9 @@
         >
         </v-file-input>
       </v-col>
-      <v-col sm="12"
-        lg="8">
-
-        <v-card elevation="3" v-if="examReports.length > 0">
-          <v-card-title class="white--text light-blue darken-2">
-            لیست آزمون ها و نتایج
-
-            <v-spacer></v-spacer>
-
-          </v-card-title>
-          <v-virtual-scroll
-            :bench="2"
-            :items="examReports"
-            height="500"
-            item-height="60"
-          >
-            <template v-slot:default="{ item }">
-              <v-list-item dense :key="item">
-                <v-list-item-action>
-                  {{ item }}
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    آزمون نمونه فیلان بهمان {{ item }}
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-btn
-                    fab
-                    x-small
-                    dense
-                    color="light-blue lighten-3"
-                    class="white--text"
-                  >
-                    <v-icon small>
-                      mdi-download
-                    </v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-              <v-divider></v-divider>
-            </template>
-          </v-virtual-scroll>
-        </v-card>
-        <v-card v-else elevation="3" class="light-blue darken-2">
-          <v-card-text class="text-h5 font-weight-bold white--text">
-            هیچ آزمونی وجود ندارد
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col sm="12"
+    </v-row>
+    <v-row class="d-flex justify-center align-center">
+      <v-col cols="12"
         lg="4">
 
         <v-card elevation="3" v-if="paperSheetsHistory.list.length > 0">
@@ -103,7 +56,7 @@
                     dense
                     color="orange lighten-3"
                     class="dark--text"
-                    @click="downloadZip(item.zip_url)"
+                    @click="downloadFile(item.zip_url)"
                   >
                     <v-icon small>
                       mdi-download
@@ -118,6 +71,54 @@
         <v-card v-else elevation="3" class="orange darken-3">
           <v-card-text class="text-h5 font-weight-bold white--text">
             هیچ فایلی آپلود نشده است
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12"
+        lg="5">
+
+        <v-card elevation="3" v-if="examReports.length > 0">
+          <v-card-title class="white--text light-blue darken-2">
+            لیست آزمون ها و نتایج
+
+            <v-spacer></v-spacer>
+
+          </v-card-title>
+          <v-virtual-scroll
+            :bench="2"
+            :items="examReports"
+            height="500"
+            item-height="60"
+          >
+            <template v-slot:default="{ item }">
+              <v-list-item dense :key="item">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    نام آزمون : {{ item.title }}
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn
+                    fab
+                    x-small
+                    dense
+                    color="light-blue lighten-3"
+                    class="white--text"
+                    @click="downloadFile(item.link)"
+                  >
+                    <v-icon small>
+                      mdi-download
+                    </v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+              <v-divider></v-divider>
+            </template>
+          </v-virtual-scroll>
+        </v-card>
+        <v-card v-else elevation="3" class="light-blue darken-2">
+          <v-card-text class="text-h5 font-weight-bold white--text">
+            هیچ آزمونی وجود ندارد
           </v-card-text>
         </v-card>
       </v-col>
@@ -141,12 +142,19 @@ export default {
   },
   mounted () {
     this.getPaperSheetsHistory()
+    this.getExamReport()
   },
   methods: {
     getPaperSheetsHistory () {
       this.$axios.get(API_ADDRESS.exam.getPaperSheetsHistory)
       .then(response => {
         this.paperSheetsHistory = new PaperSheetList(response.data)
+      })
+    },
+    getExamReport () {
+      this.$axios.get(API_ADDRESS.exam.bonyadExamReport)
+      .then(response => {
+        this.examReports = response.data
       })
     },
     uploadFile (file) {
@@ -204,7 +212,7 @@ export default {
         this.loading = false
       })
     },
-    downloadZip (url) {
+    downloadFile (url) {
       window.open(url, '_blank')
     }
   }
