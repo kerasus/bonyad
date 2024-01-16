@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import editData from "@/pages/admin/editUser";
+import editData from "@/pages/admin/editUser.vue";
 
 export default {
   name: "_id.vue",

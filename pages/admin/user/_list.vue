@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import DataTable from "~/components/RolesLists/DataTable";
+import DataTable from "@/components/RolesLists/DataTable.vue";
 export default {
   name: "List",
   components: {DataTable}
