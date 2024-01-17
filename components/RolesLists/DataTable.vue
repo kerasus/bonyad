@@ -73,6 +73,9 @@
       :server-items-length="totalRows"
       class="elevation-1"
     >
+      <template v-slot:item.active="{ item }">
+        {{ item.active ? 'فعال' : 'غیرفعال' }}
+      </template>
       <template v-slot:item.actions="{ item }">
         <div class="btns">
           <v-menu
@@ -181,6 +184,7 @@ export default {
         {text: 'نام', value: 'first_name'},
         {text: 'نام خانوادگی', value: 'last_name'},
         {text: 'شماره همراه', value: 'mobile'},
+        {text: 'فعال', value: 'active'},
         {text: 'استان', value: 'province.title'},
         {text: 'شهر', value: 'city.title'},
         {text: 'نقش ثبت نام کننده', value: 'insertedByRoles[0]'},
