@@ -73,6 +73,67 @@
       :server-items-length="totalRows"
       class="elevation-1"
     >
+      <template v-slot:top>
+        <v-row>
+          <v-col cols="12" xl="3" lg="3" md="3">
+            <v-text-field
+              v-model="filter.first_name"
+              dense
+              label="نام"
+              outlined
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" xl="3" lg="3" md="3">
+            <v-text-field
+              v-model="filter.last_name"
+              dense
+              label="نام خانوادگی"
+              outlined
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" xl="3" lg="3" md="3">
+            <v-select
+              v-model="filter.province"
+              :items="formData.provinces"
+              dense
+              label="استان"
+              :loading="formDataLoading"
+              @click:clear="clearCity"
+              @change="clearCity"
+              no-data-text="اطلاعات استان ها لود نشده است"
+              item-text="title"
+              item-value="id"
+              clearable="true"
+              outlined
+            ></v-select>
+          </v-col>
+          <v-col cols="12" xl="2" lg="2" md="2">
+            <v-select
+            v-model="filter.city"
+              :items="cities"
+              dense
+              label="شهر"
+              :loading="formDataLoading"
+              no-data-text="ابتدا استان خود را انتخاب کنید"
+              item-text="title"
+              item-value="id"
+              clearable="true"
+              outlined
+            ></v-select>
+          </v-col>
+          <v-col cols="12" xl="1" lg="1" md="1" >
+            <v-btn
+                block
+                dark
+                color="green"
+                :loading="loadingPage"
+                @click="getFilteredData"
+              >
+                <v-icon>mdi-magnify</v-icon>
+              </v-btn>
+          </v-col>
+        </v-row>
+      </template>
       <template v-slot:item.active="{ item }">
         {{ item.active ? 'فعال' : 'غیرفعال' }}
       </template>
@@ -168,8 +229,22 @@ export default {
       timer: null,
       loadingPage: false,
       excelLoading: false,
+      formDataLoading: false,
       excleProgress: 0,
       download: '',
+      formData: {
+        cities: [],
+        provinces: [],
+        majors: [],
+        genders: [],
+        grades: []
+      },
+      filter: {
+        first_name: '',
+        last_name: '',
+        city: null,
+        province: null,
+      },
       options: {
         itemsPerPage: 25,
         page: 1
@@ -211,6 +286,9 @@ export default {
   beforeDestroy() {
     clearTimeout(this.timer)
   },
+  mounted () {
+    this.getFormData()
+  },
   methods: {
     showConfirmMessage(userId) {
       this.dialog = true
@@ -229,6 +307,32 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    getFormData() {
+      this.formDataLoading = true
+      this.$axios.get(API_ADDRESS.user.formData)
+        .then(resp => {
+          this.formData = resp.data.data
+          this.formDataLoading = false
+        })
+        .catch(err => {
+          this.formDataLoading = false
+          console.log(err)
+        })
+    },
+    clearCity () {
+      this.filter.city = null
+    },
+    getFilteredData () {
+      if (this.filter.province && !this.filter.city) {
+        this.$notify({
+          type: 'error',
+          title: 'توجه',
+          text: 'در صورت انتخاب استان، انتخاب شهر الزامی است'
+        })
+        return
+      }
+      this.getUsersOfBonyad()
     },
     getExcel() {
       this.excelLoading = true
@@ -266,7 +370,13 @@ export default {
     getUsersOfBonyad() {
       this.loadingPage = true
       const mode = this.getUserOfBonyadParam()
-      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(null, mode, this.options.page))
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(null, mode, this.options.page), {
+        params: {
+          first_name: this.filter.first_name,
+          last_name: this.filter.last_name,
+          shahr_id: this.filter.city
+        }
+      })
         .then((response) => {
           response.data.data.map(item => (item.major = item.major?.title) && (item.gender = item.gender?.title) && (item.grade = item.grade?.title))
           this.rows = response.data.data
@@ -298,6 +408,9 @@ export default {
     }
   },
   computed: {
+    cities () {
+      return this.formData.cities.filter(city => city.province.id === this.filter.province)
+    },
     isUserPermittedToDelete() {
       const user = this.$store.getters['Auth/user']
       return user.hasPermission('bonyadDeleteUsers')
@@ -330,9 +443,6 @@ export default {
         }
       }
     }
-  },
-  mounted() {
-    // this.getUsersOfBonyad()
   }
 }
 </script>
