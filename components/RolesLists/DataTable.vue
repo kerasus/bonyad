@@ -97,6 +97,9 @@
               :items="formData.provinces"
               dense
               label="استان"
+              :loading="formDataLoading"
+              @click:clear="clearCity"
+              @change="clearCity"
               no-data-text="اطلاعات استان ها لود نشده است"
               item-text="title"
               item-value="id"
@@ -110,6 +113,7 @@
               :items="cities"
               dense
               label="شهر"
+              :loading="formDataLoading"
               no-data-text="ابتدا استان خود را انتخاب کنید"
               item-text="title"
               item-value="id"
@@ -225,6 +229,7 @@ export default {
       timer: null,
       loadingPage: false,
       excelLoading: false,
+      formDataLoading: false,
       excleProgress: 0,
       download: '',
       formData: {
@@ -304,13 +309,19 @@ export default {
         })
     },
     getFormData() {
+      this.formDataLoading = true
       this.$axios.get(API_ADDRESS.user.formData)
         .then(resp => {
           this.formData = resp.data.data
+          this.formDataLoading = false
         })
         .catch(err => {
+          this.formDataLoading = false
           console.log(err)
         })
+    },
+    clearCity () {
+      this.filter.city = null
     },
     getFilteredData () {
       if (this.filter.province && !this.filter.city) {
