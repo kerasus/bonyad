@@ -185,7 +185,7 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
-          to: '/abrisham/UserAbrishamProgress',
+          to: '/panel/ehsan-abrisham2',
           permission: ''
         },
         {
