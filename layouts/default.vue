@@ -92,8 +92,7 @@
           v-for="(item, i) in items"
           v-if="!item.permission || (user.permissions && user.permissions.find(permission => permission === item.permission))"
           :key="i"
-          :to="item.to"
-          @click="rightDrawer = false"
+          @click="onSelectItem(item)"
           router
           exact
         >
@@ -185,7 +184,13 @@ export default {
         {
           icon: 'mdi-account-details',
           title: 'داشبورد ابریشم',
-          to: '/panel/ehsan-abrisham2',
+          externalLink: '/panel/ehsan-abrisham2',
+          permission: ''
+        },
+        {
+          icon: 'mdi-account-details',
+          title: 'داشبورد فوریت',
+          externalLink: '/panel/110',
           permission: ''
         },
         {
@@ -256,6 +261,14 @@ export default {
       this.rightDrawer = false
       this.$store.dispatch('Auth/logout')
       this.$router.push({path: '/login'})
+    },
+    onSelectItem (item) {
+      this.rightDrawer = false
+      if (item.to) {
+        this.$router.push({path: item.to})
+      } else if (item.externalLink) {
+        window.location.href = item.externalLink
+      }
     }
   }
 }
