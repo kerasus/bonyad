@@ -22,6 +22,15 @@
       </v-col>
     </v-row>
     <v-row class="d-flex justify-center align-center">
+      <v-col cols="12" class="d-flex justify-center">
+        <v-banner elevation="1"
+                  outlined
+                  rounded>
+          فایل های آزمون را با فرمت jpg و بدون پوشه بندی (فلت) بصورت فایل فشرده (zip) بارگذاری کنید. نتایج آزمون بعد از اصلاح برگه ها در لیست آزمون ها و نتایج قابل دانلود می باشند
+        </v-banner>
+      </v-col>
+    </v-row>
+    <v-row class="d-flex justify-center align-center">
       <v-col cols="12"
         lg="4">
 

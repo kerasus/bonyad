@@ -134,6 +134,9 @@
           </v-col>
         </v-row>
       </template>
+      <template v-slot:item.total_content_watch_time="{ item }">
+        {{ getHumanizeTime(item.total_content_watch_time) }}
+      </template>
       <template v-slot:item.active="{ item }">
         {{ item.active ? 'فعال' : 'غیرفعال' }}
       </template>
@@ -159,7 +162,7 @@
                   نتایج
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item :to="getNextRoutePath(item.id)">
+              <v-list-item v-if="showNextListBtn" :to="getNextRoutePath(item.id)">
                 <v-list-item-title class="text-center blue-grey--text text--darken-4">
                   {{ nextPageInfo.btnName }}
                 </v-list-item-title>
@@ -295,6 +298,21 @@ export default {
       this.dialog = true
       this.id = userId
     },
+    getHumanizeTime (seconds) {
+      if (!seconds) {
+        return '-'
+      }
+      const parseIntSeconds = parseInt(seconds)
+      const hours = Math.floor(parseIntSeconds / 3600)
+      const minutes = Math.floor((parseIntSeconds % 3600) / 60)
+      const remainingSeconds = Math.floor(parseIntSeconds % 60)
+
+      const formattedHours = String(hours).padStart(2, '0')
+      const formattedMinutes = String(minutes).padStart(2, '0')
+      const formattedSeconds = String(remainingSeconds).padStart(2, '0')
+
+      return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+    },
     deleteUser() {
       this.dialog = false
       this.$axios.delete(API_ADDRESS.delete.base(this.id))
@@ -371,7 +389,8 @@ export default {
     getUsersOfBonyad() {
       this.loadingPage = true
       const mode = this.getUserOfBonyadParam()
-      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(null, mode, this.options.page), {
+      console.log(typeof this.$route.params.list !== 'number');
+      this.$axios.get(API_ADDRESS.exam.getUsersOfBonyad(this.getUserOfBonyadId(), this.getUserOfBonyadId() ? null : mode, this.options.page, ), {
         params: {
           first_name: this.filter.first_name,
           last_name: this.filter.last_name,
@@ -406,7 +425,12 @@ export default {
     },
     doesRouteHaveId() {
       return this.$route.params.list && (this.$route.params.list !== 'List' && this.$route.params.list !== 'list')
-    }
+    },
+    getNextRoutePath(id) {
+      return {
+        path: '/admin/' + this.nextPageInfo.routeName + '/' + id
+      }
+    },
   },
   computed: {
     cities () {
@@ -415,17 +439,6 @@ export default {
     isUserPermittedToDelete() {
       const user = this.$store.getters['Auth/user']
       return user.hasPermission('bonyadDeleteUsers')
-    },
-    getNextRoutePath() {
-      return (id) => {
-        return this.nextPageInfo.routeName === 'user' ?
-        {
-          path: '/admin/moshaver/' + id + '/' + this.nextPageInfo.routeName
-        }:
-        {
-          path: '/admin/' + this.nextPageInfo.routeName + '/' + id
-        }
-      }
     },
     user() {
       return this.$store.getters['Auth/user']
