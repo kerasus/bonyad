@@ -267,6 +267,7 @@ export default {
         {text: 'نام خانوادگی ثبت نام کننده', value: 'insertedByLastName'},
         {text: 'پایه', value: 'grade'},
         {text: 'رشته', value: 'major'},
+        {text: 'مقدار مشاهده فیلم', value: 'total_content_watch_time'},
         {text: 'عملیات', value: 'actions'},
       ],
       rows: [],
