@@ -282,7 +282,6 @@ export default {
   watch: {
     options: {
       handler() {
-        debugger
         this.getUsersOfBonyad();
       },
     },
