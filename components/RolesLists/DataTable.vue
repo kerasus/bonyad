@@ -75,7 +75,7 @@
     >
       <template v-slot:top>
         <v-row>
-          <v-col cols="12" xl="3" lg="3" md="3">
+          <v-col cols="12" xl="2" lg="2" md="2">
             <v-text-field
               v-model="filter.first_name"
               dense
@@ -83,7 +83,7 @@
               outlined
             ></v-text-field>
           </v-col>
-          <v-col cols="12" xl="3" lg="3" md="3">
+          <v-col cols="12" xl="2" lg="2" md="2">
             <v-text-field
               v-model="filter.last_name"
               dense
@@ -91,7 +91,7 @@
               outlined
             ></v-text-field>
           </v-col>
-          <v-col cols="12" xl="3" lg="3" md="3">
+          <v-col cols="12" xl="2" lg="2" md="2">
             <v-select
               v-model="filter.province"
               :items="formData.provinces"
@@ -120,6 +120,26 @@
               clearable="true"
               outlined
             ></v-select>
+          </v-col>
+          <v-col cols="12" xl="3" lg="3" md="3" >
+            <v-row>
+              <v-col cols="6">
+                <v-checkbox
+                  v-model="filter.has_exam"
+                  label="دارای آزمون"
+                  dense
+                  value="1"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="6">
+                <v-checkbox
+                  v-model="filter.has_product"
+                  label="دارای محصول"
+                  dense
+                  value="1"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
           </v-col>
           <v-col cols="12" xl="1" lg="1" md="1" >
             <v-btn
@@ -247,6 +267,8 @@ export default {
         last_name: '',
         city: null,
         province: null,
+        has_exam: 0,
+        has_product: 0,
       },
       options: {
         itemsPerPage: 25,
@@ -394,7 +416,9 @@ export default {
         params: {
           first_name: this.filter.first_name,
           last_name: this.filter.last_name,
-          shahr_id: this.filter.city
+          shahr_id: this.filter.city,
+          has_exam: this.filter.has_exam,
+          has_product: this.filter.has_product
         }
       })
         .then((response) => {
