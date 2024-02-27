@@ -97,11 +97,11 @@ class Network_Subnetwork_Moshaver {
     const sendData = {
       users: availableUsers.map(user => {
         return {
-          firstName: user.firstName.toString(),
-          lastName: user.lastName.toString(),
+          firstName: user.firstName?.toString(),
+          lastName: user.lastName?.toString(),
           student_register_limit: user.student_register_limit,
-          mobile: user.mobile.toString(),
-          nationalCode: user.nationalCode.toString(),
+          mobile: user.mobile?.toString(),
+          nationalCode: user.nationalCode?.toString(),
           gender_id: user.gender_id,
           shahr_id: user.shahr_id
         }
